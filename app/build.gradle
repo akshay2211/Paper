@@ -3,12 +3,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.pyrocodes.paper"
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -21,7 +22,40 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    // APK splitting
+    splits {
+        abi {
+            // Enable APK splitting wrt architecture
+            enable true
+
+            // Reset the architectures for which you need to build the APKs for
+            reset()
+
+            // Include the architectures for which Gradle is building APKs
+            include 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+
+            // Set this to false if you don't want an APK that has native code for all architectures
+            universalApk false
+        }
+    }
+
+// Assign codes to each architecture
+    project.ext.versionCodes = ['x86': 0, 'x86_64': 1, 'armeabi-v7a': 2, 'arm64-v8a': 3]
+
+// Add the architecture-specific codes above to base version code, i.e. the version code specified in the defaultConfig{} block
+// Example: 2000 is the base version code -> 2000 (x86), 2001 (x86_64), 2002 (armeabi-v7a) & 2003 (arm64-v8a) would be the version codes for the generated APK files
+    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            output.versionCodeOverride = project.ext.versionCodes.get(output.getFilter(com.android.build.OutputFile.ABI), 0) * 1 + android.defaultConfig.versionCode
+        }
+    }
 }
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -31,6 +65,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0-alpha01'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.github.sundeepk:compact-calendar-view:3.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
