@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import io.ak1.writedown.R
 import io.ak1.writedown.ui.component.NotesListComponent
+import io.ak1.writedown.ui.screens.Destinations
 import org.koin.java.KoinJavaComponent.inject
 
 /**
@@ -32,11 +33,13 @@ fun HomeScreen(navController: NavController) {
     val resultList = homeViewModel.getAllDefaultNotes().observeAsState(initial = listOf())
     val listState = rememberLazyListState()
     Box(modifier = Modifier.fillMaxSize()) {
-
-        NotesListComponent(resultList, listState)
+        NotesListComponent(resultList, listState) {
+            navController.navigate("${Destinations.NOTE_ROUTE}/${it.id}")
+        }
 
         FloatingActionButton(
             onClick = {
+                navController.navigate(Destinations.NOTE_ROUTE)
             },
             shape = CircleShape,
             modifier = Modifier
@@ -44,7 +47,7 @@ fun HomeScreen(navController: NavController) {
                 .padding(24.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                painter = painterResource(id = R.drawable.ic_feather),
                 contentDescription = stringResource(
                     id = R.string.image_desc
                 ),

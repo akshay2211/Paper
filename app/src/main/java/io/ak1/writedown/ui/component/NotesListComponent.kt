@@ -2,6 +2,8 @@ package io.ak1.writedown.ui.component
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyListState
@@ -23,9 +25,13 @@ import io.ak1.writedown.models.Note
  * https://ak1.io
  */
 
-@OptIn(ExperimentalFoundationApi::class,ExperimentalMaterialApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun NotesListComponent(resultList: State<List<Note>>, listState: LazyListState) {
+fun NotesListComponent(
+    resultList: State<List<Note>>,
+    listState: LazyListState,
+    callback: (Note) -> Unit
+) {
     LazyVerticalGrid(
         modifier = Modifier
             .padding(7.dp)
@@ -36,11 +42,12 @@ fun NotesListComponent(resultList: State<List<Note>>, listState: LazyListState) 
             Card(
                 modifier = Modifier
                     .padding(7.dp)
-                    .fillMaxSize(),
+                    .fillMaxWidth()
+                    .height(100.dp),
                 shape = RoundedCornerShape(6.dp),
                 backgroundColor = MaterialTheme.colors.primary,
                 onClick = {
-
+                    callback(element)
                 }
             ) {
                 Text(

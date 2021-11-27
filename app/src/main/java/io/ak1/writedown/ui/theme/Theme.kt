@@ -17,16 +17,28 @@ import io.ak1.writedown.data.local.themePreferenceKey
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
+
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = White,
+    primaryVariant = Grey,
+    secondary = Red,
+    secondaryVariant = White,
+    background = Black,
+    surface = Black,
+    onPrimary = Black,
+    onSecondary = Black,
+    onBackground = White,
+    onSurface = White,
 )
 
 private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = Black,
+    primaryVariant = Grey,
+    secondaryVariant = Black,
+    secondary = Red,
+    onPrimary = White,
+    onSecondary = White,
+    background = White,
 
     /* Other default colors to override
     background = Color.White,

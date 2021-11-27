@@ -22,12 +22,12 @@ interface NoteDao {
     suspend fun insert(note: Note)
 
     @Query("SELECT * FROM notes_table WHERE id = :id")
-    fun getNoteById(id: String): Note?
+    suspend fun getNoteById(id: String): Note?
 
     @Query("SELECT * FROM notes_table ORDER BY updatedOn ASC")
     fun getAllNotes(): List<Note>
 
-    @Query("SELECT * FROM notes_table WHERE folderId = :id ORDER BY updatedOn ASC")
+    @Query("SELECT * FROM notes_table WHERE folderId = :id ORDER BY updatedOn DESC")
     fun getAllNotesByFolderId(id: String): LiveData<List<Note>>
 
     @Query("DELETE FROM notes_table")

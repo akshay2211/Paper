@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.ak1.writedown.data.local.NoteDao
 import io.ak1.writedown.models.Note
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Created by akshay on 27/11/21
@@ -32,6 +34,25 @@ class HomeViewModel(private val noteDao: NoteDao) : ViewModel() {
                 Log.e("Data inserted", "repeat $it")
                 noteDao.insert(Note("description $it", folderId = DEFAULT))
             }
+        }
+    }
+
+    fun getNote(it: String, callback: (Note) -> Unit) {
+        viewModelScope.launch {
+
+            val note = noteDao.getNoteById(it)
+            note?.let {
+                withContext(Dispatchers.Main) {
+                    callback(it)
+                }
+            }
+
+        }
+    }
+
+    fun saveNote(note: Note) {
+        viewModelScope.launch {
+            noteDao.insert(note = note)
         }
     }
 }
