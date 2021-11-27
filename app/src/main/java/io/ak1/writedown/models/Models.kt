@@ -5,7 +5,6 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
-import java.math.BigInteger
 import java.util.*
 
 /**
@@ -18,8 +17,8 @@ import java.util.*
 @Entity(tableName = "notes_table", indices = [Index(value = ["id"], unique = true)])
 data class Note(
     var description: String,
-    var createdOn: BigInteger?,
-    var updatedOn: BigInteger?,
+    var createdOn: Long = System.currentTimeMillis(),
+    var updatedOn: Long = System.currentTimeMillis(),
     val folderId: String
 ) : Parcelable {
     @PrimaryKey

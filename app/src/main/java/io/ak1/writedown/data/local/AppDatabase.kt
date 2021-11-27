@@ -24,10 +24,10 @@ interface NoteDao {
     fun getNoteById(id: String): Note?
 
     @Query("SELECT * FROM notes_table ORDER BY updatedOn ASC")
-    fun getAllNotes(): ArrayList<Note>
+    fun getAllNotes(): List<Note>
 
     @Query("SELECT * FROM notes_table WHERE folderId = :id ORDER BY updatedOn ASC")
-    fun getAllNotesByFolderId(id: String): ArrayList<Note>
+    fun getAllNotesByFolderId(id: String): List<Note>
 
     @Query("DELETE FROM notes_table")
     suspend fun deleteTable()
@@ -40,7 +40,7 @@ interface FolderDao {
     suspend fun insert(folder: Folder)
 
     @Query("SELECT * FROM folder_table")
-    fun getAllNotes(): ArrayList<Note>
+    fun getAllFolders(): List<Folder>
 
     @Query("DELETE FROM folder_table")
     suspend fun deleteTable()
