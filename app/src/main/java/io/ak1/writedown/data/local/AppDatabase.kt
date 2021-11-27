@@ -1,5 +1,6 @@
 package io.ak1.writedown.data.local
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.ak1.writedown.models.Folder
 import io.ak1.writedown.models.Note
@@ -27,11 +28,10 @@ interface NoteDao {
     fun getAllNotes(): List<Note>
 
     @Query("SELECT * FROM notes_table WHERE folderId = :id ORDER BY updatedOn ASC")
-    fun getAllNotesByFolderId(id: String): List<Note>
+    fun getAllNotesByFolderId(id: String): LiveData<List<Note>>
 
     @Query("DELETE FROM notes_table")
     suspend fun deleteTable()
-
 }
 
 @Dao

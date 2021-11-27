@@ -11,5 +11,6 @@ package io.ak1.writedown.ui.screens
 
 object Destinations {
     const val HOME_ROUTE = "home"
+    const val NOTE_ROUTE = "note"
 
 }

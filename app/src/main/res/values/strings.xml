@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">WriteDown</string>
+    <string name="image_desc">sample description</string>
 </resources>
