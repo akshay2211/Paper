@@ -88,8 +88,8 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
                 }
             },
         colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = MaterialTheme.colors.surface,
-            focusedIndicatorColor = MaterialTheme.colors.surface
+            backgroundColor = MaterialTheme.colors.background,
+            focusedIndicatorColor = MaterialTheme.colors.background
         ),
     )
 

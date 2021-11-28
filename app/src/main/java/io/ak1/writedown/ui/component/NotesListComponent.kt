@@ -45,7 +45,6 @@ fun NotesListComponent(
                     .fillMaxWidth()
                     .height(100.dp),
                 shape = RoundedCornerShape(6.dp),
-                backgroundColor = MaterialTheme.colors.primary,
                 onClick = {
                     callback(element)
                 }
