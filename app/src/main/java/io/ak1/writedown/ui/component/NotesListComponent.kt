@@ -1,10 +1,7 @@
 package io.ak1.writedown.ui.component
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyVerticalGrid
@@ -32,32 +29,44 @@ fun NotesListComponent(
     listState: LazyListState,
     callback: (Note) -> Unit
 ) {
-    LazyVerticalGrid(
-        modifier = Modifier
-            .padding(7.dp)
-            .fillMaxSize(),
-        cells = GridCells.Fixed(2), state = listState
-    ) {
-        itemsIndexed(resultList.value) { _, element ->
-            Card(
-                modifier = Modifier
-                    .padding(7.dp)
-                    .fillMaxWidth()
-                    .height(100.dp),
-                shape = RoundedCornerShape(6.dp),
-                onClick = {
-                    callback(element)
-                }
-            ) {
-                Text(
-                    text = element.description.gridTrim(), modifier = Modifier
-                        .padding(15.dp)
-                        .fillMaxSize()
-                )
-            }
+    Column {
+        HomeHeader {
 
         }
+
+        LazyVerticalGrid(
+            modifier = Modifier
+                .padding(7.dp)
+                .fillMaxSize(),
+            cells = GridCells.Fixed(2), state = listState
+        ) {
+
+            itemsIndexed(resultList.value) { _, element ->
+                Card(
+                    modifier = Modifier
+                        .padding(7.dp)
+                        .fillMaxWidth()
+                        .height(100.dp),
+                    shape = RoundedCornerShape(6.dp),
+                    onClick = {
+                        callback(element)
+                    }
+                ) {
+                    Text(
+                        text = element.description.gridTrim(), modifier = Modifier
+                            .padding(15.dp)
+                            .fillMaxSize()
+                    )
+                }
+
+            }
+        }
     }
+}
+
+@Composable
+fun HomeHeader(function: () -> Unit) {
+    Text(text = "Note", style = MaterialTheme.typography.h1)
 }
 
 fun String.gridTrim(maxDigits: Int = 100) =
