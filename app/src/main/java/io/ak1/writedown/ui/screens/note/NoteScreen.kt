@@ -1,6 +1,7 @@
 package io.ak1.writedown.ui.screens.note
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -16,6 +17,7 @@ import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import io.ak1.writedown.models.Note
 import io.ak1.writedown.ui.screens.home.DEFAULT
@@ -75,8 +77,10 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
         onValueChange = {
             description.value = it
         },
+        textStyle = MaterialTheme.typography.h6,
         modifier = Modifier
             .fillMaxSize()
+            .padding(14.dp)
             .focusRequester(focusRequester)
             .onFocusChanged { focusState ->
                 if (focus.value != focusState.isFocused) {
