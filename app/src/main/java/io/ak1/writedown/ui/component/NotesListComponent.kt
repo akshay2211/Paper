@@ -1,6 +1,5 @@
 package io.ak1.writedown.ui.component
 
-import android.text.format.DateUtils
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -23,7 +22,6 @@ import io.ak1.writedown.R
 import io.ak1.writedown.models.Note
 import io.ak1.writedown.ui.utils.gridTrim
 import io.ak1.writedown.ui.utils.timeAgo
-import java.util.*
 
 /**
  * Created by akshay on 27/11/21
@@ -51,10 +49,10 @@ fun NotesListComponent(
                     Text(
                         text = element.description.gridTrim(),
                         modifier = Modifier.fillMaxSize(),
-                        style = MaterialTheme.typography.h6
+                        style = MaterialTheme.typography.subtitle1
                     )
 
-                    Spacer(modifier = Modifier.height(5.dp))
+                    verticalSpacer(7.dp)
 
                     Text(
                         text = element.updatedOn.timeAgo(),
@@ -71,12 +69,11 @@ fun NotesListComponent(
 }
 
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeHeader(modifier: Modifier) {
     Box(modifier = modifier) {
-        Text(text = "Note", style = MaterialTheme.typography.h2)
-        Row(modifier = Modifier.padding(0.dp,120.dp,0.dp,0.dp)) {
+        Text(text = "Note", style = MaterialTheme.typography.h3)
+        Row(modifier = Modifier.padding(0.dp, 120.dp, 0.dp, 0.dp)) {
             Spacer(
                 modifier = Modifier
                     .height(38.dp)
@@ -99,6 +96,6 @@ fun HomeHeader(modifier: Modifier) {
                 colorFilter = ColorFilter.tint(MaterialTheme.colors.primary)
             )
         }
-        verticalSpacer7Dp()
+        verticalSpacer(16.dp)
     }
 }

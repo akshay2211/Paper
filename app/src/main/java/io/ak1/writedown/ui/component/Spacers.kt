@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 
 /**
  * Created by akshay on 30/11/21
@@ -12,4 +12,4 @@ import androidx.compose.ui.unit.dp
  */
 
 @Composable
-fun verticalSpacer7Dp() = Spacer(modifier = Modifier.height(7.dp))
+fun verticalSpacer(height: Dp) = Spacer(modifier = Modifier.height(height))

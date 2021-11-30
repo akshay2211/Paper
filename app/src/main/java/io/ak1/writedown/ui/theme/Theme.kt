@@ -21,7 +21,7 @@ import kotlinx.coroutines.runBlocking
 private val DarkColorPalette = darkColors(
     primary = White,
     primaryVariant = Grey,
-    secondary = Red,
+    secondary = Accent,
     secondaryVariant = White,
     background = BlackDark,
     surface = BlackLite,
@@ -35,7 +35,7 @@ private val LightColorPalette = lightColors(
     primary = BlackDark,
     primaryVariant = Grey,
     secondaryVariant = BlackDark,
-    secondary = Red,
+    secondary = Accent,
     onPrimary = White,
     onSecondary = White,
     background = White,
