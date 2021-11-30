@@ -4,7 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.runtime.Composable
@@ -28,12 +28,11 @@ import org.koin.java.KoinJavaComponent.inject
  */
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController,listState : LazyListState) {
     val homeViewModel by inject<HomeViewModel>(HomeViewModel::class.java)
     val resultList = homeViewModel.getAllDefaultNotes().observeAsState(initial = listOf())
-    val listState = rememberLazyListState()
     Box(modifier = Modifier.fillMaxSize()) {
-        NotesListComponent(resultList, listState) {
+        NotesListComponent(resultList, listState,{},{}) {
             navController.navigate("${Destinations.NOTE_ROUTE}/${it.id}")
         }
 

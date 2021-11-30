@@ -1,6 +1,7 @@
 package io.ak1.writedown.ui.component
 
 import android.view.Window
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
@@ -29,12 +30,13 @@ fun RootComponent(window: Window) {
         window.statusBarConfig(isDark)
         Surface(color = MaterialTheme.colors.background) {
             val navController = rememberNavController()
+            val listState = rememberLazyListState()
             NavHost(
                 navController = navController,
                 startDestination = Destinations.HOME_ROUTE
             ) {
                 composable(Destinations.HOME_ROUTE) {
-                    HomeScreen(navController)
+                    HomeScreen(navController, listState)
                 }
                 composable(Destinations.NOTE_ROUTE) {
                     NoteScreen(navController)
@@ -47,7 +49,7 @@ fun RootComponent(window: Window) {
                 ) {
                     val arg = requireNotNull(it.arguments)
                     val noteId = arg.getString(Destinations.NOTE_KEY)
-                    NoteScreen(navController,noteId)
+                    NoteScreen(navController, noteId)
                 }
             }
         }
