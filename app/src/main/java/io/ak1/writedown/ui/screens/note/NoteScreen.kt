@@ -1,7 +1,9 @@
 package io.ak1.writedown.ui.screens.note
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -13,12 +15,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalTextInputService
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import io.ak1.writedown.R
 import io.ak1.writedown.models.Note
 import io.ak1.writedown.ui.screens.home.DEFAULT
 import io.ak1.writedown.ui.screens.home.HomeViewModel
@@ -71,31 +77,59 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
         inputService?.showSoftwareKeyboard()
         focusRequester.requestFocus()
     }
+    Column {
+        val modifier = Modifier.padding(7.dp)
+        Row {
+            Image(
+                painter = painterResource(id = R.drawable.ic_back),
+                contentDescription = stringResource(
+                    id = R.string.image_desc
+                ),
+                modifier = modifier.clickable {
+                    saveAndExit()
+                },
+                colorFilter = ColorFilter.tint(MaterialTheme.colors.primary)
+            )
+            Spacer(modifier = Modifier.weight(1f, true))
+            Image(
+                painter = painterResource(id = R.drawable.ic_check),
+                contentDescription = stringResource(
+                    id = R.string.image_desc
+                ),
+                modifier = modifier.clickable {
+                    saveAndExit()
+                },
+                colorFilter = ColorFilter.tint(MaterialTheme.colors.primary)
+            )
+        }
+        Spacer(modifier = Modifier.height(1.dp).fillMaxWidth().background(MaterialTheme.colors.primaryVariant))
 
-    TextField(
-        value = description.value,
-        onValueChange = {
-            description.value = it
-        },
-        textStyle = MaterialTheme.typography.h6,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(14.dp)
-            .focusRequester(focusRequester)
-            .onFocusChanged { focusState ->
-                if (focus.value != focusState.isFocused) {
-                    focus.value = focusState.isFocused
-                    if (!focusState.isFocused) {
-                        inputService?.hideSoftwareKeyboard()
-                        saveAndExit()
-                    }
-                }
+
+        TextField(
+            value = description.value,
+            onValueChange = {
+                description.value = it
             },
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = MaterialTheme.colors.background,
-            focusedIndicatorColor = MaterialTheme.colors.background
-        ),
-    )
+            textStyle = MaterialTheme.typography.h6,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(14.dp)
+                .focusRequester(focusRequester)
+                .onFocusChanged { focusState ->
+                    if (focus.value != focusState.isFocused) {
+                        focus.value = focusState.isFocused
+                        if (!focusState.isFocused) {
+                            inputService?.hideSoftwareKeyboard()
+                            saveAndExit()
+                        }
+                    }
+                },
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = MaterialTheme.colors.background,
+                focusedIndicatorColor = MaterialTheme.colors.background
+            ),
+        )
+    }
 
 
 }

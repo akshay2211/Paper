@@ -72,7 +72,7 @@ fun NotesListComponent(
 @Composable
 fun HomeHeader(modifier: Modifier) {
     Box(modifier = modifier) {
-        Text(text = "Note", style = MaterialTheme.typography.h3)
+        Text(text = "Notes", style = MaterialTheme.typography.h3)
         Row(modifier = Modifier.padding(0.dp, 120.dp, 0.dp, 0.dp)) {
             Spacer(
                 modifier = Modifier
