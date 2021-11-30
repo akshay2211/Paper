@@ -84,7 +84,7 @@ fun NotesListComponent(
         }
     }
 
-   /* if ((listState.firstVisibleItemScrollOffset > 370 && listState.firstVisibleItemIndex == 0) || listState.firstVisibleItemIndex > 0)
+   if ((listState.firstVisibleItemScrollOffset > 370 && listState.firstVisibleItemIndex == 0) || listState.firstVisibleItemIndex > 0)
     {  Card(
         modifier = modifier.fillMaxWidth(),
         backgroundColor = MaterialTheme.colors.background,
@@ -113,7 +113,7 @@ fun NotesListComponent(
             modifier = modifier,
             colorFilter = ColorFilter.tint(MaterialTheme.colors.primary)
         )
-    }}}*/
+    }}}
 }
 
 
