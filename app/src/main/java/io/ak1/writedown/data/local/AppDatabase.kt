@@ -30,8 +30,12 @@ interface NoteDao {
     @Query("SELECT * FROM notes_table WHERE folderId = :id ORDER BY updatedOn DESC")
     fun getAllNotesByFolderId(id: String): LiveData<List<Note>>
 
+    @Query("DELETE FROM notes_table WHERE id = :id")
+    suspend fun deleteNote(id: String)
+
     @Query("DELETE FROM notes_table")
     suspend fun deleteTable()
+
 }
 
 @Dao

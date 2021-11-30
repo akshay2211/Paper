@@ -25,7 +25,7 @@ import io.ak1.writedown.ui.theme.statusBarConfig
 @Composable
 fun RootComponent(window: Window) {
     val isDark = isSystemInDarkThemeCustom()
-    WriteDownTheme {
+    WriteDownTheme(isDark) {
         window.statusBarConfig(isDark)
         Surface(color = MaterialTheme.colors.background) {
             val navController = rememberNavController()

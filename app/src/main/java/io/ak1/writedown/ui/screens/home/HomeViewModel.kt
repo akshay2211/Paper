@@ -55,4 +55,12 @@ class HomeViewModel(private val noteDao: NoteDao) : ViewModel() {
             noteDao.insert(note = note)
         }
     }
+
+    fun deleteNote(value: Note?) {
+        value?.let {
+            viewModelScope.launch {
+                noteDao.deleteNote(it.id)
+            }
+        }
+    }
 }

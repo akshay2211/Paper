@@ -11,9 +11,9 @@ import java.util.*
 fun Long.timeAgo() = DateUtils.getRelativeTimeSpanString(
     this,
     Calendar.getInstance().timeInMillis,
-    DateUtils.MINUTE_IN_MILLIS
+    DateUtils.DAY_IN_MILLIS
 ).toString()
 
 
 fun String.gridTrim(maxDigits: Int = 100) =
-    if (this.length > 100) "${this.substring(maxDigits)}..." else this
+    if (this.length > maxDigits) "${this.substring(0,maxDigits)}..." else this
