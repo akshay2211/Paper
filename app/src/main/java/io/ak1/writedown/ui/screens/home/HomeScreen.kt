@@ -28,11 +28,15 @@ import org.koin.java.KoinJavaComponent.inject
  */
 
 @Composable
-fun HomeScreen(navController: NavController,listState : LazyListState) {
+fun HomeScreen(navController: NavController, listState: LazyListState) {
     val homeViewModel by inject<HomeViewModel>(HomeViewModel::class.java)
     val resultList = homeViewModel.getAllDefaultNotes().observeAsState(initial = listOf())
     Box(modifier = Modifier.fillMaxSize()) {
-        NotesListComponent(resultList, listState,{},{}) {
+        NotesListComponent(true, resultList, listState, {
+            navController.navigate(Destinations.SEARCH_ROUTE)
+        }, {
+
+        }) {
             navController.navigate("${Destinations.NOTE_ROUTE}/${it.id}")
         }
 
