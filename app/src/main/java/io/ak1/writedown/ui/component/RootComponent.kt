@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import io.ak1.writedown.ui.screens.Destinations
+import io.ak1.writedown.ui.screens.SearchScreen
 import io.ak1.writedown.ui.screens.home.HomeScreen
 import io.ak1.writedown.ui.screens.note.NoteScreen
 import io.ak1.writedown.ui.theme.WriteDownTheme
@@ -40,6 +41,9 @@ fun RootComponent(window: Window) {
                 }
                 composable(Destinations.NOTE_ROUTE) {
                     NoteScreen(navController)
+                }
+                composable(Destinations.SEARCH_ROUTE) {
+                    SearchScreen(navController, listState)
                 }
                 composable(
                     "${Destinations.NOTE_ROUTE}/{${Destinations.NOTE_KEY}}",

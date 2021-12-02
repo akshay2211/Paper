@@ -36,6 +36,7 @@ import io.ak1.writedown.ui.utils.timeAgo
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun NotesListComponent(
+    includeHeader: Boolean = true,
     resultList: State<List<Note>>,
     listState: LazyListState,
     searchCallback: () -> Unit, moreCallback: () -> Unit,
@@ -48,7 +49,9 @@ fun NotesListComponent(
             "${listState.firstVisibleItemScrollOffset}  ${listState.firstVisibleItemIndex} ${(48.sp.value + 134.dp.value)}"
 
         )
-        item { HomeHeader(modifier, searchCallback, moreCallback) }
+        if (includeHeader) {
+            item { HomeHeader(modifier, searchCallback, moreCallback) }
+        }
         itemsIndexed(resultList.value) { index, element ->
             /*val backgroundColor = when (index) {
                     2 -> MaterialTheme.colors.secondary
