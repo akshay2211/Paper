@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -40,15 +41,16 @@ fun SearchScreen(navController: NavController, listState: LazyListState) {
     val inputService = LocalTextInputService.current
     val focus = remember { mutableStateOf(true) }
     val homeViewModel by inject<HomeViewModel>(HomeViewModel::class.java)
-    val description = remember {
-        mutableStateOf(TextFieldValue())
+    var description = rememberSaveable {
+        mutableStateOf("")
     }
+
     LaunchedEffect(navController) {
         focus.value = true
         inputService?.showSoftwareKeyboard()
         focusRequester.requestFocus()
     }
-    val resultList = homeViewModel.getAllNotesByDescription(description.value.text)
+    val resultList = homeViewModel.getAllNotesByDescription(description.value)
         .observeAsState(initial = listOf())
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
@@ -74,14 +76,14 @@ fun SearchScreen(navController: NavController, listState: LazyListState) {
                     )
                 },
                 trailingIcon = {
-                    if (!description.value.text.isNullOrEmpty()) {
+                    if (!description.value.isNullOrEmpty()) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_x),
                             contentDescription = stringResource(
                                 id = R.string.image_desc
                             ),
                             modifier = modifier.clickable {
-                                description.value = TextFieldValue()
+                                description.value = ""
                             },
                             colorFilter = ColorFilter.tint(MaterialTheme.colors.primary)
                         )
