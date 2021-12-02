@@ -2,6 +2,7 @@ package io.ak1.writedown.ui.screens.home
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.ak1.writedown.data.local.NoteDao
@@ -26,6 +27,9 @@ class HomeViewModel(private val noteDao: NoteDao) : ViewModel() {
         }
         return list
     }
+
+    fun getAllNotesByDescription(query: String) =
+        if (query.trim().isNullOrEmpty()) MutableLiveData(emptyList()) else noteDao.getNotesBySearch(query)
 
 
     fun insertFakeData() {
