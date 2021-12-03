@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WriteDown</string>
+    <string name="app_name">Paper</string>
     <string name="image_desc">sample description</string>
     <string name="deletion_confirmation">Remove saved note</string>
     <string name="note_removed">Note Deleted</string>

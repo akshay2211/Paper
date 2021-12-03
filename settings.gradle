@@ -5,5 +5,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "WriteDown"
+rootProject.name = "Paper"
 include ':app'
