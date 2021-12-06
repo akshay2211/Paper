@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,11 +32,15 @@ import org.koin.java.KoinJavaComponent.inject
 fun HomeScreen(navController: NavController, listState: LazyListState) {
     val homeViewModel by inject<HomeViewModel>(HomeViewModel::class.java)
     val resultList = homeViewModel.getAllDefaultNotes().observeAsState(initial = listOf())
+
+    LaunchedEffect(resultList.value) {
+        homeViewModel.insertDefaultData()
+    }
     Box(modifier = Modifier.fillMaxSize()) {
         NotesListComponent(true, resultList, listState, {
             navController.navigate(Destinations.SEARCH_ROUTE)
         }, {
-
+            navController.navigate(Destinations.SETTING_ROUTE)
         }) {
             navController.navigate("${Destinations.NOTE_ROUTE}/${it.id}")
         }
@@ -59,3 +64,4 @@ fun HomeScreen(navController: NavController, listState: LazyListState) {
         }
     }
 }
+

@@ -13,6 +13,7 @@ object Destinations {
     const val HOME_ROUTE = "home"
     const val NOTE_ROUTE = "note"
     const val SEARCH_ROUTE = "search"
+    const val SETTING_ROUTE = "setting"
     const val NOTE_KEY = "note_param"
 
 }
