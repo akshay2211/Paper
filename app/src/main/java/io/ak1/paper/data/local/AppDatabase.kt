@@ -39,6 +39,9 @@ interface NoteDao {
     @Query("DELETE FROM notes_table")
     suspend fun deleteTable()
 
+    @Query("SELECT Count(*) FROM notes_table WHERE folderId = :folderId")
+    suspend fun getNotesCountByFolderId(folderId: String): Int
+
 }
 
 @Dao

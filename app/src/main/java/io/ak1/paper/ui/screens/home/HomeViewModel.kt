@@ -1,10 +1,11 @@
 package io.ak1.paper.ui.screens.home
 
+import android.content.Context
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.ak1.paper.R
 import io.ak1.paper.data.local.NoteDao
 import io.ak1.paper.models.Note
 import kotlinx.coroutines.Dispatchers
@@ -18,25 +19,40 @@ import kotlinx.coroutines.withContext
 
 const val DEFAULT = "default"
 
-class HomeViewModel(private val noteDao: NoteDao) : ViewModel() {
-    fun getAllDefaultNotes(): LiveData<List<Note>> {
+class HomeViewModel(private val noteDao: NoteDao, private val context: Context) : ViewModel() {
 
-        val list = noteDao.getAllNotesByFolderId(DEFAULT)
-        if (list.value?.size == 0) {
-            insertFakeData()
-        }
-        return list
-    }
+    fun getAllDefaultNotes() = noteDao.getAllNotesByFolderId(DEFAULT)
+    private suspend fun getNotesCount() = noteDao.getNotesCountByFolderId(DEFAULT)
 
     fun getAllNotesByDescription(query: String) =
-        if (query.trim().isNullOrEmpty()) MutableLiveData(emptyList()) else noteDao.getNotesBySearch(query)
+        if (query.trim()
+                .isNullOrEmpty()
+        ) MutableLiveData(emptyList()) else noteDao.getNotesBySearch(query)
 
 
-    fun insertFakeData() {
+    fun insertDefaultData() {
         viewModelScope.launch {
-            repeat(10) {
-                Log.e("Data inserted", "repeat $it")
-                noteDao.insert(Note("description $it", folderId = DEFAULT))
+            val count = getNotesCount()
+            Log.e("count", "$count")
+            if (count == 0) {
+                noteDao.insert(
+                    Note(
+                        context.resources.getString(R.string.default_note_text),
+                        folderId = DEFAULT
+                    )
+                )
+                noteDao.insert(
+                    Note(
+                        context.resources.getString(R.string.default_note_text2),
+                        folderId = DEFAULT
+                    )
+                )
+                noteDao.insert(
+                    Note(
+                        context.resources.getString(R.string.default_note_text3),
+                        folderId = DEFAULT
+                    )
+                )
             }
         }
     }

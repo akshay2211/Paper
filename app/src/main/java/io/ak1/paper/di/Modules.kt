@@ -20,5 +20,5 @@ var databaseModule = module {
 }
 
 var viewModel = module {
-    viewModel { HomeViewModel(get()) }
+    viewModel { HomeViewModel(get(), get()) }
 }
