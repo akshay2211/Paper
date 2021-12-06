@@ -1,6 +1,5 @@
 package io.ak1.paper.ui.component
 
-import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -22,11 +21,10 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import io.ak1.paper.R
 import io.ak1.paper.models.Note
 import io.ak1.paper.ui.utils.gridTrim
 import io.ak1.paper.ui.utils.timeAgo
-import io.ak1.paper.R
 
 /**
  * Created by akshay on 27/11/21
@@ -44,11 +42,6 @@ fun NotesListComponent(
 ) {
     val modifier = Modifier.padding(7.dp)
     LazyColumn(modifier = modifier, state = listState) {
-        Log.e(
-            "scrollState",
-            "${listState.firstVisibleItemScrollOffset}  ${listState.firstVisibleItemIndex} ${(48.sp.value + 134.dp.value)}"
-
-        )
         if (includeHeader) {
             item { HomeHeader(modifier, searchCallback, moreCallback) }
         }
@@ -96,7 +89,10 @@ fun NotesListComponent(
             elevation = 1.dp
         ) {
             Row(modifier) {
-                Text(text = "Notes", style = MaterialTheme.typography.h5)
+                Text(
+                    text = stringResource(id = R.string.app_name),
+                    style = MaterialTheme.typography.h5
+                )
                 Iconsbar(modifier, searchCallback, moreCallback)
             }
         }
@@ -133,7 +129,7 @@ fun RowScope.Iconsbar(modifier: Modifier, searchCallback: () -> Unit, moreCallba
 @Composable
 fun HomeHeader(modifier: Modifier, searchCallback: () -> Unit, moreCallback: () -> Unit) {
     Box(modifier = modifier) {
-        Text(text = "Notes", style = MaterialTheme.typography.h3)
+        Text(text = stringResource(id = R.string.app_name), style = MaterialTheme.typography.h3)
         Row(modifier = Modifier.padding(0.dp, 120.dp, 0.dp, 0.dp)) {
             Iconsbar(modifier, searchCallback, moreCallback)
         }
