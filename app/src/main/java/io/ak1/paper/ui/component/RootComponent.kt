@@ -14,6 +14,7 @@ import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.SearchScreen
 import io.ak1.paper.ui.screens.home.HomeScreen
 import io.ak1.paper.ui.screens.note.NoteScreen
+import io.ak1.paper.ui.screens.setting.SettingsScreen
 import io.ak1.paper.ui.theme.PaperTheme
 import io.ak1.paper.ui.theme.isSystemInDarkThemeCustom
 import io.ak1.paper.ui.theme.statusBarConfig
@@ -44,6 +45,9 @@ fun RootComponent(window: Window) {
                 }
                 composable(Destinations.SEARCH_ROUTE) {
                     SearchScreen(navController, listState)
+                }
+                composable(Destinations.SETTING_ROUTE) {
+                    SettingsScreen(navController)
                 }
                 composable(
                     "${Destinations.NOTE_ROUTE}/{${Destinations.NOTE_KEY}}",
