@@ -1,6 +1,7 @@
 ![Preview image](media/banner.webp)
 
 # Paper - A Minimal Notes App
+[![](https://androidweekly.net/issues/issue-496/badge?style=flat-square)](https://androidweekly.net/issues/issue-496)
 
 A minimal notes application in [Jetpack Compose](https://developer.android.com/jetpack/compose) with [MVVM architecture](https://developer.android.com/jetpack/guide).
 Built with components like DataStore, Coroutines, ViewModel, LiveData, Room, Navigation-Compose, Coil, koin etc.
