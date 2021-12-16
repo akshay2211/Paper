@@ -15,6 +15,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
@@ -88,7 +89,7 @@ fun NotesListComponent(
             shape = RectangleShape,
             elevation = 1.dp
         ) {
-            Row(modifier) {
+            Row(modifier, verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = stringResource(id = R.string.app_name),
                     style = MaterialTheme.typography.h5
