@@ -81,7 +81,7 @@ fun isSystemInDarkThemeCustom(): Boolean {
 }
 
 @Composable
-fun Window.statusBarConfig(darkTheme: Boolean) {
+fun Window.StatusBarConfig(darkTheme: Boolean) {
     WindowInsetsControllerCompat(this, this.decorView).isAppearanceLightStatusBars =
         !darkTheme
     this.statusBarColor = MaterialTheme.colors.background.toArgb()

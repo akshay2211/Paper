@@ -8,16 +8,16 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import io.ak1.paper.ui.screens.Destinations
-import io.ak1.paper.ui.screens.SearchScreen
+import io.ak1.paper.ui.screens.search.SearchScreen
 import io.ak1.paper.ui.screens.home.HomeScreen
 import io.ak1.paper.ui.screens.note.NoteScreen
 import io.ak1.paper.ui.screens.setting.SettingsScreen
 import io.ak1.paper.ui.theme.PaperTheme
 import io.ak1.paper.ui.theme.isSystemInDarkThemeCustom
-import io.ak1.paper.ui.theme.statusBarConfig
+import io.ak1.paper.ui.theme.StatusBarConfig
 
 /**
  * Created by akshay on 27/11/21
@@ -29,7 +29,7 @@ import io.ak1.paper.ui.theme.statusBarConfig
 fun RootComponent(window: Window) {
     val isDark = isSystemInDarkThemeCustom()
     PaperTheme(isDark) {
-        window.statusBarConfig(isDark)
+        window.StatusBarConfig(isDark)
         Surface(color = MaterialTheme.colors.background) {
             val navController = rememberNavController()
             val listState = rememberLazyListState()

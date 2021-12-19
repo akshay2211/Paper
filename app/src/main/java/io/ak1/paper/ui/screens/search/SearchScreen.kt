@@ -1,4 +1,4 @@
-package io.ak1.paper.ui.screens
+package io.ak1.paper.ui.screens.search
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -28,6 +28,7 @@ import io.ak1.paper.ui.component.NotesListComponent
 import io.ak1.paper.ui.screens.home.HomeViewModel
 import org.koin.java.KoinJavaComponent.inject
 import io.ak1.paper.R
+import io.ak1.paper.ui.screens.Destinations
 
 /**
  * Created by akshay on 01/12/21
@@ -40,7 +41,7 @@ fun SearchScreen(navController: NavController, listState: LazyListState) {
     val inputService = LocalTextInputService.current
     val focus = remember { mutableStateOf(true) }
     val homeViewModel by inject<HomeViewModel>(HomeViewModel::class.java)
-    var description = rememberSaveable {
+    val description = rememberSaveable {
         mutableStateOf("")
     }
 
@@ -75,7 +76,7 @@ fun SearchScreen(navController: NavController, listState: LazyListState) {
                     )
                 },
                 trailingIcon = {
-                    if (!description.value.isNullOrEmpty()) {
+                    if (description.value.isNotEmpty()) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_x),
                             contentDescription = stringResource(
