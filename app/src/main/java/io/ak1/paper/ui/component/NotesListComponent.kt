@@ -87,7 +87,7 @@ fun NotesListComponent(
             modifier = modifier.fillMaxWidth(),
             backgroundColor = MaterialTheme.colors.background,
             shape = RectangleShape,
-            elevation = 1.dp
+            elevation = 0.dp
         ) {
             Row(modifier, verticalAlignment = Alignment.CenterVertically) {
                 Text(
