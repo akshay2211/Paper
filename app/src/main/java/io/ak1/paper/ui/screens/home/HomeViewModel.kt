@@ -1,7 +1,6 @@
 package io.ak1.paper.ui.screens.home
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,16 +23,14 @@ class HomeViewModel(private val noteDao: NoteDao, private val context: Context) 
     fun getAllDefaultNotes() = noteDao.getAllNotesByFolderId(DEFAULT)
     private suspend fun getNotesCount() = noteDao.getNotesCountByFolderId(DEFAULT)
 
-    fun getAllNotesByDescription(query: String) =
-        if (query.trim()
-                .isNullOrEmpty()
-        ) MutableLiveData(emptyList()) else noteDao.getNotesBySearch(query)
+    fun getAllNotesByDescription(query: String) = if (query.trim().isEmpty()) MutableLiveData(
+        emptyList()
+    ) else noteDao.getNotesBySearch(query)
 
 
     fun insertDefaultData() {
         viewModelScope.launch {
             val count = getNotesCount()
-            Log.e("count", "$count")
             if (count == 0) {
                 noteDao.insert(
                     Note(

@@ -15,7 +15,7 @@ Built with components like DataStore, Coroutines, ViewModel, LiveData, Room, Nav
 * Minor features like dedicated settings screen, Dialogs etc.
 
 
-This is the first step for [Paper](https://github.com/akshay2211/paper) in becoming a full fleadge Notes application with all the desired features
+This is the first step for [Paper](https://github.com/akshay2211/paper) in becoming a full fledged Notes application with all the desired features
 currently this is the first phase which included a basic working good Ui App.
 
 Screenshots

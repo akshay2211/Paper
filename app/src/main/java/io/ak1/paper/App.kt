@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.ak1.paper
 
 import android.app.Application

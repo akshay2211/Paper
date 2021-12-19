@@ -67,7 +67,7 @@ fun NotesListComponent(
                         style = MaterialTheme.typography.subtitle1
                     )
 
-                    verticalSpacer(7.dp)
+                    VerticalSpacer(7.dp)
 
                     Text(
                         text = element.updatedOn.timeAgo(),
@@ -134,6 +134,6 @@ fun HomeHeader(modifier: Modifier, searchCallback: () -> Unit, moreCallback: () 
         Row(modifier = Modifier.padding(0.dp, 120.dp, 0.dp, 0.dp)) {
             Iconsbar(modifier, searchCallback, moreCallback)
         }
-        verticalSpacer(16.dp)
+        VerticalSpacer(16.dp)
     }
 }
