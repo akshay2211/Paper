@@ -30,8 +30,15 @@ Upcoming Features
 
 * Image Integrations
 * Doodle Screen Integration 
+
+#### Phase 3
+
 * Feature to Share Notes
 * Backup and Restore Feature
+
+##### Phase 4
+* To-do list integration
+* Tags/Folders to segregate notes
 
 
 Contribute
