@@ -3,6 +3,7 @@
 # Paper - A Minimal Notes App
 [![](https://androidweekly.net/issues/issue-496/badge?style=flat-square)](https://androidweekly.net/issues/issue-496)
 [![](https://img.shields.io/badge/APK-1.0.0-black?style=flat-square&logo=googleplay)](https://play.google.com/store/apps/details?id=io.ak1.paper)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Paper-green.svg?style=flat-square)](https://android-arsenal.com/details/3/8296)
 
 A minimal notes application in [Jetpack Compose](https://developer.android.com/jetpack/compose) with [MVVM architecture](https://developer.android.com/jetpack/guide).
 Built with components like DataStore, Coroutines, ViewModel, LiveData, Room, Navigation-Compose, Coil, koin etc.
