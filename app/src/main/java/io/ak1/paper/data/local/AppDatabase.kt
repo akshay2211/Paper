@@ -10,7 +10,7 @@ import io.ak1.paper.models.Note
  * https://ak1.io
  */
 
-@Database(entities = [Note::class, Folder::class], version = 1)
+@Database(entities = [Note::class, Folder::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun noteDao(): NoteDao
     abstract fun folderDao(): FolderDao

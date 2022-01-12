@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import io.ak1.paper.ui.screens.Destinations
+import io.ak1.paper.ui.screens.doodle.DoodleScreen
 import io.ak1.paper.ui.screens.search.SearchScreen
 import io.ak1.paper.ui.screens.home.HomeScreen
 import io.ak1.paper.ui.screens.note.NoteScreen
@@ -48,6 +49,9 @@ fun RootComponent(window: Window) {
                 }
                 composable(Destinations.SETTING_ROUTE) {
                     SettingsScreen(navController)
+                }
+                composable(Destinations.DOODLE_ROUTE) {
+                    DoodleScreen(navController)
                 }
                 composable(
                     "${Destinations.NOTE_ROUTE}/{${Destinations.NOTE_KEY}}",

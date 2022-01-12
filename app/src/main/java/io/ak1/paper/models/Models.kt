@@ -19,7 +19,8 @@ data class Note(
     var description: String,
     var createdOn: Long = System.currentTimeMillis(),
     var updatedOn: Long = System.currentTimeMillis(),
-    val folderId: String
+    val folderId: String,
+    var doodle: String = ""
 ) : Parcelable {
     @PrimaryKey
     var id: String = UUID.randomUUID().toString()
