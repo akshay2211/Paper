@@ -20,7 +20,7 @@ data class Note(
     var createdOn: Long = System.currentTimeMillis(),
     var updatedOn: Long = System.currentTimeMillis(),
     val folderId: String,
-    var doodle: String = ""
+    var doodle: String? = null
 ) : Parcelable {
     @PrimaryKey
     var id: String = UUID.randomUUID().toString()
