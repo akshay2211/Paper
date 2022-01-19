@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.ak1.paper.R
 import io.ak1.paper.models.Note
+import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.utils.gridTrim
 import io.ak1.paper.ui.utils.timeAgo
 
@@ -40,21 +41,14 @@ fun NotesListComponent(
     searchCallback: () -> Unit, moreCallback: () -> Unit,
     callback: (Note) -> Unit,
 ) {
-    val modifier = Modifier.padding(7.dp)
+    val modifier = Modifier.padding(0.dp)
     LazyColumn(modifier = modifier, state = listState) {
         if (includeHeader) {
             item { HomeHeader(modifier, searchCallback, moreCallback) }
         }
         itemsIndexed(resultList.value) { index, element ->
-            /*val backgroundColor = when (index) {
-                    2 -> MaterialTheme.colors.secondary
-                    0 -> Accent2
-                    else -> MaterialTheme.colors.surface
-                }*/
-
             Card(
-                modifier = modifier.fillMaxWidth(),
-                //backgroundColor = backgroundColor,
+                modifier = modifier.fillMaxWidth().padding(14.dp,5.dp),
                 shape = RoundedCornerShape(6.dp),
                 onClick = { callback(element) }
             ) {
@@ -80,23 +74,20 @@ fun NotesListComponent(
 
         }
     }
-
     if ((listState.firstVisibleItemScrollOffset > 338 && listState.firstVisibleItemIndex == 0) || listState.firstVisibleItemIndex > 0) {
-        Card(
-            modifier = modifier.fillMaxWidth(),
+        TopAppBar(
+            title = {
+                Text(text = "Paper")
+            },
+            actions = {
+                PaperIconButton(id = R.drawable.ic_search, onClick = searchCallback)
+                PaperIconButton(id = R.drawable.ic_more, onClick = moreCallback)
+            },
             backgroundColor = MaterialTheme.colors.background,
-            shape = RectangleShape,
-            elevation = 0.dp
-        ) {
-            Row(modifier, verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = stringResource(id = R.string.app_name),
-                    style = MaterialTheme.typography.h5
-                )
-                Iconsbar(modifier, searchCallback, moreCallback)
-            }
-        }
+            elevation = AppBarDefaults.TopAppBarElevation
+        )
     }
+
 }
 
 @Composable
@@ -128,17 +119,31 @@ fun RowScope.Iconsbar(modifier: Modifier, searchCallback: () -> Unit, moreCallba
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun HomeHeader(modifier: Modifier, searchCallback: () -> Unit, moreCallback: () -> Unit) {
-    Box(modifier = modifier) {
-        Text(text = stringResource(id = R.string.app_name), style = MaterialTheme.typography.h3)
+    Box {
+        Text(text = stringResource(id = R.string.app_name), style = MaterialTheme.typography.h3,modifier = Modifier.padding(14.dp))
         Row(modifier = Modifier.padding(0.dp, 120.dp, 0.dp, 0.dp)) {
-            Iconsbar(modifier, searchCallback, moreCallback)
+            TopAppBar(
+                title = {
+
+                },
+                actions = {
+                    PaperIconButton(id = R.drawable.ic_search, onClick = searchCallback)
+                    PaperIconButton(id = R.drawable.ic_more, onClick = moreCallback)
+                },
+                backgroundColor = MaterialTheme.colors.background,
+                elevation = 0.dp
+            )
         }
         VerticalSpacer(16.dp)
     }
 }
 
 @Composable
-fun PaperIconButton(@DrawableRes id: Int, tint: Color = MaterialTheme.colors.primary, onClick:()->Unit){
+fun PaperIconButton(
+    @DrawableRes id: Int,
+    tint: Color = MaterialTheme.colors.primary,
+    onClick: () -> Unit
+) {
     IconButton(
         onClick = onClick
     ) {
