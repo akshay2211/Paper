@@ -109,6 +109,9 @@ dependencies {
     // Drawbox
     implementation 'io.ak1:drawbox:1.0.0'
 
+    // Accompanist - Navigation
+    implementation "com.google.accompanist:accompanist-navigation-material:0.21.4-beta"
+
     // Tests
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
