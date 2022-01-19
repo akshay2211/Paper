@@ -28,6 +28,7 @@ import io.ak1.paper.ui.component.NotesListComponent
 import io.ak1.paper.ui.screens.home.HomeViewModel
 import org.koin.java.KoinJavaComponent.inject
 import io.ak1.paper.R
+import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.Destinations
 
 /**
@@ -54,45 +55,32 @@ fun SearchScreen(navController: NavController, listState: LazyListState) {
         .observeAsState(initial = listOf())
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
-            val modifier = Modifier.padding(7.dp)
             TextField(
                 value = description.value,
                 onValueChange = {
                     description.value = it
                 },
                 placeholder = {
-                    Text(text = "Search")
+                    Text(
+                        text = "Search",
+                        style = MaterialTheme.typography.h6
+                    )
                 },
                 leadingIcon = {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_back),
-                        contentDescription = stringResource(
-                            id = R.string.image_desc
-                        ),
-                        modifier = modifier.clickable {
-                            navController.navigateUp()
-                        },
-                        colorFilter = ColorFilter.tint(MaterialTheme.colors.primary)
-                    )
+                    PaperIconButton(id = R.drawable.ic_back) {
+                        navController.navigateUp()
+                    }
                 },
                 trailingIcon = {
                     if (description.value.isNotEmpty()) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_x),
-                            contentDescription = stringResource(
-                                id = R.string.image_desc
-                            ),
-                            modifier = modifier.clickable {
-                                description.value = ""
-                            },
-                            colorFilter = ColorFilter.tint(MaterialTheme.colors.primary)
-                        )
+                        PaperIconButton(id = R.drawable.ic_x) {
+                            navController.navigateUp()
+                        }
                     }
                 },
                 textStyle = MaterialTheme.typography.h6,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(7.dp)
                     .focusRequester(focusRequester)
                     .onFocusChanged { focusState ->
                         if (focus.value != focusState.isFocused) {
