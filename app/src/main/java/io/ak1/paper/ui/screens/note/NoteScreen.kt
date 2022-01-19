@@ -3,7 +3,6 @@ package io.ak1.paper.ui.screens.note
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -26,6 +25,7 @@ import androidx.navigation.NavController
 import io.ak1.paper.R
 import io.ak1.paper.models.Note
 import io.ak1.paper.ui.component.CustomAlertDialog
+import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.home.DEFAULT
 import io.ak1.paper.ui.screens.home.HomeViewModel
 import org.koin.java.KoinJavaComponent
@@ -84,44 +84,26 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
         TopAppBar(
             title = {},
             navigationIcon = {
-                IconButton(
-                    onClick = {
-                        navController.navigateUp()
-                    }
-                ) {
-                    Icon(
-                        painterResource(id = R.drawable.ic_back),
-                        contentDescription = stringResource(id = R.string.image_desc),
-                        tint = MaterialTheme.colors.primary
-                    )
+                PaperIconButton(id = R.drawable.ic_back) {
+                    navController.navigateUp()
                 }
             },
             actions = {
-                IconButton(
-                    onClick = {
-                        navController.navigateUp()
-                    }
+                PaperIconButton(
+                    id = R.drawable.ic_check,
+                    tint = if (description.value.text.trim()
+                            .isEmpty()
+                    ) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary
                 ) {
-                    Icon(
-                        painterResource(id = R.drawable.ic_check),
-                        contentDescription = stringResource(id = R.string.image_desc),
-                        tint = if (description.value.text.trim()
-                                .isEmpty()
-                        ) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary
-                    )
+                    navController.navigateUp()
                 }
-                IconButton(
-                    onClick = {
-                        if (note.value != null) {
-                            setShowDialog(true)
-                        }
+                PaperIconButton(id = R.drawable.ic_trash,
+                    tint = if (description.value.text.trim()
+                        .isEmpty()
+                ) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary) {
+                    if (note.value != null) {
+                        setShowDialog(true)
                     }
-                ) {
-                    Icon(
-                        painterResource(id = R.drawable.ic_trash),
-                        contentDescription = stringResource(id = R.string.image_desc),
-                        tint = if (note.value == null) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary
-                    )
                 }
             },
             backgroundColor = MaterialTheme.colors.background,

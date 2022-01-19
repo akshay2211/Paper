@@ -15,12 +15,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.edit
 import androidx.navigation.NavController
-import io.ak1.paper.ui.component.DefaultAppBar
 import kotlinx.coroutines.launch
 import io.ak1.paper.R
 import io.ak1.paper.data.local.dataStore
 import io.ak1.paper.data.local.isDarkThemeOn
 import io.ak1.paper.data.local.themePreferenceKey
+import io.ak1.paper.ui.component.PaperIconButton
 
 /**
  * Created by akshay on 06/12/21
@@ -34,7 +34,19 @@ fun SettingsScreen(navController: NavController) {
     Scaffold(
         Modifier.fillMaxSize(),
         topBar = {
-            DefaultAppBar(titleId = R.string.settings_title, navController = navController)
+            TopAppBar(
+                title = {Text(
+                    text = stringResource(id = R.string.settings_title),
+                    style = MaterialTheme.typography.h6, modifier = Modifier.padding(0.dp, 9.dp)
+                )},
+                navigationIcon = {
+                    PaperIconButton(id = R.drawable.ic_back) {
+                        navController.navigateUp()
+                    }
+                },
+                backgroundColor = MaterialTheme.colors.background,
+                elevation = 0.dp
+            )
         }
     ) {
         val context = LocalContext.current

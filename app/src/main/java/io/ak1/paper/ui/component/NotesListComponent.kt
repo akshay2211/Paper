@@ -1,5 +1,6 @@
 package io.ak1.paper.ui.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -9,14 +10,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
@@ -135,5 +134,18 @@ fun HomeHeader(modifier: Modifier, searchCallback: () -> Unit, moreCallback: () 
             Iconsbar(modifier, searchCallback, moreCallback)
         }
         VerticalSpacer(16.dp)
+    }
+}
+
+@Composable
+fun PaperIconButton(@DrawableRes id: Int, tint: Color = MaterialTheme.colors.primary, onClick:()->Unit){
+    IconButton(
+        onClick = onClick
+    ) {
+        Icon(
+            painterResource(id = id),
+            contentDescription = stringResource(id = R.string.image_desc),
+            tint = tint
+        )
     }
 }
