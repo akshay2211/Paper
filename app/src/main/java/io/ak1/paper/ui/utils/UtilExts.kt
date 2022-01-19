@@ -14,6 +14,12 @@ fun Long.timeAgo() = DateUtils.getRelativeTimeSpanString(
     DateUtils.DAY_IN_MILLIS
 ).toString()
 
+fun Long.timeAgoInSeconds() = DateUtils.getRelativeTimeSpanString(
+    this,
+    Calendar.getInstance().timeInMillis,
+    DateUtils.SECOND_IN_MILLIS
+).toString()
+
 
 fun String.gridTrim(maxDigits: Int = 100) =
     if (this.length > maxDigits) "${this.substring(0,maxDigits)}..." else this

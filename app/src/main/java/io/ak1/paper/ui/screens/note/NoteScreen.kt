@@ -1,14 +1,15 @@
 package io.ak1.paper.ui.screens.note
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -18,14 +19,18 @@ import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import io.ak1.paper.R
 import io.ak1.paper.models.Note
 import io.ak1.paper.ui.component.CustomAlertDialog
 import io.ak1.paper.ui.component.PaperIconButton
+import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.home.DEFAULT
 import io.ak1.paper.ui.screens.home.HomeViewModel
+import io.ak1.paper.ui.utils.timeAgoInSeconds
 import org.koin.java.KoinJavaComponent
 
 /**
@@ -74,8 +79,8 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
                 )
             }
         }
-        inputService?.showSoftwareKeyboard()
-        focusRequester.requestFocus()
+        // inputService?.showSoftwareKeyboard()
+        //focusRequester.requestFocus()
     }
 
     Scaffold(topBar = {
@@ -95,10 +100,12 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
                 ) {
                     navController.navigateUp()
                 }
-                PaperIconButton(id = R.drawable.ic_trash,
+                PaperIconButton(
+                    id = R.drawable.ic_trash,
                     tint = if (description.value.text.trim()
-                        .isEmpty()
-                ) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary) {
+                            .isEmpty()
+                    ) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary
+                ) {
                     if (note.value != null) {
                         setShowDialog(true)
                     }
@@ -107,31 +114,52 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
             backgroundColor = MaterialTheme.colors.background,
             elevation = 0.dp
         )
-    },
+    }, bottomBar = {
+        BottomAppBar(
+            modifier = Modifier.height(46.dp),
+            backgroundColor = MaterialTheme.colors.background,
+            contentPadding = PaddingValues(4.dp, 4.dp),
+            content = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    PaperIconButton(id = R.drawable.ic_feather) {
+                        navController.navigate(Destinations.INSERT_ROUTE)
+                    }
+                    note.value?.updatedOn?.timeAgoInSeconds()?.let {
+                        Text(
+                            text = "Last updated $it",
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.overline
+                        )
+                    }
 
-        content = {
-            BasicTextField(
-                value = description.value,
-                onValueChange = { tx ->
-                    description.value = tx
-                },
-                textStyle = MaterialTheme.typography.h6,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(14.dp, 3.dp)
-                    .focusRequester(focusRequester)
-                    .onFocusChanged { focusState ->
-                        if (focus.value != focusState.isFocused) {
-                            focus.value = focusState.isFocused
-                            if (!focusState.isFocused && !showDialog) {
-                                inputService?.hideSoftwareKeyboard()
-                                saveAndExit()
-                            }
+                }
+            }
+        )
+    }) {
+        BasicTextField(
+            value = description.value,
+            onValueChange = { tx ->
+                description.value = tx
+            },
+            textStyle = MaterialTheme.typography.subtitle1,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(14.dp, 3.dp, 14.dp, 50.dp)
+                .focusRequester(focusRequester)
+                .onFocusChanged { focusState ->
+                    if (focus.value != focusState.isFocused) {
+                        focus.value = focusState.isFocused
+                        if (!focusState.isFocused && !showDialog) {
+                            inputService?.hideSoftwareKeyboard()
+                            saveAndExit()
                         }
                     }
-            )
-        }
-    )
+                }
+        )
+    }
 
     CustomAlertDialog(
         titleId = R.string.deletion_confirmation,
@@ -141,5 +169,17 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
         navController.navigateUp()
         homeViewModel.deleteNote(note.value)
         Toast.makeText(context, R.string.note_removed, Toast.LENGTH_LONG).show()
+    }
+}
+
+@Composable
+fun AddMoreScreen(navHostController: NavHostController) {
+    LazyColumn {
+        items(6) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                PaperIconButton(id = R.drawable.ic_more) {}
+                Text(text = "Hello")
+            }
+        }
     }
 }
