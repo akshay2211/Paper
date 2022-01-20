@@ -1,5 +1,7 @@
 package io.ak1.paper.ui.screens.note
 
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,6 +18,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalTextInputService
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
@@ -125,7 +129,11 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     PaperIconButton(id = R.drawable.ic_feather) {
-                        navController.navigate(Destinations.INSERT_ROUTE)
+                        inputService?.hideSoftwareKeyboard()
+                        focusRequester.freeFocus()
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            navController.navigate(Destinations.INSERT_ROUTE)
+                        }, 100L)
                     }
                     note.value?.updatedOn?.timeAgoInSeconds()?.let {
                         Text(
@@ -175,10 +183,28 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
 @Composable
 fun AddMoreScreen(navHostController: NavHostController) {
     LazyColumn {
-        items(6) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                PaperIconButton(id = R.drawable.ic_more) {}
-                Text(text = "Hello")
+        items(6) { it ->
+            IconButton(
+                onClick = {
+                    if (it == 0) {
+                        navHostController.navigate(Destinations.DOODLE_ROUTE)
+                    }
+                }
+            ) {
+
+                Icon(
+                    painterResource(id = R.drawable.ic_feather),
+                    contentDescription = stringResource(id = R.string.image_desc),
+                    tint = MaterialTheme.colors.primary
+                )
+                Text(
+                    text = "Hello",
+                    color = MaterialTheme.colors.primary,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(50.dp, 0.dp, 0.dp, 0.dp)
+                )
+
             }
         }
     }
