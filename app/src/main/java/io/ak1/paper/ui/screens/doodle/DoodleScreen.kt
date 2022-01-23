@@ -44,7 +44,8 @@ fun DoodleScreen(navController: NavHostController) {
                     id = R.drawable.ic_trash,
                 ) {
                     //drawController.getDrawBoxBitmap()?.getEncodedString()
-                    navController.popBackStack(Destinations.NOTE_ROUTE, true, false)
+                    //var drawBoxDataText = drawController.exportPath()
+                    //navController.popBackStack(Destinations.NOTE_ROUTE, true, false)
 
                 }
             },
