@@ -1,6 +1,9 @@
 package io.ak1.paper.ui.utils
 
+import android.graphics.Bitmap
 import android.text.format.DateUtils
+import android.util.Base64
+import java.io.ByteArrayOutputStream
 import java.util.*
 
 /**
@@ -22,4 +25,9 @@ fun Long.timeAgoInSeconds() = DateUtils.getRelativeTimeSpanString(
 
 
 fun String.gridTrim(maxDigits: Int = 100) =
-    if (this.length > maxDigits) "${this.substring(0,maxDigits)}..." else this
+    if (this.length > maxDigits) "${this.substring(0, maxDigits)}..." else this
+
+
+fun Bitmap.getEncodedString(): String? = Base64.encodeToString(ByteArrayOutputStream().apply {
+            this@getEncodedString.compress(Bitmap.CompressFormat.PNG, 100, this)
+        }.toByteArray(), Base64.DEFAULT)

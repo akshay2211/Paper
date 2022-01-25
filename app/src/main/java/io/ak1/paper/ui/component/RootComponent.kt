@@ -58,8 +58,15 @@ fun RootComponent(window: Window) {
                     composable(Destinations.SETTING_ROUTE) {
                         SettingsScreen(navController)
                     }
-                    composable(Destinations.DOODLE_ROUTE) {
-                        DoodleScreen(navController)
+                    composable(
+                        "${Destinations.DOODLE_ROUTE}/{${Destinations.NOTE_KEY}}",
+                        arguments = listOf(navArgument(Destinations.NOTE_KEY) {
+                            type = NavType.StringType
+                        })
+                    ) {
+                        val arg = requireNotNull(it.arguments)
+                        val noteId = arg.getString(Destinations.NOTE_KEY)
+                        DoodleScreen(navController, noteId)
                     }
                     composable(
                         "${Destinations.NOTE_ROUTE}/{${Destinations.NOTE_KEY}}",
