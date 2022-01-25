@@ -107,7 +107,10 @@ dependencies {
     implementation 'io.coil-kt:coil-compose:1.4.0'
 
     // Drawbox
-    implementation 'io.ak1:drawbox:1.0.0'
+    implementation 'io.ak1:drawbox:1.0.2'
+
+    // Gson
+    implementation 'com.google.code.gson:gson:2.8.9'
 
     // Accompanist - Navigation
     implementation "com.google.accompanist:accompanist-navigation-material:0.21.4-beta"
