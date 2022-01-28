@@ -79,8 +79,15 @@ fun RootComponent(window: Window) {
                         NoteScreen(navController, noteId)
                     }
 
-                    bottomSheet(Destinations.INSERT_ROUTE) {
-                        AddMoreScreen(navController)
+                    bottomSheet(
+                        "${Destinations.INSERT_ROUTE}/{${Destinations.NOTE_KEY}}",
+                        arguments = listOf(navArgument(Destinations.NOTE_KEY) {
+                            type = NavType.StringType
+                        })
+                    ) {
+                        val arg = requireNotNull(it.arguments)
+                        val noteId = arg.getString(Destinations.NOTE_KEY)
+                        AddMoreScreen(navController, noteId)
                     }
                 }
             }
