@@ -35,3 +35,5 @@ data class Folder(
     @PrimaryKey
     var id: String = UUID.randomUUID().toString()
 }
+
+data class Doodle(val rawText:String,val base64Text: String)
