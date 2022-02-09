@@ -51,11 +51,11 @@ fun DoodleScreen(navController: NavHostController, noteId: String? = null) {
             homeViewModel.getNote(noteId) {
                 note.value = it
                 // TODO: 28/01/22 not working due to Path
-                val listOfMyClassObject: Type =
+             /*   val listOfMyClassObject: Type =
                     object : TypeToken<ArrayList<PathWrapper?>?>() {}.type
                 val outputList: ArrayList<PathWrapper> =
                     GsonBuilder().create().fromJson(it.doodle ?: "", listOfMyClassObject)
-                drawController.importPath(outputList)
+                drawController.importPath(outputList)*/
             }
         }
         // inputService?.showSoftwareKeyboard()
