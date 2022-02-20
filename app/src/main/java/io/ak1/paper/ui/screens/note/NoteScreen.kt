@@ -179,13 +179,11 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
         }else{
             LazyColumn( modifier = Modifier
                 .fillMaxSize()
-              //  .background(Color.Blue)
 ) {
                 if (note.value?.doodle != null) {
                     note.value?.imageText?.convert()?.asImageBitmap()?.let {
                         item {
                             Image(bitmap = it, contentDescription = "hi",modifier = Modifier.fillMaxWidth().wrapContentWidth())
-                           // Text(text = "${note.value?.doodle}",modifier = Modifier.height(200.dp))
                         }
                     }
 
@@ -199,11 +197,8 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
                         textStyle = MaterialTheme.typography.subtitle1,
                         modifier = Modifier
                             .fillMaxSize()
-                            // .fillParentMaxHeight()
-                            //   .requiredHeight(200.dp)
                             .padding(14.dp, 3.dp, 14.dp, 50.dp)
                             .focusRequester(focusRequester)
-                            //.background(Color.Cyan)
                             .onFocusChanged { focusState ->
                                 if (focus.value != focusState.isFocused) {
                                     focus.value = focusState.isFocused
