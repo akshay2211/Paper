@@ -81,8 +81,8 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_version"
 
     //Koin
-    def koin_version = '3.1.4'
-    implementation "io.insert-koin:koin-android:$koin_version"
+    def koin_version= "3.1.5"
+    implementation "io.insert-koin:koin-androidx-compose:$koin_version"
 
     // LifeCycle
     def lifecycle_version = '2.4.1'

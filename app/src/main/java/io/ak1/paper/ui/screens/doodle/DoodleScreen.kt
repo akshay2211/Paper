@@ -1,6 +1,5 @@
 package io.ak1.paper.ui.screens.doodle
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
@@ -14,9 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
 import io.ak1.drawbox.DrawBox
-import io.ak1.drawbox.PathWrapper
 import io.ak1.drawbox.rememberDrawController
 import io.ak1.paper.R
 import io.ak1.paper.models.Doodle
@@ -26,8 +23,7 @@ import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.home.DEFAULT
 import io.ak1.paper.ui.screens.home.HomeViewModel
 import io.ak1.paper.ui.utils.getEncodedString
-import org.koin.java.KoinJavaComponent
-import java.lang.reflect.Type
+import org.koin.androidx.compose.getViewModel
 
 
 /**
@@ -39,7 +35,7 @@ fun DoodleScreen(navController: NavHostController, noteId: String? = null) {
 
 
     val drawController = rememberDrawController()
-    val homeViewModel by KoinJavaComponent.inject<HomeViewModel>(HomeViewModel::class.java)
+    val homeViewModel = getViewModel<HomeViewModel>()
     val note = remember {
         mutableStateOf<Note?>(null)
     }

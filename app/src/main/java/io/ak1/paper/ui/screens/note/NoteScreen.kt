@@ -4,7 +4,6 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.BasicTextField
@@ -18,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalTextInputService
@@ -40,7 +38,7 @@ import io.ak1.paper.ui.screens.home.DEFAULT
 import io.ak1.paper.ui.screens.home.HomeViewModel
 import io.ak1.paper.ui.utils.convert
 import io.ak1.paper.ui.utils.timeAgoInSeconds
-import org.koin.java.KoinJavaComponent
+import org.koin.androidx.compose.getViewModel
 
 /**
  * Created by akshay on 27/11/21
@@ -53,7 +51,8 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
     val inputService = LocalTextInputService.current
     val focus = remember { mutableStateOf(false) }
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
-    val homeViewModel by KoinJavaComponent.inject<HomeViewModel>(HomeViewModel::class.java)
+    val homeViewModel = getViewModel<HomeViewModel>()
+
     val description = remember {
         mutableStateOf(TextFieldValue())
     }
@@ -176,14 +175,21 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
                         }
                     }
             )
-        }else{
-            LazyColumn( modifier = Modifier
-                .fillMaxSize()
-) {
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
                 if (note.value?.doodle != null) {
                     note.value?.imageText?.convert()?.asImageBitmap()?.let {
                         item {
-                            Image(bitmap = it, contentDescription = "hi",modifier = Modifier.fillMaxWidth().wrapContentWidth())
+                            Image(
+                                bitmap = it,
+                                contentDescription = "hi",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentWidth()
+                            )
                         }
                     }
 
@@ -212,7 +218,6 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
                 }
             }
         }
-
 
 
     }
