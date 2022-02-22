@@ -2,6 +2,7 @@ package io.ak1.paper.data.local
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import androidx.room.migration.AutoMigrationSpec
 import io.ak1.paper.models.*
 
 /**
@@ -13,7 +14,7 @@ import io.ak1.paper.models.*
     version = 4,
     entities = [Note::class, Doodle::class, Image::class, Folder::class],
     autoMigrations = [
-        AutoMigration(from = 3, to = 4)
+        AutoMigration(from = 3, to = 4, spec = AppDatabase.MIGRATION_3_4::class)
     ]
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -21,12 +22,23 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun folderDao(): FolderDao
     abstract fun doodleDao(): DoodleDao
     abstract fun imageDao(): ImageDao
+
+    @RenameColumn(tableName = "notes_table", fromColumnName = "id", toColumnName = "noteId")
+    @DeleteColumn.Entries(
+        DeleteColumn(tableName = "notes_table", columnName = "imageText"),
+        DeleteColumn(tableName = "notes_table", columnName = "doodle"),
+    )
+    class MIGRATION_3_4 : AutoMigrationSpec
+
 }
 
 @Dao
 interface DoodleDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(doodle: Doodle)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(vararg doodle: Doodle)
 
     @Query("DELETE FROM doodle_table WHERE doodleid = :id")
     suspend fun deleteDoodle(id: String)
@@ -39,6 +51,9 @@ interface DoodleDao {
 interface ImageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(image: Image)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(vararg image: Image)
 
     @Query("DELETE FROM image_table WHERE imageId = :id")
     suspend fun deleteImage(id: String)
@@ -53,7 +68,7 @@ interface NoteDao {
     suspend fun insert(note: Note)
 
     @Query("SELECT * FROM notes_table WHERE noteId = :id")
-    suspend fun getNoteById(id: String): Note?
+    fun getNoteById(id: String): LiveData<NoteWithDoodleAndImage>
 
     @Query("SELECT * FROM notes_table ORDER BY updatedOn DESC")
     fun getAllNotes(): List<Note>

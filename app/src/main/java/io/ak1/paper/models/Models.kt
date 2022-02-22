@@ -27,7 +27,7 @@ data class Note(
 
 @Parcelize
 @Entity(tableName = "doodle_table", indices = [Index(value = ["doodleid"], unique = true)])
-data class Doodle(val attachedNoteId: String, val rawText: String, val base64Text: String) :
+data class Doodle(var attachedNoteId: String, val rawText: String, val base64Text: String) :
     Parent() {
     @PrimaryKey
     var doodleid: String = UUID.randomUUID().toString()
@@ -35,7 +35,7 @@ data class Doodle(val attachedNoteId: String, val rawText: String, val base64Tex
 
 @Parcelize
 @Entity(tableName = "image_table", indices = [Index(value = ["imageId"], unique = true)])
-data class Image(val attachedNoteId: String, val imageText: String, val imageDesc: String?) :
+data class Image(var attachedNoteId: String, val imageText: String, val imageDesc: String?) :
     Parent() {
     @PrimaryKey
     var imageId: String = UUID.randomUUID().toString()
