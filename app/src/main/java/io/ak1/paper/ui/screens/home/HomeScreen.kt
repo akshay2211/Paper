@@ -46,7 +46,7 @@ fun HomeScreen(navController: NavController, listState: LazyListState) {
             }, {
                 navController.navigate(Destinations.SETTING_ROUTE)
             }) {
-                navController.navigate("${Destinations.NOTE_ROUTE}/${it.id}")
+                navController.navigate("${Destinations.NOTE_ROUTE}/${it.noteId}")
             }
         },
 

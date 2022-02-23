@@ -1,19 +1,19 @@
-package io.ak1.paper.ui.screens.note
+package io.ak1.paper.ui.screens.note.note
 
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -30,11 +30,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import io.ak1.paper.R
-import io.ak1.paper.models.Note
+import io.ak1.paper.models.Doodle
+import io.ak1.paper.models.Image
+import io.ak1.paper.models.NoteWithDoodleAndImage
 import io.ak1.paper.ui.component.CustomAlertDialog
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.Destinations
-import io.ak1.paper.ui.screens.home.DEFAULT
 import io.ak1.paper.ui.screens.home.HomeViewModel
 import io.ak1.paper.ui.utils.convert
 import io.ak1.paper.ui.utils.timeAgoInSeconds
@@ -45,7 +46,11 @@ import org.koin.androidx.compose.getViewModel
  * https://ak1.io
  */
 @Composable
-fun NoteScreen(navController: NavController, noteId: String? = null) {
+fun NoteScreen(
+    navController: NavController,
+    innerNavController: NavHostController,
+    note: MutableState<NoteWithDoodleAndImage>
+) {
     val context = LocalContext.current
     val focusRequester = remember { FocusRequester() }
     val inputService = LocalTextInputService.current
@@ -56,40 +61,68 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
     val description = remember {
         mutableStateOf(TextFieldValue())
     }
-    val note = remember {
-        mutableStateOf<Note?>(null)
+    val doodles = remember {
+        mutableStateOf(ArrayList<Doodle>())
+    }
+    val images = remember {
+        mutableStateOf(ArrayList<Image>())
+    }
+    val localNote = remember {
+        mutableStateOf(homeViewModel.emptyNote)
     }
 
-    fun saveAndExit() {
-        if (note.value == null && description.value.text.trim().isNotEmpty()) {
-            homeViewModel.saveNote(
-                Note(
-                    description = description.value.text.trim(),
-                    folderId = DEFAULT
-                )
+    LaunchedEffect(note.value) {
+        note.value.let {
+            localNote.value = it
+            description.value = TextFieldValue(
+                annotatedString = AnnotatedString(it.note.description),
+                TextRange(it.note.description.length)
             )
-        } else if (note.value != null && note.value?.description != description.value.text.trim()) {
-            note.value?.apply {
-                this.description = description.value.text
-                this.updatedOn = System.currentTimeMillis()
+            if (it.doodleList.isNotEmpty()) {
+                doodles.value.apply {
+                    clear()
+                    addAll(it.doodleList)
+                }
             }
-            homeViewModel.saveNote(note.value!!)
-        }
-        navController.navigateUp()
-    }
-    LaunchedEffect(note) {
-        noteId?.let { noteId ->
-            homeViewModel.getNote(noteId) {
-                note.value = it
-                description.value = TextFieldValue(
-                    annotatedString = AnnotatedString(it.description),
-                    TextRange(it.description.length)
-                )
+            if (it.imageList.isNotEmpty()) {
+                images.value.apply {
+                    clear()
+                    addAll(it.imageList)
+                }
             }
         }
         //inputService?.showSoftwareKeyboard()
         //focusRequester.requestFocus()
     }
+
+
+    fun saveAndExit() {
+        if (note.value.note.description != description.value.text.trim() || doodles.value.isNotEmpty() || images.value.isNotEmpty()) {
+            note.value.note.description = description.value.text.trim()
+
+            if (doodles.value.isNotEmpty()) {
+                val newDoodles = doodles.value.map {
+                    it.attachedNoteId = note.value.note.noteId
+                    it
+                }.toTypedArray()
+                homeViewModel.saveDoodle(*newDoodles)
+            }
+            if (images.value.isNotEmpty()) {
+                val newImages = images.value.map {
+                    it.attachedNoteId = note.value.note.noteId
+                    it
+                }.toTypedArray()
+                homeViewModel.saveImage(*newImages)
+            }
+            homeViewModel.saveNote(note.value.note)
+        }
+        if (note.value.note.description.isEmpty() && doodles.value.isEmpty() && images.value.isEmpty()) {
+            homeViewModel.deleteNote(note.value.note)
+        }
+        navController.navigateUp()
+    }
+
+
 
     Scaffold(topBar = {
         TopAppBar(
@@ -136,10 +169,11 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
                         inputService?.hideSoftwareKeyboard()
                         focusRequester.freeFocus()
                         Handler(Looper.getMainLooper()).postDelayed({
-                            navController.navigate("${Destinations.INSERT_ROUTE}/${noteId}")
+                            homeViewModel.saveNote(note.value.note)
+                            innerNavController.navigate("${Destinations.INSERT_ROUTE}/${note.value.note.noteId}")
                         }, 100L)
                     }
-                    note.value?.updatedOn?.timeAgoInSeconds()?.let {
+                    note.value.note.updatedOn.timeAgoInSeconds().let {
                         Text(
                             text = "Last updated $it",
                             textAlign = TextAlign.Center,
@@ -151,7 +185,24 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
             }
         )
     }) {
-        if (note.value?.doodle == null) {
+        Column {
+            if (note.value.doodleList.isNotEmpty()) {
+                LazyRow {
+                    items(note.value.doodleList) {
+                        it.base64Text.convert()?.let {
+                            androidx.compose.foundation.Image(
+                                bitmap = it.asImageBitmap(),
+                                contentDescription = "hi",
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .padding(5.dp)
+                                    .clip(CircleShape)
+                            )
+                        }
+
+                    }
+                }
+            }
             BasicTextField(
                 value = description.value,
                 onValueChange = { tx ->
@@ -159,6 +210,7 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
                 },
                 textStyle = MaterialTheme.typography.subtitle1,
                 modifier = Modifier
+                    .weight(1f, true)
                     .fillMaxSize()
                     // .fillParentMaxHeight()
                     //   .requiredHeight(200.dp)
@@ -175,51 +227,7 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
                         }
                     }
             )
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                if (note.value?.doodle != null) {
-                    note.value?.imageText?.convert()?.asImageBitmap()?.let {
-                        item {
-                            Image(
-                                bitmap = it,
-                                contentDescription = "hi",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentWidth()
-                            )
-                        }
-                    }
-
-                }
-                item {
-                    BasicTextField(
-                        value = description.value,
-                        onValueChange = { tx ->
-                            description.value = tx
-                        },
-                        textStyle = MaterialTheme.typography.subtitle1,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(14.dp, 3.dp, 14.dp, 50.dp)
-                            .focusRequester(focusRequester)
-                            .onFocusChanged { focusState ->
-                                if (focus.value != focusState.isFocused) {
-                                    focus.value = focusState.isFocused
-                                    if (!focusState.isFocused && !showDialog) {
-                                        inputService?.hideSoftwareKeyboard()
-                                        saveAndExit()
-                                    }
-                                }
-                            }
-                    )
-                }
-            }
         }
-
-
     }
 
     CustomAlertDialog(
@@ -228,19 +236,19 @@ fun NoteScreen(navController: NavController, noteId: String? = null) {
         setShowDialog = setShowDialog
     ) {
         navController.navigateUp()
-        homeViewModel.deleteNote(note.value)
+        homeViewModel.deleteNote(note.value.note)
         Toast.makeText(context, R.string.note_removed, Toast.LENGTH_LONG).show()
     }
 }
 
 @Composable
-fun AddMoreScreen(navHostController: NavHostController, noteId: String? = null) {
+fun AddMoreScreen(navHostController: NavHostController, nodeId: String? = null) {
     LazyColumn {
         items(6) { it ->
             IconButton(
                 onClick = {
                     if (it == 0) {
-                        navHostController.navigate("${Destinations.DOODLE_ROUTE}/${noteId}")
+                        navHostController.navigate(Destinations.DOODLE_ROUTE)
                     }
                 }
             ) {
