@@ -13,17 +13,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.ak1.paper.R
 import io.ak1.paper.models.Note
-import io.ak1.paper.ui.screens.Destinations
+import io.ak1.paper.models.NoteWithDoodleAndImage
 import io.ak1.paper.ui.utils.gridTrim
 import io.ak1.paper.ui.utils.timeAgo
 
@@ -36,7 +34,7 @@ import io.ak1.paper.ui.utils.timeAgo
 @Composable
 fun NotesListComponent(
     includeHeader: Boolean = true,
-    resultList: State<List<Note>>,
+    resultList: State<List<NoteWithDoodleAndImage>>,
     listState: LazyListState,
     searchCallback: () -> Unit, moreCallback: () -> Unit,
     callback: (Note) -> Unit,
@@ -50,12 +48,12 @@ fun NotesListComponent(
             Card(
                 modifier = modifier.fillMaxWidth().padding(14.dp,5.dp),
                 shape = RoundedCornerShape(6.dp),
-                onClick = { callback(element) }
+                onClick = { callback(element.note) }
             ) {
                 Column(modifier = Modifier.padding(15.dp)) {
 
                     Text(
-                        text = element.description.gridTrim(),
+                        text = element.note.description.gridTrim(),
                         modifier = Modifier.fillMaxSize(),
                         style = MaterialTheme.typography.subtitle1
                     )
@@ -63,7 +61,7 @@ fun NotesListComponent(
                     VerticalSpacer(7.dp)
 
                     Text(
-                        text = element.updatedOn.timeAgo(),
+                        text = element.note.updatedOn.timeAgo(),
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colors.primaryVariant,
                         style = MaterialTheme.typography.caption
