@@ -3,6 +3,8 @@ package io.ak1.paper.di
 import android.content.Context
 import androidx.room.Room
 import io.ak1.paper.data.local.AppDatabase
+import io.ak1.paper.data.local.MIGRATION_1_2
+import io.ak1.paper.data.local.MIGRATION_2_3
 
 /**
  * Created by akshay on 27/10/21
@@ -18,7 +20,7 @@ fun getDb(context: Context): AppDatabase {
         Room.databaseBuilder(
             context,
             AppDatabase::class.java, "database-paper"
-        ).build()
+        ).addMigrations(MIGRATION_1_2,MIGRATION_2_3).build()
     }
 }
 
