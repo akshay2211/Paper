@@ -1,6 +1,5 @@
 package io.ak1.paper.ui.screens.note
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
@@ -16,10 +15,9 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
-import io.ak1.paper.models.NoteWithDoodleAndImage
 import io.ak1.paper.ui.screens.Destinations
-import io.ak1.paper.ui.screens.doodle.DoodleScreen
 import io.ak1.paper.ui.screens.home.HomeViewModel
+import io.ak1.paper.ui.screens.note.doodle.DoodleScreen
 import io.ak1.paper.ui.screens.note.note.AddMoreScreen
 import io.ak1.paper.ui.screens.note.note.NoteScreen
 import org.koin.androidx.compose.getViewModel
@@ -34,7 +32,7 @@ import org.koin.androidx.compose.getViewModel
 fun NoteContainerScreen(navController: NavController, noteId: String? = null) {
     val homeViewModel = getViewModel<HomeViewModel>()
     var localNote = remember {
-        mutableStateOf<NoteWithDoodleAndImage>(homeViewModel.emptyNote)
+        mutableStateOf(homeViewModel.emptyNote)
     }
     var note = homeViewModel.getNote(noteId)?.observeAsState()
 
@@ -42,7 +40,6 @@ fun NoteContainerScreen(navController: NavController, noteId: String? = null) {
         note?.value?.let {
             localNote.value = it
         }
-        Log.e("note", "setCurrentNote  $noteId")
     }
 
     val bottomSheetNavigator = rememberBottomSheetNavigator()
