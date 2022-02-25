@@ -40,6 +40,9 @@ interface DoodleDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg doodle: Doodle)
 
+    @Query("SELECT * FROM doodle_table WHERE doodleid = :id")
+    fun getDoodleById(id: String): LiveData<Doodle>
+
     @Query("DELETE FROM doodle_table WHERE doodleid = :id")
     suspend fun deleteDoodle(id: String)
 
