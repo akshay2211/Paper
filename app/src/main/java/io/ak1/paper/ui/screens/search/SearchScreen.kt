@@ -96,7 +96,7 @@ fun SearchScreen(navController: NavController, listState: LazyListState) {
             )
             NotesListComponent(false, resultList, listState, {}, {}) {
                 focus.value = false
-                navController.navigate("${Destinations.NOTE_ROUTE}/${it.id}")
+                navController.navigate("${Destinations.NOTE_ROUTE}/${it.noteId}")
             }
         }
     }

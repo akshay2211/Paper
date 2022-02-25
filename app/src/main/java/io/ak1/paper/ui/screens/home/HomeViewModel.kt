@@ -64,8 +64,8 @@ class HomeViewModel(private val db: AppDatabase, private val context: Context) :
     fun getNote(it: String?) = it?.let { noteDao.getNoteById(it) }
 
     fun saveNote(note: Note) = viewModelScope.launch {
-            noteDao.insert(note = note)
-        }
+        noteDao.insert(note = note)
+    }
 
     fun saveDoodle(vararg doodle: Doodle) = viewModelScope.launch {
         doodleDao.insertAll(doodle = doodle)
@@ -83,4 +83,14 @@ class HomeViewModel(private val db: AppDatabase, private val context: Context) :
             }
         }
     }
+
+    fun deleteDoodle(value: Doodle?) {
+        value?.let {
+            viewModelScope.launch {
+                doodleDao.deleteDoodle(value.doodleid)
+            }
+        }
+    }
+
+    fun getDoodle(id: String) = id.let { doodleDao.getDoodleById(it) }
 }

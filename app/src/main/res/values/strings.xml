@@ -2,7 +2,9 @@
     <string name="app_name">Paper</string>
     <string name="image_desc">sample description</string>
     <string name="deletion_confirmation">Remove saved note</string>
+    <string name="deletion_confirmation_doodle">Remove saved doodle</string>
     <string name="note_removed">Note Deleted</string>
+    <string name="doodle_removed">Doodle Deleted</string>
     <string name="settings_title">Settings</string>
     <string name="light_mode_selected">Light mode is Selected</string>
     <string name="dark_mode_selected">Dark mode is Selected</string>
@@ -11,4 +13,11 @@
     <string name="default_note_text">“All our dreams can come true, if we have the courage to pursue them.” – Walt Disney.</string>
     <string name="default_note_text2">“If people are doubting how far you can go, go so far that you can’t hear them anymore.” – Michele Ruiz</string>
     <string name="default_note_text3">“Write it. Shoot it. Publish it. Crochet it, sauté it, whatever. MAKE.” – Joss Whedon</string>
+
+    <string name="take_photo">Take Photo</string>
+    <string name="add_image">Add Image</string>
+    <string name="add_doodle">Add Doodle</string>
+
+
+
 </resources>

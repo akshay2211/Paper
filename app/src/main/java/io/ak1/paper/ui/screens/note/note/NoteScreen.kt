@@ -3,6 +3,8 @@ package io.ak1.paper.ui.screens.note.note
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -18,6 +20,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.painterResource
@@ -185,18 +188,28 @@ fun NoteScreen(
             }
         )
     }) {
+
         Column {
             if (note.value.doodleList.isNotEmpty()) {
-                LazyRow {
-                    items(note.value.doodleList) {
-                        it.base64Text.convert()?.let {
+                LazyRow(modifier = Modifier.padding(5.dp, 0.dp)) {
+                    items(note.value.doodleList) { doodle ->
+                        doodle.base64Text.convert()?.let {
                             androidx.compose.foundation.Image(
                                 bitmap = it.asImageBitmap(),
                                 contentDescription = "hi",
                                 modifier = Modifier
-                                    .size(100.dp)
+                                    .size(70.dp)
                                     .padding(5.dp)
                                     .clip(CircleShape)
+                                    .border(
+                                        1.dp,
+                                        MaterialTheme.colors.primary,
+                                        CircleShape
+                                    )
+                                    .clickable {
+                                        innerNavController.navigate("${Destinations.DOODLE_ROUTE}/${doodle.doodleid}")
+                                    },
+                                contentScale = ContentScale.Crop
                             )
                         }
 
@@ -212,11 +225,8 @@ fun NoteScreen(
                 modifier = Modifier
                     .weight(1f, true)
                     .fillMaxSize()
-                    // .fillParentMaxHeight()
-                    //   .requiredHeight(200.dp)
                     .padding(14.dp, 3.dp, 14.dp, 50.dp)
                     .focusRequester(focusRequester)
-                    //.background(Color.Cyan)
                     .onFocusChanged { focusState ->
                         if (focus.value != focusState.isFocused) {
                             focus.value = focusState.isFocused
@@ -241,30 +251,45 @@ fun NoteScreen(
     }
 }
 
+data class Menu(val iconId: Int, val stringId: Int)
+
 @Composable
 fun AddMoreScreen(navHostController: NavHostController, nodeId: String? = null) {
+
+    var list = listOf(
+        Menu(R.drawable.ic_more, R.string.take_photo),
+        Menu(R.drawable.ic_search, R.string.add_image),
+        Menu(R.drawable.ic_feather, R.string.add_doodle),
+    )
     LazyColumn {
-        items(6) { it ->
+        items(list) { it ->
             IconButton(
                 onClick = {
-                    if (it == 0) {
-                        navHostController.navigate(Destinations.DOODLE_ROUTE)
+                    if (it.iconId == R.drawable.ic_feather) {
+                        navHostController.navigateUp()
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            navHostController.navigate(Destinations.DOODLE_ROUTE)
+                        }, 100L)
+
                     }
                 }
             ) {
+                Row {
 
-                Icon(
-                    painterResource(id = R.drawable.ic_feather),
-                    contentDescription = stringResource(id = R.string.image_desc),
-                    tint = MaterialTheme.colors.primary
-                )
-                Text(
-                    text = "Hello",
-                    color = MaterialTheme.colors.primary,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(50.dp, 0.dp, 0.dp, 0.dp)
-                )
+                    Icon(
+                        painterResource(id = it.iconId),
+                        contentDescription = stringResource(id = it.stringId),
+                        tint = MaterialTheme.colors.primary,
+                        modifier = Modifier.padding(10.dp, 3.dp)
+                    )
+                    Text(
+                        text = stringResource(id = it.stringId),
+                        color = MaterialTheme.colors.primary,
+                        modifier = Modifier
+                            .weight(1f, true)
+                            .padding(10.dp, 3.dp)
+                    )
+                }
 
             }
         }
