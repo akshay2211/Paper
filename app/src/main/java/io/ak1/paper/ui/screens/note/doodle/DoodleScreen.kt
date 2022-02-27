@@ -78,10 +78,18 @@ fun DoodleScreen(navController: NavHostController, isNewDoodle: Boolean, id: Str
                 }
             },
             actions = {
+                PaperIconButton(id = R.drawable.ic_undo) {
+                    drawController.unDo()
+                }
+                PaperIconButton(id = R.drawable.ic_redo) {
+                    drawController.reDo()
+                }
                 PaperIconButton(
                     id = R.drawable.ic_check,
                 ) {
-                    if (drawController.exportPath().isNotEmpty()) drawController.saveBitmap() else navController.navigateUp()
+                    if (drawController.exportPath()
+                            .isNotEmpty()
+                    ) drawController.saveBitmap() else navController.navigateUp()
                 }
                 if (doodle.value != null) {
                     PaperIconButton(
