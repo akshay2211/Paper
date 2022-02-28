@@ -1,12 +1,12 @@
 package io.ak1.paper.ui.screens.home
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.FloatingActionButton
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
@@ -36,32 +36,36 @@ fun HomeScreen(navController: NavController, listState: LazyListState) {
     LaunchedEffect(resultList.value) {
         homeViewModel.insertDefaultData()
     }
-    Box(modifier = Modifier.fillMaxSize()) {
-        NotesListComponent(true, resultList, listState, {
-            navController.navigate(Destinations.SEARCH_ROUTE)
-        }, {
-            navController.navigate(Destinations.SETTING_ROUTE)
-        }) {
-            navController.navigate("${Destinations.NOTE_ROUTE}/${it.id}")
-        }
+    val fabShape = RoundedCornerShape(30)
+    Scaffold(
+        topBar = {},
 
-        FloatingActionButton(
-            onClick = {
-                navController.navigate(Destinations.NOTE_ROUTE)
-            },
-            shape = CircleShape,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(24.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_feather),
-                contentDescription = stringResource(
-                    id = R.string.image_desc
-                ),
-                colorFilter = ColorFilter.tint(Color.White)
-            )
-        }
-    }
+        content = {
+            NotesListComponent(true, resultList, listState, {
+                navController.navigate(Destinations.SEARCH_ROUTE)
+            }, {
+                navController.navigate(Destinations.SETTING_ROUTE)
+            }) {
+                navController.navigate("${Destinations.NOTE_ROUTE}/${it.noteId}")
+            }
+        },
+
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate(Destinations.NOTE_ROUTE)
+                },
+                shape = fabShape,
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_feather),
+                    contentDescription = stringResource(
+                        id = R.string.image_desc
+                    ),
+                    colorFilter = ColorFilter.tint(Color.White)
+                )
+            }
+        })
+
 }
 

@@ -10,14 +10,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import io.ak1.paper.ui.screens.Destinations
-import io.ak1.paper.ui.screens.search.SearchScreen
 import io.ak1.paper.ui.screens.home.HomeScreen
-import io.ak1.paper.ui.screens.note.NoteScreen
+import io.ak1.paper.ui.screens.note.NoteContainerScreen
+import io.ak1.paper.ui.screens.search.SearchScreen
 import io.ak1.paper.ui.screens.setting.SettingsScreen
 import io.ak1.paper.ui.theme.PaperTheme
-import io.ak1.paper.ui.theme.isSystemInDarkThemeCustom
 import io.ak1.paper.ui.theme.StatusBarConfig
+import io.ak1.paper.ui.theme.isSystemInDarkThemeCustom
 
 /**
  * Created by akshay on 27/11/21
@@ -25,6 +26,7 @@ import io.ak1.paper.ui.theme.StatusBarConfig
  */
 
 
+@OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
 fun RootComponent(window: Window) {
     val isDark = isSystemInDarkThemeCustom()
@@ -41,7 +43,7 @@ fun RootComponent(window: Window) {
                     HomeScreen(navController, listState)
                 }
                 composable(Destinations.NOTE_ROUTE) {
-                    NoteScreen(navController)
+                    NoteContainerScreen(navController)
                 }
                 composable(Destinations.SEARCH_ROUTE) {
                     SearchScreen(navController, listState)
@@ -49,6 +51,7 @@ fun RootComponent(window: Window) {
                 composable(Destinations.SETTING_ROUTE) {
                     SettingsScreen(navController)
                 }
+
                 composable(
                     "${Destinations.NOTE_ROUTE}/{${Destinations.NOTE_KEY}}",
                     arguments = listOf(navArgument(Destinations.NOTE_KEY) {
@@ -57,7 +60,7 @@ fun RootComponent(window: Window) {
                 ) {
                     val arg = requireNotNull(it.arguments)
                     val noteId = arg.getString(Destinations.NOTE_KEY)
-                    NoteScreen(navController, noteId)
+                    NoteContainerScreen(navController, noteId)
                 }
             }
         }

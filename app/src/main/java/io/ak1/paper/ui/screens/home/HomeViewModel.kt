@@ -5,11 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.ak1.paper.R
-import io.ak1.paper.data.local.NoteDao
+import io.ak1.paper.data.local.AppDatabase
+import io.ak1.paper.models.Doodle
+import io.ak1.paper.models.Image
 import io.ak1.paper.models.Note
-import kotlinx.coroutines.Dispatchers
+import io.ak1.paper.models.NoteWithDoodleAndImage
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /**
  * Created by akshay on 27/11/21
@@ -18,7 +19,12 @@ import kotlinx.coroutines.withContext
 
 const val DEFAULT = "default"
 
-class HomeViewModel(private val noteDao: NoteDao, private val context: Context) : ViewModel() {
+class HomeViewModel(private val db: AppDatabase, private val context: Context) : ViewModel() {
+    val noteDao = db.noteDao()
+    val doodleDao = db.doodleDao()
+    val imageDao = db.imageDao()
+    val emptyNote = NoteWithDoodleAndImage(Note(DEFAULT, ""), ArrayList(), ArrayList())
+
 
     fun getAllDefaultNotes() = noteDao.getAllNotesByFolderId(DEFAULT)
     private suspend fun getNotesCount() = noteDao.getNotesCountByFolderId(DEFAULT)
@@ -34,19 +40,19 @@ class HomeViewModel(private val noteDao: NoteDao, private val context: Context) 
             if (count == 0) {
                 noteDao.insert(
                     Note(
-                        context.resources.getString(R.string.default_note_text),
+                        description = context.resources.getString(R.string.default_note_text),
                         folderId = DEFAULT
                     )
                 )
                 noteDao.insert(
                     Note(
-                        context.resources.getString(R.string.default_note_text2),
+                        description = context.resources.getString(R.string.default_note_text2),
                         folderId = DEFAULT
                     )
                 )
                 noteDao.insert(
                     Note(
-                        context.resources.getString(R.string.default_note_text3),
+                        description = context.resources.getString(R.string.default_note_text3),
                         folderId = DEFAULT
                     )
                 )
@@ -54,30 +60,37 @@ class HomeViewModel(private val noteDao: NoteDao, private val context: Context) 
         }
     }
 
-    fun getNote(it: String, callback: (Note) -> Unit) {
-        viewModelScope.launch {
 
-            val note = noteDao.getNoteById(it)
-            note?.let {
-                withContext(Dispatchers.Main) {
-                    callback(it)
-                }
-            }
+    fun getNote(it: String?) = it?.let { noteDao.getNoteById(it) }
 
-        }
+    fun saveNote(note: Note) = viewModelScope.launch {
+        noteDao.insert(note = note)
     }
 
-    fun saveNote(note: Note) {
-        viewModelScope.launch {
-            noteDao.insert(note = note)
-        }
+    fun saveDoodle(vararg doodle: Doodle) = viewModelScope.launch {
+        doodleDao.insertAll(doodle = doodle)
     }
+
+    fun saveImage(vararg image: Image) = viewModelScope.launch {
+        imageDao.insertAll(image = image)
+    }
+
 
     fun deleteNote(value: Note?) {
         value?.let {
             viewModelScope.launch {
-                noteDao.deleteNote(it.id)
+                noteDao.deleteNote(it.noteId)
             }
         }
     }
+
+    fun deleteDoodle(value: Doodle?) {
+        value?.let {
+            viewModelScope.launch {
+                doodleDao.deleteDoodle(value.doodleid)
+            }
+        }
+    }
+
+    fun getDoodle(id: String) = id.let { doodleDao.getDoodleById(it) }
 }

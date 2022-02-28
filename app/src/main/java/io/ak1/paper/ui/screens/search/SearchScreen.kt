@@ -1,8 +1,9 @@
 package io.ak1.paper.ui.screens.search
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -18,17 +19,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalTextInputService
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import io.ak1.paper.R
 import io.ak1.paper.ui.component.NotesListComponent
+import io.ak1.paper.ui.component.PaperIconButton
+import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.home.HomeViewModel
 import org.koin.java.KoinJavaComponent.inject
-import io.ak1.paper.R
-import io.ak1.paper.ui.screens.Destinations
 
 /**
  * Created by akshay on 01/12/21
@@ -54,45 +52,32 @@ fun SearchScreen(navController: NavController, listState: LazyListState) {
         .observeAsState(initial = listOf())
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
-            val modifier = Modifier.padding(7.dp)
             TextField(
                 value = description.value,
                 onValueChange = {
                     description.value = it
                 },
                 placeholder = {
-                    Text(text = "Search")
+                    Text(
+                        text = "Search",
+                        style = MaterialTheme.typography.h6
+                    )
                 },
                 leadingIcon = {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_back),
-                        contentDescription = stringResource(
-                            id = R.string.image_desc
-                        ),
-                        modifier = modifier.clickable {
-                            navController.navigateUp()
-                        },
-                        colorFilter = ColorFilter.tint(MaterialTheme.colors.primary)
-                    )
+                    PaperIconButton(id = R.drawable.ic_back) {
+                        navController.navigateUp()
+                    }
                 },
                 trailingIcon = {
                     if (description.value.isNotEmpty()) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_x),
-                            contentDescription = stringResource(
-                                id = R.string.image_desc
-                            ),
-                            modifier = modifier.clickable {
-                                description.value = ""
-                            },
-                            colorFilter = ColorFilter.tint(MaterialTheme.colors.primary)
-                        )
+                        PaperIconButton(id = R.drawable.ic_x) {
+                            navController.navigateUp()
+                        }
                     }
                 },
                 textStyle = MaterialTheme.typography.h6,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(7.dp)
                     .focusRequester(focusRequester)
                     .onFocusChanged { focusState ->
                         if (focus.value != focusState.isFocused) {
@@ -111,7 +96,7 @@ fun SearchScreen(navController: NavController, listState: LazyListState) {
             )
             NotesListComponent(false, resultList, listState, {}, {}) {
                 focus.value = false
-                navController.navigate("${Destinations.NOTE_ROUTE}/${it.id}")
+                navController.navigate("${Destinations.NOTE_ROUTE}/${it.noteId}")
             }
         }
     }
