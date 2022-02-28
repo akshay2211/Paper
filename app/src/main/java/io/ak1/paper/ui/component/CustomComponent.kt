@@ -1,7 +1,7 @@
 package io.ak1.paper.ui.component
 
 import androidx.annotation.DrawableRes
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -13,9 +13,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -46,7 +50,9 @@ fun NotesListComponent(
         }
         itemsIndexed(resultList.value) { index, element ->
             Card(
-                modifier = modifier.fillMaxWidth().padding(14.dp,5.dp),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(14.dp, 5.dp),
                 shape = RoundedCornerShape(6.dp),
                 onClick = { callback(element.note) }
             ) {
@@ -118,7 +124,11 @@ fun RowScope.Iconsbar(modifier: Modifier, searchCallback: () -> Unit, moreCallba
 @Composable
 fun HomeHeader(modifier: Modifier, searchCallback: () -> Unit, moreCallback: () -> Unit) {
     Box {
-        Text(text = stringResource(id = R.string.app_name), style = MaterialTheme.typography.h3,modifier = Modifier.padding(14.dp))
+        Text(
+            text = stringResource(id = R.string.app_name),
+            style = MaterialTheme.typography.h3,
+            modifier = Modifier.padding(14.dp)
+        )
         Row(modifier = Modifier.padding(0.dp, 120.dp, 0.dp, 0.dp)) {
             TopAppBar(
                 title = {
@@ -139,16 +149,93 @@ fun HomeHeader(modifier: Modifier, searchCallback: () -> Unit, moreCallback: () 
 @Composable
 fun PaperIconButton(
     @DrawableRes id: Int,
-    tint: Color = MaterialTheme.colors.primary,
+    enabled: Boolean = true,
+    tint: Color = if (enabled) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant,
     onClick: () -> Unit
 ) {
     IconButton(
-        onClick = onClick
+        onClick = onClick,
+        enabled = enabled
     ) {
         Icon(
             painterResource(id = id),
             contentDescription = stringResource(id = R.string.image_desc),
             tint = tint
         )
+    }
+}
+
+@Composable
+fun ColorRow(
+    isVisible: Boolean,
+    rowElementsCount: Int = 8,
+    colors: List<Color>,
+    clickedColor: (Color) -> Unit
+) {
+    val density = LocalDensity.current
+    val defaultColor = remember {
+        mutableStateOf(colors[0])
+    }
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = slideInVertically {
+            // Slide in from 40 dp from the top.
+            with(density) { -40.dp.roundToPx() }
+        } + expandVertically(
+            // Expand from the top.
+            expandFrom = Alignment.Top
+        ) + fadeIn(
+            // Fade in with the initial alpha of 0.3f.
+            initialAlpha = 0.3f
+        ),
+        exit = slideOutVertically() + shrinkVertically() + fadeOut()
+    ) {
+
+        var columnsSize: Int = colors.size / rowElementsCount
+        val remaining = colors.size % rowElementsCount
+        if (remaining > 0) {
+            columnsSize++
+        }
+        Column(modifier = Modifier.padding(16.dp, 8.dp,16.dp, 16.dp)) {
+            repeat(columnsSize) { column ->
+                println()
+                Row {
+                    repeat(rowElementsCount) { row ->
+                        val pos = (column * rowElementsCount) + row
+                        var size = 22.dp
+                        if (pos < colors.size) {
+                            val color = colors[pos]
+                            if (defaultColor.value == color) {
+                                size = 36.dp
+                            }
+
+                            IconButton(
+                                onClick = {
+                                    defaultColor.value = color
+                                    clickedColor(color)
+
+                                }, modifier = Modifier
+                                    .weight(1f, true)
+
+                            ) {
+                                Icon(
+                                    painterResource(id = R.drawable.ic_color),
+                                    contentDescription = stringResource(id = R.string.image_desc),
+                                    tint = color,
+                                    modifier = Modifier.size(size)
+                                    //.animateContentSize(animationSpec = tween(1000,100,LinearOutSlowInEasing))
+                                )
+                            }
+                        } else {
+                            Spacer(
+                                modifier = Modifier
+                                    .weight(1f, true)
+                            )
+                        }
+
+                    }
+                }
+            }
+        }
     }
 }
