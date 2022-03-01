@@ -19,7 +19,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalTextInputService
@@ -27,9 +29,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import io.ak1.paper.R
@@ -60,6 +65,13 @@ fun NoteScreen(
     val focus = remember { mutableStateOf(false) }
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
     val homeViewModel = getViewModel<HomeViewModel>()
+
+    val noteFont: TextStyle = TextStyle(
+        fontWeight = FontWeight.Thin,
+        color = MaterialTheme.colors.primary,
+        fontSize = 20.sp,
+        letterSpacing = 0.10.sp
+    )
 
     val description = remember {
         mutableStateOf(TextFieldValue())
@@ -191,7 +203,7 @@ fun NoteScreen(
 
         Column {
             if (note.value.doodleList.isNotEmpty()) {
-                LazyRow(modifier = Modifier.padding(5.dp, 0.dp)) {
+                LazyRow(modifier = Modifier.padding(5.dp, 15.dp)) {
                     items(note.value.doodleList) { doodle ->
                         doodle.base64Text.convert()?.let {
                             androidx.compose.foundation.Image(
@@ -221,7 +233,8 @@ fun NoteScreen(
                 onValueChange = { tx ->
                     description.value = tx
                 },
-                textStyle = MaterialTheme.typography.subtitle1,
+                textStyle = noteFont,
+                cursorBrush = SolidColor(MaterialTheme.colors.primary),
                 modifier = Modifier
                     .weight(1f, true)
                     .fillMaxSize()
@@ -256,6 +269,7 @@ data class Menu(val iconId: Int, val stringId: Int)
 @Composable
 fun AddMoreScreen(navHostController: NavHostController, nodeId: String? = null) {
 
+    val context = LocalContext.current
     var list = listOf(
         Menu(R.drawable.ic_more, R.string.take_photo),
         Menu(R.drawable.ic_search, R.string.add_image),
@@ -271,6 +285,8 @@ fun AddMoreScreen(navHostController: NavHostController, nodeId: String? = null) 
                             navHostController.navigate(Destinations.DOODLE_ROUTE)
                         }, 100L)
 
+                    }else{
+                        Toast.makeText(context,"Coming soon",Toast.LENGTH_LONG).show()
                     }
                 }
             ) {

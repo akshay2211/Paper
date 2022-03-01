@@ -80,6 +80,8 @@ class HomeViewModel(private val db: AppDatabase, private val context: Context) :
         value?.let {
             viewModelScope.launch {
                 noteDao.deleteNote(it.noteId)
+                doodleDao.deleteDoodleByNote(it.noteId)
+                imageDao.deleteImageByNote(it.noteId)
             }
         }
     }
