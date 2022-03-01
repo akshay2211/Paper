@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.animation.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -170,6 +171,7 @@ fun ColorRow(
     isVisible: Boolean,
     rowElementsCount: Int = 8,
     colors: List<Color>,
+    backgroundColor: Color = MaterialTheme.colors.background,
     clickedColor: (Color) -> Unit
 ) {
     val density = LocalDensity.current
@@ -196,7 +198,11 @@ fun ColorRow(
         if (remaining > 0) {
             columnsSize++
         }
-        Column(modifier = Modifier.padding(16.dp, 8.dp,16.dp, 16.dp)) {
+        Column(
+            modifier = Modifier
+                .background(backgroundColor)
+                .padding(16.dp, 8.dp, 16.dp, 16.dp)
+        ) {
             repeat(columnsSize) { column ->
                 println()
                 Row {
