@@ -2,14 +2,12 @@ package io.ak1.paper.ui.component
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.*
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -18,8 +16,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import io.ak1.paper.R
 import io.ak1.paper.models.Note
 import io.ak1.paper.models.NoteWithDoodleAndImage
+import io.ak1.paper.ui.utils.convert
 import io.ak1.paper.ui.utils.gridTrim
 import io.ak1.paper.ui.utils.timeAgo
 
@@ -58,12 +60,33 @@ fun NotesListComponent(
                 onClick = { callback(element.note) }
             ) {
                 Column(modifier = Modifier.padding(15.dp)) {
+                    Row {
+                        Text(
+                            text = element.note.description.trim().gridTrim(),
+                            modifier = Modifier.fillMaxSize().weight(1f,fill = true),
+                            style = MaterialTheme.typography.subtitle1
+                        )
+                        if (element.doodleList.isNotEmpty()) {
+                            val doodle = element.doodleList[0]
+                            doodle.base64Text.convert()?.let {
+                                Image(
+                                    bitmap = it.asImageBitmap(),
+                                    contentDescription = "hi",
+                                    modifier = Modifier
+                                        .size(70.dp)
+                                        .padding(5.dp)
+                                        .clip(CircleShape)
+                                        .border(
+                                            1.dp,
+                                            MaterialTheme.colors.primary,
+                                            CircleShape
+                                        ),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                        }
+                    }
 
-                    Text(
-                        text = element.note.description.gridTrim(),
-                        modifier = Modifier.fillMaxSize(),
-                        style = MaterialTheme.typography.subtitle1
-                    )
 
                     VerticalSpacer(7.dp)
 
