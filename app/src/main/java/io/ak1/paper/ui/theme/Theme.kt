@@ -76,10 +76,3 @@ fun isSystemInDarkThemeCustom(): Boolean {
         else -> context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
     }
 }
-
-@Composable
-fun Window.StatusBarConfig(darkTheme: Boolean) {
-    WindowInsetsControllerCompat(this, this.decorView).isAppearanceLightStatusBars =
-        !darkTheme
-    this.statusBarColor = MaterialTheme.colors.background.toArgb()
-}

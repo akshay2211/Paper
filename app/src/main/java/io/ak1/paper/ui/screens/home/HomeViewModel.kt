@@ -96,3 +96,8 @@ class HomeViewModel(private val db: AppDatabase, private val context: Context) :
 
     fun getDoodle(id: String) = id.let { doodleDao.getDoodleById(it) }
 }
+
+enum class BoxState {
+    Collapsed,
+    Expanded
+}
