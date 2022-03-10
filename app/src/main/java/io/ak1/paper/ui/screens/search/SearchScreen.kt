@@ -1,9 +1,6 @@
 package io.ak1.paper.ui.screens.search
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -51,7 +48,11 @@ fun SearchScreen(navController: NavController) {
     }
     val resultList = homeViewModel.getAllNotesByDescription(description.value)
         .observeAsState(initial = listOf())
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+    ) {
         Column {
             TextField(
                 value = description.value,
@@ -72,7 +73,7 @@ fun SearchScreen(navController: NavController) {
                 trailingIcon = {
                     if (description.value.isNotEmpty()) {
                         PaperIconButton(id = R.drawable.ic_x) {
-                            navController.navigateUp()
+                            description.value = ""
                         }
                     }
                 },
