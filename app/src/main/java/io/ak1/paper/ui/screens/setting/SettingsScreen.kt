@@ -32,7 +32,7 @@ import io.ak1.paper.ui.component.PaperIconButton
 fun SettingsScreen(navController: NavController) {
 
     Scaffold(
-        Modifier.fillMaxSize(),
+        Modifier.fillMaxSize().statusBarsPadding(),
         topBar = {
             TopAppBar(
                 title = {Text(

@@ -86,7 +86,7 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_version"
 
     //Koin
-    def koin_version= "3.1.5"
+    def koin_version = "3.1.5"
     implementation "io.insert-koin:koin-androidx-compose:$koin_version"
 
     // LifeCycle
@@ -117,8 +117,13 @@ dependencies {
     // Gson
     implementation 'com.google.code.gson:gson:2.9.0'
 
-    // Accompanist - Navigation
-    implementation 'com.google.accompanist:accompanist-navigation-material:0.24.2-alpha'
+    // Accompanist
+    //Jetpack Navigation Compose Material
+    implementation 'com.google.accompanist:accompanist-navigation-material:0.24.3-alpha'
+    //Insets for Jetpack Compose
+    implementation "com.google.accompanist:accompanist-insets:0.24.3-alpha"
+    //System UI Controller
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.24.3-alpha"
 
     // Tests
     testImplementation 'junit:junit:4.13.2'

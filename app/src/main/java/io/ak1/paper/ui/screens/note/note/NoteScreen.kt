@@ -21,7 +21,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalTextInputService
@@ -37,6 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.google.accompanist.insets.ExperimentalAnimatedInsets
+import com.google.accompanist.insets.statusBarsPadding
 import io.ak1.paper.R
 import io.ak1.paper.models.Doodle
 import io.ak1.paper.models.Image
@@ -53,6 +54,7 @@ import org.koin.androidx.compose.getViewModel
  * Created by akshay on 27/11/21
  * https://ak1.io
  */
+@OptIn(ExperimentalAnimatedInsets::class)
 @Composable
 fun NoteScreen(
     navController: NavController,
@@ -139,69 +141,76 @@ fun NoteScreen(
 
 
 
-    Scaffold(topBar = {
-        TopAppBar(
-            title = {},
-            navigationIcon = {
-                PaperIconButton(id = R.drawable.ic_back) {
-                    navController.navigateUp()
-                }
-            },
-            actions = {
-                PaperIconButton(
-                    id = R.drawable.ic_check,
-                    tint = if (description.value.text.trim()
-                            .isEmpty()
-                    ) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary
-                ) {
-                    navController.navigateUp()
-                }
-                PaperIconButton(
-                    id = R.drawable.ic_trash,
-                    tint = if (description.value.text.trim()
-                            .isEmpty()
-                    ) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary
-                ) {
-                    if (note.value != null) {
-                        setShowDialog(true)
+    Scaffold(modifier = Modifier
+        .statusBarsPadding(),
+        topBar = {
+            TopAppBar(
+                title = {},
+                navigationIcon = {
+                    PaperIconButton(id = R.drawable.ic_back) {
+                        navController.navigateUp()
                     }
-                }
-            },
-            backgroundColor = MaterialTheme.colors.background,
-            elevation = 0.dp
-        )
-    }, bottomBar = {
-        BottomAppBar(
-            modifier = Modifier.height(46.dp),
-            backgroundColor = MaterialTheme.colors.background,
-            contentPadding = PaddingValues(4.dp, 4.dp),
-            content = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    PaperIconButton(id = R.drawable.ic_feather) {
-                        inputService?.hideSoftwareKeyboard()
-                        focusRequester.freeFocus()
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            homeViewModel.saveNote(note.value.note)
-                            innerNavController.navigate("${Destinations.INSERT_ROUTE}/${note.value.note.noteId}")
-                        }, 100L)
+                },
+                actions = {
+                    PaperIconButton(
+                        id = R.drawable.ic_check,
+                        tint = if (description.value.text.trim()
+                                .isEmpty()
+                        ) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary
+                    ) {
+                        navController.navigateUp()
                     }
-                    note.value.note.updatedOn.timeAgoInSeconds().let {
-                        Text(
-                            text = "Last updated $it",
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.overline
-                        )
+                    PaperIconButton(
+                        id = R.drawable.ic_trash,
+                        tint = if (description.value.text.trim()
+                                .isEmpty()
+                        ) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary
+                    ) {
+                        if (note.value != null) {
+                            setShowDialog(true)
+                        }
                     }
+                },
+                backgroundColor = MaterialTheme.colors.background,
+                elevation = 0.dp
+            )
+        }, bottomBar = {
+            BottomAppBar(
+                modifier = Modifier
+                    .height(46.dp),
+                backgroundColor = MaterialTheme.colors.background,
+                contentPadding = PaddingValues(4.dp, 4.dp),
+                content = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        PaperIconButton(id = R.drawable.ic_feather) {
+                            inputService?.hideSoftwareKeyboard()
+                            focusRequester.freeFocus()
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                homeViewModel.saveNote(note.value.note)
+                                innerNavController.navigate("${Destinations.INSERT_ROUTE}/${note.value.note.noteId}")
+                            }, 100L)
+                        }
+                        note.value.note.updatedOn.timeAgoInSeconds().let {
+                            Text(
+                                text = "Last updated $it",
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.overline
+                            )
+                        }
 
+                    }
                 }
-            }
-        )
-    }) {
+            )
+        }) {
 
-        Column {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .clickable {
+                focusRequester.captureFocus()
+            }) {
             if (note.value.doodleList.isNotEmpty()) {
                 LazyRow(modifier = Modifier.padding(5.dp, 15.dp)) {
                     items(note.value.doodleList) { doodle ->
@@ -236,8 +245,8 @@ fun NoteScreen(
                 textStyle = noteFont,
                 cursorBrush = SolidColor(MaterialTheme.colors.primary),
                 modifier = Modifier
-                    .weight(1f, true)
                     .fillMaxSize()
+                    .weight(1f, true)
                     .padding(14.dp, 3.dp, 14.dp, 50.dp)
                     .focusRequester(focusRequester)
                     .onFocusChanged { focusState ->
@@ -285,8 +294,8 @@ fun AddMoreScreen(navHostController: NavHostController, nodeId: String? = null) 
                             navHostController.navigate(Destinations.DOODLE_ROUTE)
                         }, 100L)
 
-                    }else{
-                        Toast.makeText(context,"Coming soon",Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(context, "Coming soon", Toast.LENGTH_LONG).show()
                     }
                 }
             ) {
