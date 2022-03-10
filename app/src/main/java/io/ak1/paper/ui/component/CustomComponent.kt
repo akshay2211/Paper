@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -86,7 +87,9 @@ fun NoteView(element: NoteWithDoodleAndImage, callback: (Note) -> Unit) {
                     Text(
                         text = element.note.description.trim().gridTrim(),
                         modifier = Modifier.fillMaxWidth(),
-                        style = MaterialTheme.typography.h6
+                        style = MaterialTheme.typography.h6,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis
                     )
                     VerticalSpacer(7.dp)
                     Text(
@@ -186,7 +189,9 @@ fun ImageGridView(element: NoteWithDoodleAndImage) {
                 text = element.note.updatedOn.timeAgo(),
                 color = MaterialTheme.colors.primaryVariant,
                 style = MaterialTheme.typography.caption,
-                modifier = Modifier.align(Alignment.BottomStart).padding(14.dp)
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(14.dp)
             )
 
     }
