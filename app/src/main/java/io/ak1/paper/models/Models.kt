@@ -1,7 +1,9 @@
 package io.ak1.paper.models
 
+import android.graphics.Bitmap
 import android.os.Parcelable
 import androidx.room.*
+import io.ak1.paper.ui.utils.convert
 import kotlinx.parcelize.Parcelize
 import java.util.*
 
@@ -49,6 +51,13 @@ data class NoteWithDoodleAndImage(
     val doodleList: List<Doodle>
 )
 
+fun NoteWithDoodleAndImage.getBitmapList(): MutableList<Bitmap?> {
+    return imageList.map {
+        it.imageText.convert()
+    }.toMutableList().apply {
+        addAll(doodleList.map { it.base64Text.convert() })
+    }
+}
 
 @Parcelize
 @Entity(tableName = "folder_table", indices = [Index(value = ["id"], unique = true)])
