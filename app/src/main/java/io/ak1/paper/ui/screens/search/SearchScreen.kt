@@ -1,10 +1,7 @@
 package io.ak1.paper.ui.screens.search
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -34,7 +31,7 @@ import org.koin.java.KoinJavaComponent.inject
  */
 
 @Composable
-fun SearchScreen(navController: NavController, listState: LazyListState) {
+fun SearchScreen(navController: NavController) {
     val focusRequester = remember { FocusRequester() }
     val inputService = LocalTextInputService.current
     val focus = remember { mutableStateOf(true) }
@@ -42,6 +39,7 @@ fun SearchScreen(navController: NavController, listState: LazyListState) {
     val description = rememberSaveable {
         mutableStateOf("")
     }
+    val scrollState = rememberLazyListState()
 
     LaunchedEffect(navController) {
         focus.value = true
@@ -50,7 +48,11 @@ fun SearchScreen(navController: NavController, listState: LazyListState) {
     }
     val resultList = homeViewModel.getAllNotesByDescription(description.value)
         .observeAsState(initial = listOf())
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+    ) {
         Column {
             TextField(
                 value = description.value,
@@ -71,7 +73,7 @@ fun SearchScreen(navController: NavController, listState: LazyListState) {
                 trailingIcon = {
                     if (description.value.isNotEmpty()) {
                         PaperIconButton(id = R.drawable.ic_x) {
-                            navController.navigateUp()
+                            description.value = ""
                         }
                     }
                 },
@@ -94,7 +96,7 @@ fun SearchScreen(navController: NavController, listState: LazyListState) {
                     unfocusedIndicatorColor = MaterialTheme.colors.background
                 ),
             )
-            NotesListComponent(false, resultList, listState, {}, {}) {
+            NotesListComponent(false, resultList, scrollState) {
                 focus.value = false
                 navController.navigate("${Destinations.NOTE_ROUTE}/${it.noteId}")
             }

@@ -1,5 +1,7 @@
 package io.ak1.paper.ui.screens.note.doodle
 
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -46,7 +48,7 @@ fun DoodleScreen(navController: NavHostController, isNewDoodle: Boolean, id: Str
     var undoCount = remember { mutableStateOf(0) }
     val redoCount = remember { mutableStateOf(0) }
     val defaultColor = remember { mutableStateOf(colors500[0]) }
-    val colorBarVisibility = remember { mutableStateOf(true) }
+    val colorBarVisibility = remember { mutableStateOf(false) }
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
 
     var doodle = homeViewModel.getDoodle(id).observeAsState()
@@ -84,7 +86,16 @@ fun DoodleScreen(navController: NavHostController, isNewDoodle: Boolean, id: Str
                 ) {
                     if (drawController.exportPath()
                             .isNotEmpty()
-                    ) drawController.saveBitmap() else navController.navigateUp()
+                    ) {
+                        if (colorBarVisibility.value) {
+                            colorBarVisibility.value = false
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                drawController.saveBitmap()
+                            }, 500L)
+                            return@PaperIconButton
+                        }
+                        drawController.saveBitmap()
+                    } else navController.navigateUp()
                 }
                 if (doodle.value != null)
                     PaperIconButton(
