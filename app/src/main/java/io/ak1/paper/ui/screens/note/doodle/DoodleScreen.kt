@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.google.accompanist.insets.statusBarsPadding
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import io.ak1.drawbox.DrawBox
@@ -72,7 +73,9 @@ fun DoodleScreen(navController: NavHostController, isNewDoodle: Boolean, id: Str
         homeViewModel.saveDoodle(doodleData.value)
         navController.navigateUp()
     }
-    Scaffold(topBar = {
+    Scaffold(modifier = Modifier
+        .statusBarsPadding(),
+        topBar = {
         TopAppBar(
             title = { Text(text = "Doodle", color = MaterialTheme.colors.primary) },
             navigationIcon = {

@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.google.accompanist.insets.ExperimentalAnimatedInsets
+import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import io.ak1.paper.R
 import io.ak1.paper.models.Doodle
@@ -207,10 +208,8 @@ fun NoteScreen(
         }) {
 
         Column(modifier = Modifier
-            .fillMaxSize()
-            .clickable {
-                focusRequester.captureFocus()
-            }) {
+            .fillMaxSize().navigationBarsWithImePadding()
+        ) {
             if (note.value.doodleList.isNotEmpty()) {
                 LazyRow(modifier = Modifier.padding(5.dp, 15.dp)) {
                     items(note.value.doodleList) { doodle ->
