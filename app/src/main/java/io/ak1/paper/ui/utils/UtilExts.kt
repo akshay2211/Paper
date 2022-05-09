@@ -11,6 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import java.io.ByteArrayOutputStream
 import java.util.*
 
@@ -54,4 +56,9 @@ fun Modifier.limitWidthInWideScreen(width: Dp = 640.dp) = this
     .fillMaxWidth()
     .widthIn(max = width)
     .wrapContentWidth(align = Alignment.CenterHorizontally)
+
+fun String.withArg(arg: String,isDef:Boolean = false) = if (isDef) "$this/{$arg}" else "$this/$arg"
+fun String.toArgs() = listOf(navArgument(this) {
+    type = NavType.StringType
+})
 
