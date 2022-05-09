@@ -3,9 +3,7 @@ package io.ak1.paper.ui.screens.note.doodle
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,7 +15,6 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.google.accompanist.insets.statusBarsPadding
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import io.ak1.drawbox.DrawBox
@@ -138,12 +135,12 @@ fun DoodleScreen(navController: NavHostController, isNewDoodle: Boolean, id: Str
                     drawController.changeColor(it)
                 }
             }
-        }) {
+        }) { padding ->
 
         DrawBox(
             drawController = drawController,
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize().padding(padding),
             bitmapCallback = { bitmap, error ->
                 val base64 = bitmap?.asAndroidBitmap()?.getEncodedString() ?: ""
                 val list = drawController.exportPath()

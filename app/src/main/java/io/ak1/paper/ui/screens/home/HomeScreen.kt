@@ -16,11 +16,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import io.ak1.paper.R
-import io.ak1.paper.ui.component.CollapsibleTopBar
-import io.ak1.paper.ui.component.CollapsibleTopBarState
-import io.ak1.paper.ui.component.NotesListComponent
-import io.ak1.paper.ui.component.PaperIconButton
+import io.ak1.paper.ui.component.*
 import io.ak1.paper.ui.screens.Destinations
+import io.ak1.paper.ui.utils.withArg
 import org.koin.java.KoinJavaComponent.inject
 
 /**
@@ -59,9 +57,9 @@ fun HomeScreen(navController: NavController) {
             }
         },
 
-        content = {
-            NotesListComponent(true, resultList, scrollState) {
-                navController.navigate("${Destinations.NOTE_ROUTE}/${it.noteId}")
+        content = { padding ->
+            NotesListComponent(true, resultList, scrollState,padding) {
+                navController.navigate(Destinations.NOTE_ROUTE.withArg(it.noteId))
             }
         },
 
