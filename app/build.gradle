@@ -120,8 +120,6 @@ dependencies {
     // Accompanist
     //Jetpack Navigation Compose Material
     implementation 'com.google.accompanist:accompanist-navigation-material:0.24.7-alpha'
-    //Insets for Jetpack Compose
-    implementation 'com.google.accompanist:accompanist-insets:0.24.7-alpha'
     //System UI Controller
     implementation 'com.google.accompanist:accompanist-systemuicontroller:0.24.7-alpha'
 
