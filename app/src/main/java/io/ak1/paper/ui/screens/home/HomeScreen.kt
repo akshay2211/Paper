@@ -21,7 +21,7 @@ import io.ak1.paper.ui.component.CollapsibleTopBarState
 import io.ak1.paper.ui.component.NotesListComponent
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.Destinations
-import org.koin.java.KoinJavaComponent.inject
+import org.koin.androidx.compose.inject
 
 /**
  * Created by akshay on 27/11/21
@@ -30,7 +30,8 @@ import org.koin.java.KoinJavaComponent.inject
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    val homeViewModel by inject<HomeViewModel>(HomeViewModel::class.java)
+    val homeViewModel by inject<HomeViewModel>()
+
     val resultList = homeViewModel.getAllDefaultNotes().observeAsState(initial = listOf())
     val scrollState = rememberLazyListState()
     LaunchedEffect(resultList.value) {
@@ -39,6 +40,7 @@ fun HomeScreen(navController: NavController) {
     var currentState = remember { mutableStateOf(CollapsibleTopBarState.Expanded) }
 
     LaunchedEffect(scrollState.firstVisibleItemIndex) {
+        homeViewModel.saveCurrentNote(null)
         if (scrollState.firstVisibleItemIndex == 0) {
             currentState.value = CollapsibleTopBarState.Expanded
         } else if (currentState.value == CollapsibleTopBarState.Expanded) {
@@ -49,7 +51,7 @@ fun HomeScreen(navController: NavController) {
     val fabShape = RoundedCornerShape(30)
     Scaffold(
         topBar = {
-            CollapsibleTopBar(collapsibleTopBarState = currentState.value) {
+           CollapsibleTopBar(collapsibleTopBarState = currentState.value) {
                 PaperIconButton(id = R.drawable.ic_search, onClick = {
                     navController.navigate(Destinations.SEARCH_ROUTE)
                 })
@@ -59,9 +61,10 @@ fun HomeScreen(navController: NavController) {
             }
         },
 
-        content = {
-            NotesListComponent(true, resultList, scrollState) {
-                navController.navigate("${Destinations.NOTE_ROUTE}/${it.noteId}")
+        content = { padding ->
+            NotesListComponent(true, resultList, scrollState, padding) {
+                homeViewModel.saveCurrentNote(it)
+                navController.navigate(Destinations.NOTE_ROUTE)
             }
         },
 

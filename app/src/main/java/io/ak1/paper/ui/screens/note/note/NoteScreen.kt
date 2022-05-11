@@ -3,6 +3,7 @@ package io.ak1.paper.ui.screens.note.note
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -36,8 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import com.google.accompanist.insets.ExperimentalAnimatedInsets
-import com.google.accompanist.insets.statusBarsPadding
 import io.ak1.paper.R
 import io.ak1.paper.models.Doodle
 import io.ak1.paper.models.Image
@@ -54,7 +54,6 @@ import org.koin.androidx.compose.getViewModel
  * Created by akshay on 27/11/21
  * https://ak1.io
  */
-@OptIn(ExperimentalAnimatedInsets::class)
 @Composable
 fun NoteScreen(
     navController: NavController,
@@ -142,7 +141,8 @@ fun NoteScreen(
 
 
     Scaffold(modifier = Modifier
-        .statusBarsPadding(),
+        .statusBarsPadding()
+        .background(Color.Green),
         topBar = {
             TopAppBar(
                 title = {},
@@ -175,42 +175,50 @@ fun NoteScreen(
                 elevation = 0.dp
             )
         }, bottomBar = {
-            BottomAppBar(
-                modifier = Modifier
-                    .height(46.dp),
-                backgroundColor = MaterialTheme.colors.background,
-                contentPadding = PaddingValues(4.dp, 4.dp),
-                content = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        PaperIconButton(id = R.drawable.ic_feather) {
-                            inputService?.hideSoftwareKeyboard()
-                            focusRequester.freeFocus()
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                homeViewModel.saveNote(note.value.note)
-                                innerNavController.navigate("${Destinations.INSERT_ROUTE}/${note.value.note.noteId}")
-                            }, 100L)
-                        }
-                        note.value.note.updatedOn.timeAgoInSeconds().let {
-                            Text(
-                                text = "Last updated $it",
-                                textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.overline
-                            )
-                        }
+            Column(
+                Modifier
+                    .navigationBarsPadding()
+                    .imePadding()
+            ) {
+                BottomAppBar(
+                    modifier = Modifier
+                        .height(46.dp),
+                    backgroundColor = MaterialTheme.colors.background,
+                    contentPadding = PaddingValues(4.dp, 4.dp),
+                    content = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            PaperIconButton(id = R.drawable.ic_feather) {
+                                inputService?.hideSoftwareKeyboard()
+                                focusRequester.freeFocus()
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    homeViewModel.saveNote(note.value.note)
+                                    innerNavController.navigate("${Destinations.INSERT_ROUTE}/${note.value.note.noteId}")
+                                }, 100L)
+                            }
+                            note.value.note.updatedOn.timeAgoInSeconds().let {
+                                Text(
+                                    text = "Last updated $it",
+                                    textAlign = TextAlign.Center,
+                                    style = MaterialTheme.typography.overline
+                                )
+                            }
 
+                        }
                     }
-                }
-            )
-        }) {
-
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .clickable {
-                focusRequester.captureFocus()
-            }) {
+                )
+            }
+        }) { paddingValues ->
+        val paddingBottom = paddingValues.calculateBottomPadding()
+        val padding = if (paddingBottom > 46.dp) paddingBottom - 46.dp else paddingBottom
+        Column(
+            modifier = Modifier
+                .padding(0.dp, 0.dp, 0.dp, padding)
+                .background(Color.Red)
+                .fillMaxSize()
+        ) {
             if (note.value.doodleList.isNotEmpty()) {
                 LazyRow(modifier = Modifier.padding(5.dp, 15.dp)) {
                     items(note.value.doodleList) { doodle ->

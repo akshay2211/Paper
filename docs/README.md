@@ -25,23 +25,5 @@ Screenshots
 <img src="https://raw.githubusercontent.com/akshay2211/Paper/master/media/light.png" width="25%"/><img src="https://raw.githubusercontent.com/akshay2211/Paper/master/media/dark.png" width="25%"/>
 
 
-Contribute
-----------
-Interested in seeing a particular feature of the Android Framework or Jetpack implemented in this
-app? 
-Please open a new [issue](https://github.com/akshay2211/paper/issues).
-
-License
------------------
-Licensed under the Apache License, Version 2.0, [click here for the full license](/LICENSE).
-
-Author & support
------------------
-This project was created by [Akshay Sharma](https://akshay2211.github.io/).
-
-If this project help you reduce time to develop, you can give me a cup of coffee :) 
-
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/akshay2211)
-
 
 

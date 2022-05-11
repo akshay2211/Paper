@@ -42,6 +42,7 @@ fun SearchScreen(navController: NavController) {
     val scrollState = rememberLazyListState()
 
     LaunchedEffect(navController) {
+        homeViewModel.saveCurrentNote(null)
         focus.value = true
         inputService?.showSoftwareKeyboard()
         focusRequester.requestFocus()
@@ -98,7 +99,8 @@ fun SearchScreen(navController: NavController) {
             )
             NotesListComponent(false, resultList, scrollState) {
                 focus.value = false
-                navController.navigate("${Destinations.NOTE_ROUTE}/${it.noteId}")
+                homeViewModel.saveCurrentNote(it)
+                navController.navigate(Destinations.NOTE_ROUTE)
             }
         }
     }

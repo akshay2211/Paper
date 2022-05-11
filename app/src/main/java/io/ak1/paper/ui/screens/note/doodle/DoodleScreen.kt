@@ -3,9 +3,7 @@ package io.ak1.paper.ui.screens.note.doodle
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -72,7 +70,9 @@ fun DoodleScreen(navController: NavHostController, isNewDoodle: Boolean, id: Str
         homeViewModel.saveDoodle(doodleData.value)
         navController.navigateUp()
     }
-    Scaffold(topBar = {
+    Scaffold(modifier = Modifier
+        .statusBarsPadding(),
+        topBar = {
         TopAppBar(
             title = { Text(text = "Doodle", color = MaterialTheme.colors.primary) },
             navigationIcon = {
@@ -135,12 +135,12 @@ fun DoodleScreen(navController: NavHostController, isNewDoodle: Boolean, id: Str
                     drawController.changeColor(it)
                 }
             }
-        }) {
+        }) { padding ->
 
         DrawBox(
             drawController = drawController,
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize().padding(padding),
             bitmapCallback = { bitmap, error ->
                 val base64 = bitmap?.asAndroidBitmap()?.getEncodedString() ?: ""
                 val list = drawController.exportPath()
