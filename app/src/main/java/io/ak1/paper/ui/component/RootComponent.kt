@@ -8,7 +8,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.home.HomeScreen
@@ -17,8 +16,6 @@ import io.ak1.paper.ui.screens.search.SearchScreen
 import io.ak1.paper.ui.screens.setting.SettingsScreen
 import io.ak1.paper.ui.theme.PaperTheme
 import io.ak1.paper.ui.theme.isSystemInDarkThemeCustom
-import io.ak1.paper.ui.utils.toArgs
-import io.ak1.paper.ui.utils.withArg
 
 /**
  * Created by akshay on 27/11/21
@@ -26,7 +23,6 @@ import io.ak1.paper.ui.utils.withArg
  */
 
 
-@OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
 fun RootComponent() {
     val isDark = isSystemInDarkThemeCustom()
@@ -44,16 +40,6 @@ fun RootComponent() {
                 composable(Destinations.NOTE_ROUTE) { NoteContainerScreen(navController) }
                 composable(Destinations.SEARCH_ROUTE) { SearchScreen(navController) }
                 composable(Destinations.SETTING_ROUTE) { SettingsScreen(navController) }
-
-                composable(
-                    Destinations.NOTE_ROUTE.withArg(Destinations.NOTE_KEY, true),
-                    Destinations.NOTE_KEY.toArgs()
-                ) { requireNotNull(it.arguments).let { bundle ->
-                        bundle.getString(Destinations.NOTE_KEY)?.let { noteId ->
-                            NoteContainerScreen(navController, noteId)
-                        }
-                    }
-                }
             }
         }
     }
