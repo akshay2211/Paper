@@ -3,7 +3,6 @@ package io.ak1.paper.ui.screens.note.note
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,7 +19,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -116,13 +114,7 @@ fun NoteScreen(
         if (note.value.note.description != description.value.text.trim() || doodles.value.isNotEmpty() || images.value.isNotEmpty()) {
             note.value.note.description = description.value.text.trim()
 
-            if (doodles.value.isNotEmpty()) {
-                val newDoodles = doodles.value.map {
-                    it.attachedNoteId = note.value.note.noteId
-                    it
-                }.toTypedArray()
-                homeViewModel.saveDoodle(*newDoodles)
-            }
+            homeViewModel.saveDoodle(doodles.value, note.value.note.noteId)
             if (images.value.isNotEmpty()) {
                 val newImages = images.value.map {
                     it.attachedNoteId = note.value.note.noteId
@@ -141,8 +133,7 @@ fun NoteScreen(
 
 
     Scaffold(modifier = Modifier
-        .statusBarsPadding()
-        .background(Color.Green),
+        .statusBarsPadding(),
         topBar = {
             TopAppBar(
                 title = {},
@@ -158,7 +149,8 @@ fun NoteScreen(
                                 .isEmpty()
                         ) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary
                     ) {
-                        navController.navigateUp()
+                        saveAndExit()
+                        // navController.navigateUp()
                     }
                     PaperIconButton(
                         id = R.drawable.ic_trash,
@@ -180,35 +172,7 @@ fun NoteScreen(
                     .navigationBarsPadding()
                     .imePadding()
             ) {
-                BottomAppBar(
-                    modifier = Modifier
-                        .height(46.dp),
-                    backgroundColor = MaterialTheme.colors.background,
-                    contentPadding = PaddingValues(4.dp, 4.dp),
-                    content = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            PaperIconButton(id = R.drawable.ic_feather) {
-                                inputService?.hideSoftwareKeyboard()
-                                focusRequester.freeFocus()
-                                Handler(Looper.getMainLooper()).postDelayed({
-                                    homeViewModel.saveNote(note.value.note)
-                                    innerNavController.navigate("${Destinations.INSERT_ROUTE}/${note.value.note.noteId}")
-                                }, 100L)
-                            }
-                            note.value.note.updatedOn.timeAgoInSeconds().let {
-                                Text(
-                                    text = "Last updated $it",
-                                    textAlign = TextAlign.Center,
-                                    style = MaterialTheme.typography.overline
-                                )
-                            }
 
-                        }
-                    }
-                )
             }
         }) { paddingValues ->
         val paddingBottom = paddingValues.calculateBottomPadding()
@@ -216,7 +180,6 @@ fun NoteScreen(
         Column(
             modifier = Modifier
                 .padding(0.dp, 0.dp, 0.dp, padding)
-                .background(Color.Red)
                 .fillMaxSize()
         ) {
             if (note.value.doodleList.isNotEmpty()) {

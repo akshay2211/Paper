@@ -17,6 +17,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalTextInputService
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import io.ak1.paper.R
 import io.ak1.paper.ui.component.NotesListComponent
@@ -97,7 +98,7 @@ fun SearchScreen(navController: NavController) {
                     unfocusedIndicatorColor = MaterialTheme.colors.background
                 ),
             )
-            NotesListComponent(false, resultList, scrollState) {
+            NotesListComponent(false, resultList.value, scrollState, PaddingValues(12.dp)) {
                 focus.value = false
                 homeViewModel.saveCurrentNote(it)
                 navController.navigate(Destinations.NOTE_ROUTE)

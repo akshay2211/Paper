@@ -4,9 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.text.format.DateUtils
 import android.util.Base64
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -57,8 +55,15 @@ fun Modifier.limitWidthInWideScreen(width: Dp = 640.dp) = this
     .widthIn(max = width)
     .wrapContentWidth(align = Alignment.CenterHorizontally)
 
-fun String.withArg(arg: String,isDef:Boolean = false) = if (isDef) "$this/{$arg}" else "$this/$arg"
+fun String.withArg(arg: String, isDef: Boolean = false) =
+    if (isDef) "$this/{$arg}" else "$this/$arg"
+
 fun String.toArgs() = listOf(navArgument(this) {
     type = NavType.StringType
 })
+
+fun Modifier.paddingBottom(paddingValues: PaddingValues): Modifier {
+    val pv = paddingValues.calculateBottomPadding()
+    return padding(0.dp, 0.dp, 0.dp, if (pv > 46.dp) pv - 46.dp else pv)
+}
 
