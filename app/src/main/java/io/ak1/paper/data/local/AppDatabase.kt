@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.room.migration.AutoMigrationSpec
 import io.ak1.paper.models.*
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by akshay on 27/10/21
@@ -78,7 +79,7 @@ interface NoteDao {
 
     @Transaction
     @Query("SELECT * FROM notes_table WHERE folderId = :id ORDER BY updatedOn DESC")
-    fun getAllNotesByFolderId(id: String): LiveData<List<NoteWithDoodleAndImage>>
+    fun getAllNotesByFolderId(id: String): Flow<List<NoteWithDoodleAndImage>>
 
     @Transaction
     @Query("SELECT * FROM notes_table WHERE description LIKE '%' || :query || '%' ORDER BY updatedOn DESC")

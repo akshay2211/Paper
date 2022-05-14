@@ -20,5 +20,9 @@ var databaseModule = module {
 }
 
 var viewModel = module {
-    viewModel { HomeViewModel(get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get()) }
+}
+var repositories = module {
+    single { getLocalRepository() }
+    single { getNotesRepository(get()) }
 }
