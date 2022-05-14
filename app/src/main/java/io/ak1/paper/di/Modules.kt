@@ -1,6 +1,7 @@
 package io.ak1.paper.di
 
 import io.ak1.paper.ui.screens.home.HomeViewModel
+import io.ak1.paper.ui.screens.note.NoteViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -16,13 +17,16 @@ import org.koin.dsl.module
 var databaseModule = module {
     single { getDb(androidApplication()) }
     single { getNoteTableDao(get()) }
+    single { getDoodleTableDao(get()) }
+    single { getImageTableDao(get()) }
     single { getFolderTableDao(get()) }
 }
 
 var viewModel = module {
     viewModel { HomeViewModel(get(), get(), get(), get()) }
+    viewModel { NoteViewModel(get(), get()) }
 }
 var repositories = module {
     single { getLocalRepository() }
-    single { getNotesRepository(get()) }
+    single { getNotesRepository(get(), get(), get()) }
 }

@@ -15,9 +15,10 @@
  */
 package io.ak1.paper.data.repositories.local.impl
 
-import androidx.lifecycle.MutableLiveData
 import io.ak1.paper.data.repositories.local.LocalRepository
 import io.ak1.paper.models.NoteWithDoodleAndImage
+import io.ak1.paper.ui.screens.note.getEmptyNote
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * Created by akshay on 10/05/22
@@ -26,9 +27,9 @@ import io.ak1.paper.models.NoteWithDoodleAndImage
 
 
 class LocalRepositoryImpl : LocalRepository {
-    override val currentNote = MutableLiveData<NoteWithDoodleAndImage>()
-    override fun saveCurrentNote(currentNote: NoteWithDoodleAndImage) {
-        this.currentNote.postValue(currentNote)
+    override val currentNote = MutableStateFlow(getEmptyNote())
+    override suspend fun saveCurrentNote(currentNote: NoteWithDoodleAndImage) {
+        this.currentNote.emit(currentNote)
     }
 
 

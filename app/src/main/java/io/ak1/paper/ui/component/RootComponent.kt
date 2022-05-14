@@ -1,5 +1,7 @@
 package io.ak1.paper.ui.component
 
+import android.util.Log
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
@@ -32,12 +34,19 @@ fun RootComponent() {
         SideEffect { systemUiController.setSystemBarsColor(Color.Transparent, darkIcons) }
         Surface(color = MaterialTheme.colors.background) {
             val navController = rememberNavController()
+            val scrollState = rememberLazyListState()
             NavHost(
                 navController = navController,
                 startDestination = Destinations.HOME_ROUTE
             ) {
-                composable(Destinations.HOME_ROUTE) { HomeScreen(navController) }
-                composable(Destinations.NOTE_ROUTE) { NoteContainerScreen(navController) }
+                Log.e("track ", "RootComponent")
+                composable(Destinations.HOME_ROUTE) {
+                    HomeScreen(scrollState) { navController.navigate(it) }
+                }
+                composable(Destinations.NOTE_ROUTE) {
+                    NoteContainerScreen({ navController.navigate(it) })
+                    { navController.navigateUp() }
+                }
                 composable(Destinations.SEARCH_ROUTE) { SearchScreen(navController) }
                 composable(Destinations.SETTING_ROUTE) { SettingsScreen(navController) }
             }

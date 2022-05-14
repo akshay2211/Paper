@@ -53,7 +53,9 @@ class HomeViewModel(
 
     val currentNote = localRepository.currentNote
     fun saveCurrentNote(currentNote: NoteWithDoodleAndImage?) {
-        localRepository.saveCurrentNote(currentNote ?: emptyNote)
+        viewModelScope.launch {
+            localRepository.saveCurrentNote(currentNote ?: emptyNote)
+        }
     }
 
 

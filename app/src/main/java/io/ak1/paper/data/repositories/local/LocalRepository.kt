@@ -17,12 +17,13 @@ package io.ak1.paper.data.repositories.local
 
 import androidx.lifecycle.MutableLiveData
 import io.ak1.paper.models.NoteWithDoodleAndImage
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * Created by akshay on 14/05/22
  * https://ak1.io
  */
 interface LocalRepository {
-    fun saveCurrentNote(currentNote: NoteWithDoodleAndImage)
-    val currentNote : MutableLiveData<NoteWithDoodleAndImage>
+    suspend fun saveCurrentNote(currentNote: NoteWithDoodleAndImage)
+    val currentNote : MutableStateFlow<NoteWithDoodleAndImage>
 }

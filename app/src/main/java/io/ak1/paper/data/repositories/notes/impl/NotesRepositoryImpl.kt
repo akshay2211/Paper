@@ -15,9 +15,12 @@
  */
 package io.ak1.paper.data.repositories.notes.impl
 
+import io.ak1.paper.data.local.DoodleDao
+import io.ak1.paper.data.local.ImageDao
 import io.ak1.paper.data.local.NoteDao
 import io.ak1.paper.data.repositories.notes.NotesRepository
 import io.ak1.paper.models.Note
+import io.ak1.paper.models.NoteWithDoodleAndImage
 import io.ak1.paper.ui.screens.home.DEFAULT
 import kotlinx.coroutines.flow.Flow
 
@@ -25,22 +28,23 @@ import kotlinx.coroutines.flow.Flow
  * Created by akshay on 10/05/22
  * https://ak1.io
  */
-class NotesRepositoryImpl(private val notesDao: NoteDao) : NotesRepository {
+class NotesRepositoryImpl(
+    private val notesDao: NoteDao,
+    private val doodleDao: DoodleDao,
+    private val imageDao: ImageDao
+) : NotesRepository {
 
-    override suspend fun create(note: Note): Note {
-        TODO("Not yet implemented")
+    override suspend fun create(note: Note) {
+        notesDao.insert(note = note)
     }
 
-    override fun getAllNotesByFolderId(folderId: String): Flow<List<Note>> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getNote(noteId: String): Flow<Note> {
-        TODO("Not yet implemented")
-    }
+    override fun getNote(noteId: String): Flow<NoteWithDoodleAndImage> =
+        notesDao.getNoteById(noteId)
 
     override suspend fun delete(noteId: String) {
-        TODO("Not yet implemented")
+        notesDao.deleteNote(noteId)
+        doodleDao.deleteDoodleByNote(noteId)
+        imageDao.deleteImageByNote(noteId)
     }
 
     override fun observeNotes() = notesDao.getAllNotesByFolderId(DEFAULT)

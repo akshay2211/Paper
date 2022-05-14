@@ -25,11 +25,9 @@ import kotlinx.coroutines.flow.Flow
  */
 interface NotesRepository {
 
-    suspend fun create(note: Note): Note
+    suspend fun create(note: Note)
 
-    fun getAllNotesByFolderId(folderId: String): Flow<List<Note>>
-
-    fun getNote(noteId: String): Flow<Note>
+    fun getNote(noteId: String): Flow<NoteWithDoodleAndImage>
 
     suspend fun delete(noteId: String)
 
