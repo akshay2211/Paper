@@ -21,13 +21,16 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
 import io.ak1.paper.data.repositories.doodles.DoodlesRepository
 import io.ak1.paper.data.repositories.local.LocalRepository
+import io.ak1.paper.data.repositories.notes.NotesRepository
 import io.ak1.paper.models.Doodle
-import kotlinx.coroutines.Dispatchers
+import io.ak1.paper.models.Note
+import io.ak1.paper.ui.screens.home.DEFAULT
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.*
 
 /**
  * Created by akshay on 15/05/22
@@ -40,6 +43,7 @@ data class DoodleUiState(
 )
 
 class DoodleViewModel(
+    private val notesRepository: NotesRepository,
     private val doodlesRepository: DoodlesRepository,
     private val localRepository: LocalRepository
 ) : ViewModel() {
@@ -51,12 +55,12 @@ class DoodleViewModel(
 
         viewModelScope.launch {
             localRepository.currentDoodleId.collect { doodleId ->
-               with(Dispatchers.Default){
-                    val doodle = doodlesRepository.getDoodleById(doodleId)
-                        ?: Doodle(localRepository.currentNote.value.note.noteId, "", "")
-                   Log.e("hello", "->>   ${GsonBuilder().create().toJson(doodle)}")
-                   _uiState.update { it.copy(doodle = doodle) }
-                }
+                val note = notesRepository.getNote(localRepository.currentNote.value)
+                val noteId = note?.note?.noteId ?: UUID.randomUUID().toString()
+                val doodle = doodlesRepository.getDoodleById(doodleId)
+                    ?: Doodle(noteId, "", "")
+                Log.e("hello", "->>   ${GsonBuilder().create().toJson(doodle)}")
+                _uiState.update { it.copy(doodle = doodle) }
             }
 
         }
@@ -64,6 +68,12 @@ class DoodleViewModel(
 
     fun saveDoodle(doodle: Doodle) {
         viewModelScope.launch {
+            val note = notesRepository.getNote(doodle.attachedNoteId)
+            if (note == null) {
+                val newNote = Note(DEFAULT, "").apply { noteId = doodle.attachedNoteId }
+                notesRepository.create(newNote)
+                localRepository.saveCurrentNote(newNote.noteId)
+            }
             doodlesRepository.create(doodle)
         }
     }

@@ -27,7 +27,7 @@ import org.koin.androidx.compose.inject
  * Created by akshay on 27/11/21
  * https://ak1.io
  */
-
+val fabShape = RoundedCornerShape(30)
 @Composable
 fun HomeScreen(scrollState: LazyListState, navigateTo: (String) -> Unit) {
     val homeViewModel by inject<HomeViewModel>()
@@ -35,10 +35,10 @@ fun HomeScreen(scrollState: LazyListState, navigateTo: (String) -> Unit) {
 
     LocalTextInputService.current?.hideSoftwareKeyboard()
     HomeScreen(uiState, scrollState, {
-        homeViewModel.saveCurrentNote(it)
+        homeViewModel.saveCurrentNote(it.note.noteId)
         navigateTo(Destinations.NOTE_ROUTE)
     }, {
-        homeViewModel.saveCurrentNote(null)
+        homeViewModel.saveCurrentNote()
         navigateTo(Destinations.NOTE_ROUTE)
     },navigateTo)
 }
@@ -51,7 +51,7 @@ fun HomeScreen(
     openNewNote: () -> Unit,
     navigateTo: (String) -> Unit
 ) {
-    val fabShape = RoundedCornerShape(30)
+
     Scaffold(
         modifier = Modifier
             .navigationBarsPadding(),

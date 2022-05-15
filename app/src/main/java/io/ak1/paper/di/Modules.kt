@@ -26,7 +26,7 @@ var databaseModule = module {
 var viewModel = module {
     viewModel { HomeViewModel(get(), get(), get(), get()) }
     viewModel { NoteViewModel(get(), get()) }
-    viewModel { DoodleViewModel(get(), get()) }
+    viewModel { DoodleViewModel(get(), get(), get()) }
 }
 var repositories = module {
     single { getLocalRepository() }

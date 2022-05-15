@@ -72,7 +72,7 @@ interface NoteDao {
     suspend fun insert(note: Note)
 
     @Query("SELECT * FROM notes_table WHERE noteId = :id")
-    fun getNoteById(id: String): Flow<NoteWithDoodleAndImage>
+    suspend fun getNoteById(id: String): NoteWithDoodleAndImage?
 
     @Query("SELECT * FROM notes_table ORDER BY updatedOn DESC")
     fun getAllNotes(): List<Note>

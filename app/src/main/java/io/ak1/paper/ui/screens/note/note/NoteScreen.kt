@@ -1,5 +1,6 @@
 package io.ak1.paper.ui.screens.note.note
 
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -8,7 +9,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -38,6 +38,7 @@ import io.ak1.paper.models.NoteWithDoodleAndImage
 import io.ak1.paper.ui.component.CustomAlertDialog
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.Destinations
+import io.ak1.paper.ui.screens.home.fabShape
 import io.ak1.paper.ui.utils.convert
 import io.ak1.paper.ui.utils.timeAgoInSeconds
 import org.koin.androidx.compose.inject
@@ -64,6 +65,7 @@ fun NoteScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
         }
     }
     fun saveAndExit(note: NoteWithDoodleAndImage) {
+        Log.e("saveAndExit", "${note.note.noteId}   --${note.note.description}--")
         if (note.note.description != description.value.text.trim()
         ) {
             note.note.description = description.value.text.trim()
@@ -97,6 +99,7 @@ fun NoteScreen(
     backPress: () -> Unit,
     navigateTo: (String) -> Unit
 ) {
+    Log.e("NoteScreen", "${uiState.note.note.noteId}   --${uiState.note.note.description}--")
     val focusRequester = remember { FocusRequester() }
     val inputService = LocalTextInputService.current
     val focus = remember { mutableStateOf(false) }
@@ -126,7 +129,6 @@ fun NoteScreen(
             NotesBottomBar(uiState.note.note) {
                 inputService?.hideSoftwareKeyboard()
                 //  focusRequester.freeFocus()
-                save.invoke()
                 navigateTo(Destinations.OPTIONS_ROUTE)
             }
         },
@@ -145,13 +147,13 @@ fun NoteScreen(
                                     bitmap = it.asImageBitmap(),
                                     contentDescription = "hi",
                                     modifier = Modifier
-                                        .size(70.dp)
+                                        .size(170.dp)
                                         .padding(5.dp)
-                                        .clip(CircleShape)
+                                        .clip(fabShape)
                                         .border(
-                                            1.dp,
+                                            0.5.dp,
                                             MaterialTheme.colors.primary,
-                                            CircleShape
+                                            fabShape
                                         )
                                         .clickable {
                                             saveDoodleId(doodle.doodleid)

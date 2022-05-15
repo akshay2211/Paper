@@ -38,8 +38,7 @@ class NotesRepositoryImpl(
         notesDao.insert(note = note)
     }
 
-    override fun getNote(noteId: String): Flow<NoteWithDoodleAndImage> =
-        notesDao.getNoteById(noteId)
+    override suspend fun getNote(noteId: String) = notesDao.getNoteById(noteId)
 
     override suspend fun delete(noteId: String) {
         notesDao.deleteNote(noteId)

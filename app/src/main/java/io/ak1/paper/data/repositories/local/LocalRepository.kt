@@ -25,8 +25,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
  * https://ak1.io
  */
 interface LocalRepository {
-    suspend fun saveCurrentNote(currentNote: NoteWithDoodleAndImage)
-    val currentNote : MutableStateFlow<NoteWithDoodleAndImage>
+    suspend fun saveCurrentNote(currentNote: String)
+    val currentNote : MutableStateFlow<String>
 
     suspend fun saveCurrentDoodleId(currentDoodleId: String)
     val currentDoodleId : MutableStateFlow<String>

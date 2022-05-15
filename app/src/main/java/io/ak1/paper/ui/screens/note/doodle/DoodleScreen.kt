@@ -179,7 +179,10 @@ private fun DoodleScreen(
         }
     }
     BackHandler(enabled = true) {
-        drawController.saveBitmap()
+        if (drawController.exportPath().isNotEmpty())
+            drawController.saveBitmap()
+        else
+            backPress.invoke()
     }
 
 }

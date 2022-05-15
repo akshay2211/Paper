@@ -16,8 +16,6 @@
 package io.ak1.paper.data.repositories.local.impl
 
 import io.ak1.paper.data.repositories.local.LocalRepository
-import io.ak1.paper.models.NoteWithDoodleAndImage
-import io.ak1.paper.ui.screens.note.note.getEmptyNote
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.*
 
@@ -29,8 +27,8 @@ import java.util.*
 
 class LocalRepositoryImpl : LocalRepository {
 
-    override val currentNote = MutableStateFlow(getEmptyNote())
-    override suspend fun saveCurrentNote(currentNote: NoteWithDoodleAndImage) {
+    override val currentNote = MutableStateFlow("")
+    override suspend fun saveCurrentNote(currentNote: String) {
         this.currentNote.emit(currentNote)
     }
 
