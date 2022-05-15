@@ -3,6 +3,8 @@ package io.ak1.paper.di
 import android.content.Context
 import androidx.room.Room
 import io.ak1.paper.data.local.*
+import io.ak1.paper.data.repositories.doodles.DoodlesRepository
+import io.ak1.paper.data.repositories.doodles.impl.DoodlesRepositoryImpl
 import io.ak1.paper.data.repositories.local.LocalRepository
 import io.ak1.paper.data.repositories.local.impl.LocalRepositoryImpl
 import io.ak1.paper.data.repositories.notes.NotesRepository
@@ -37,5 +39,7 @@ fun getNotesRepository(
     doodleDao: DoodleDao,
     imageDao: ImageDao
 ): NotesRepository = NotesRepositoryImpl(notesDao, doodleDao, imageDao)
+
+fun getDoodleRepository(doodleDao: DoodleDao): DoodlesRepository = DoodlesRepositoryImpl(doodleDao)
 
 fun getLocalRepository(): LocalRepository = LocalRepositoryImpl()

@@ -46,16 +46,6 @@ fun NotesListComponent(
 ) {
     val modifier = Modifier.padding(padding).padding(12.dp, 0.dp)
     LazyColumn(modifier = modifier.limitWidthInWideScreen(), state = scrollState) {
-        if (includeHeader) {
-            item {
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(10.dp)
-                )
-            }
-        }
-
         itemsIndexed(resultList) { index, element ->
             NoteView(element) {
                 callback(it)

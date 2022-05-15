@@ -27,9 +27,11 @@ interface NotesRepository {
 
     suspend fun create(note: Note)
 
-    fun getNote(noteId: String): Flow<NoteWithDoodleAndImage>
+    suspend fun getNote(noteId: String): NoteWithDoodleAndImage?
 
     suspend fun delete(noteId: String)
 
     fun observeNotes(): Flow<List<NoteWithDoodleAndImage>>
+
+    fun getNoteByFlow(noteId: String): Flow<NoteWithDoodleAndImage?>
 }

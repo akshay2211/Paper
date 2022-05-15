@@ -13,29 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ak1.paper.data.repositories.local.impl
+package io.ak1.paper.data.repositories.doodles
 
-import io.ak1.paper.data.repositories.local.LocalRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import java.util.*
+import io.ak1.paper.models.Doodle
 
 /**
- * Created by akshay on 10/05/22
+ * Created by akshay on 15/05/22
  * https://ak1.io
  */
-
-
-class LocalRepositoryImpl : LocalRepository {
-
-    override val currentNote = MutableStateFlow("")
-    override suspend fun saveCurrentNote(currentNote: String) {
-        this.currentNote.emit(currentNote)
-    }
-
-    override val currentDoodleId = MutableStateFlow(UUID.randomUUID().toString())
-    override suspend fun saveCurrentDoodleId(currentDoodleId: String) {
-        this.currentDoodleId.emit(currentDoodleId)
-    }
-
-
+interface DoodlesRepository {
+    suspend fun create(doodle: Doodle)
+    suspend fun getDoodleById(doodleId: String): Doodle?
+    suspend fun deleteDoodleById(doodleId: String)
+    suspend fun deleteDoodleByNoteId(noteId: String)
 }

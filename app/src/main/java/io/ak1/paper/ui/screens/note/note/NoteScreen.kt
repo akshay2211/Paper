@@ -1,15 +1,14 @@
 package io.ak1.paper.ui.screens.note.note
 
-import android.os.Handler
-import android.os.Looper
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -24,8 +23,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalTextInputService
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -34,260 +31,237 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import io.ak1.paper.R
-import io.ak1.paper.models.Doodle
-import io.ak1.paper.models.Image
+import io.ak1.paper.models.Note
 import io.ak1.paper.models.NoteWithDoodleAndImage
 import io.ak1.paper.ui.component.CustomAlertDialog
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.Destinations
-import io.ak1.paper.ui.screens.home.HomeViewModel
+import io.ak1.paper.ui.screens.home.fabShape
 import io.ak1.paper.ui.utils.convert
 import io.ak1.paper.ui.utils.timeAgoInSeconds
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.inject
 
 /**
- * Created by akshay on 27/11/21
+ * Created by akshay on 23/02/22
  * https://ak1.io
  */
+
+@OptIn(ExperimentalMaterialNavigationApi::class)
+@Composable
+fun NoteScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
+    val noteViewModel by inject<NoteViewModel>()
+    val uiState by noteViewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    val description = remember { mutableStateOf(TextFieldValue()) }
+
+    LaunchedEffect(uiState) {
+        uiState.note.let {
+            description.value = TextFieldValue(
+                annotatedString = AnnotatedString(it.note.description),
+                TextRange(it.note.description.length)
+            )
+        }
+    }
+    fun saveAndExit(note: NoteWithDoodleAndImage) {
+        Log.e("saveAndExit", "${note.note.noteId}   --${note.note.description}--")
+        if (note.note.description != description.value.text.trim()
+        ) {
+            note.note.description = description.value.text.trim()
+            noteViewModel.saveNote(note.note)
+        }
+        if (description.value.text.isEmpty() && note.doodleList.isEmpty() && note.imageList.isEmpty()) {
+            noteViewModel.deleteNote(note.note)
+        }
+    }
+
+    NoteScreen(
+        uiState, description, { saveAndExit(uiState.note) },
+        {   //delete
+            noteViewModel.deleteNote(uiState.note.note)
+            Toast.makeText(context, R.string.note_removed, Toast.LENGTH_LONG).show()
+            backPress.invoke()
+        }, {
+            noteViewModel.saveCurrentDoodleId(it)
+        }, backPress, navigateTo
+    )
+
+}
+
 @Composable
 fun NoteScreen(
-    navController: NavController,
-    innerNavController: NavHostController,
-    note: MutableState<NoteWithDoodleAndImage>
+    uiState: NoteUiState,
+    description: MutableState<TextFieldValue>,
+    save: () -> Unit,
+    delete: () -> Unit,
+    saveDoodleId: (id: String) -> Unit,
+    backPress: () -> Unit,
+    navigateTo: (String) -> Unit
 ) {
-    val context = LocalContext.current
+    Log.e("NoteScreen", "${uiState.note.note.noteId}   --${uiState.note.note.description}--")
     val focusRequester = remember { FocusRequester() }
     val inputService = LocalTextInputService.current
     val focus = remember { mutableStateOf(false) }
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
-    val homeViewModel = getViewModel<HomeViewModel>()
-
-    val noteFont: TextStyle = TextStyle(
+    val noteFont = TextStyle(
         fontWeight = FontWeight.Thin,
         color = MaterialTheme.colors.primary,
         fontSize = 20.sp,
         letterSpacing = 0.10.sp
     )
 
-    val description = remember {
-        mutableStateOf(TextFieldValue())
-    }
-    val doodles = remember {
-        mutableStateOf(ArrayList<Doodle>())
-    }
-    val images = remember {
-        mutableStateOf(ArrayList<Image>())
-    }
-    val localNote = remember {
-        mutableStateOf(homeViewModel.emptyNote)
+    BackHandler(enabled = true) {
+        save.invoke()
+        backPress.invoke()
     }
 
-    LaunchedEffect(note.value) {
-        note.value.let {
-            localNote.value = it
-            description.value = TextFieldValue(
-                annotatedString = AnnotatedString(it.note.description),
-                TextRange(it.note.description.length)
-            )
-            if (it.doodleList.isNotEmpty()) {
-                doodles.value.apply {
-                    clear()
-                    addAll(it.doodleList)
-                }
-            }
-            if (it.imageList.isNotEmpty()) {
-                images.value.apply {
-                    clear()
-                    addAll(it.imageList)
-                }
-            }
-        }
-        //inputService?.showSoftwareKeyboard()
-        //focusRequester.requestFocus()
-    }
-
-
-    fun saveAndExit() {
-        if (note.value.note.description != description.value.text.trim() || doodles.value.isNotEmpty() || images.value.isNotEmpty()) {
-            note.value.note.description = description.value.text.trim()
-
-            homeViewModel.saveDoodle(doodles.value, note.value.note.noteId)
-            if (images.value.isNotEmpty()) {
-                val newImages = images.value.map {
-                    it.attachedNoteId = note.value.note.noteId
-                    it
-                }.toTypedArray()
-                homeViewModel.saveImage(*newImages)
-            }
-            homeViewModel.saveNote(note.value.note)
-        }
-        if (note.value.note.description.isEmpty() && doodles.value.isEmpty() && images.value.isEmpty()) {
-            homeViewModel.deleteNote(note.value.note)
-        }
-        navController.navigateUp()
-    }
-
-
-
-    Scaffold(modifier = Modifier
-        .statusBarsPadding(),
+    Scaffold(
+        modifier = Modifier.statusBarsPadding(),
         topBar = {
-            TopAppBar(
-                title = {},
-                navigationIcon = {
-                    PaperIconButton(id = R.drawable.ic_back) {
-                        navController.navigateUp()
-                    }
-                },
-                actions = {
-                    PaperIconButton(
-                        id = R.drawable.ic_check,
-                        tint = if (description.value.text.trim()
-                                .isEmpty()
-                        ) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary
-                    ) {
-                        saveAndExit()
-                        // navController.navigateUp()
-                    }
-                    PaperIconButton(
-                        id = R.drawable.ic_trash,
-                        tint = if (description.value.text.trim()
-                                .isEmpty()
-                        ) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary
-                    ) {
-                        if (note.value != null) {
-                            setShowDialog(true)
-                        }
-                    }
-                },
-                backgroundColor = MaterialTheme.colors.background,
-                elevation = 0.dp
-            )
-        }, bottomBar = {
-            Column(
-                Modifier
-                    .navigationBarsPadding()
-                    .imePadding()
-            ) {
-
+            NotesTopBar({ backPress.invoke() }, {
+                inputService?.hideSoftwareKeyboard()
+                save.invoke()
+                backPress.invoke()
+            }, { setShowDialog(true) })
+        },
+        bottomBar = {
+            NotesBottomBar(uiState.note.note) {
+                inputService?.hideSoftwareKeyboard()
+                //  focusRequester.freeFocus()
+                navigateTo(Destinations.OPTIONS_ROUTE)
             }
-        }) { paddingValues ->
-        val paddingBottom = paddingValues.calculateBottomPadding()
-        val padding = if (paddingBottom > 46.dp) paddingBottom - 46.dp else paddingBottom
-        Column(
-            modifier = Modifier
-                .padding(0.dp, 0.dp, 0.dp, padding)
-                .fillMaxSize()
-        ) {
-            if (note.value.doodleList.isNotEmpty()) {
-                LazyRow(modifier = Modifier.padding(5.dp, 15.dp)) {
-                    items(note.value.doodleList) { doodle ->
-                        doodle.base64Text.convert()?.let {
-                            androidx.compose.foundation.Image(
-                                bitmap = it.asImageBitmap(),
-                                contentDescription = "hi",
-                                modifier = Modifier
-                                    .size(70.dp)
-                                    .padding(5.dp)
-                                    .clip(CircleShape)
-                                    .border(
-                                        1.dp,
-                                        MaterialTheme.colors.primary,
-                                        CircleShape
-                                    )
-                                    .clickable {
-                                        innerNavController.navigate("${Destinations.DOODLE_ROUTE}/${doodle.doodleid}")
-                                    },
-                                contentScale = ContentScale.Crop
-                            )
-                        }
+        },
+        content = { paddingValues ->
+            val pv = paddingValues.calculateBottomPadding()
+            Column(
+                modifier = Modifier
+                    .padding(0.dp, 0.dp, 0.dp, if (pv > 45.dp) pv - 45.dp else pv)
+                    .fillMaxSize()
+            ) {
+                if (uiState.note.doodleList.isNotEmpty()) {
+                    LazyRow(modifier = Modifier.padding(5.dp, 15.dp)) {
+                        items(uiState.note.doodleList) { doodle ->
+                            doodle.base64Text.convert()?.let {
+                                Image(
+                                    bitmap = it.asImageBitmap(),
+                                    contentDescription = "hi",
+                                    modifier = Modifier
+                                        .size(100.dp)
+                                        .padding(5.dp)
+                                        .clip(fabShape)
+                                        .border(
+                                            0.5.dp,
+                                            MaterialTheme.colors.primary,
+                                            fabShape
+                                        )
+                                        .clickable {
+                                            saveDoodleId(doodle.doodleid)
+                                            navigateTo(Destinations.DOODLE_ROUTE)
+                                        },
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
 
+                        }
                     }
                 }
-            }
-            BasicTextField(
-                value = description.value,
-                onValueChange = { tx ->
-                    description.value = tx
-                },
-                textStyle = noteFont,
-                cursorBrush = SolidColor(MaterialTheme.colors.primary),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f, true)
-                    .padding(14.dp, 3.dp, 14.dp, 50.dp)
-                    .focusRequester(focusRequester)
-                    .onFocusChanged { focusState ->
-                        if (focus.value != focusState.isFocused) {
-                            focus.value = focusState.isFocused
-                            if (!focusState.isFocused && !showDialog) {
-                                inputService?.hideSoftwareKeyboard()
-                                saveAndExit()
+                BasicTextField(
+                    value = description.value,
+                    onValueChange = { tx ->
+                        description.value = tx
+                    },
+                    textStyle = noteFont,
+                    cursorBrush = SolidColor(MaterialTheme.colors.primary),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f, true)
+                        .padding(14.dp, 3.dp, 14.dp, 50.dp)
+                        .focusRequester(focusRequester)
+                        .onFocusChanged { focusState ->
+                            if (focus.value != focusState.isFocused) {
+                                focus.value = focusState.isFocused
+                                if (!focusState.isFocused && !showDialog) {
+                                    inputService?.hideSoftwareKeyboard()
+                                }
                             }
                         }
-                    }
-            )
-        }
-    }
-
+                )
+            }
+        })
     CustomAlertDialog(
         titleId = R.string.deletion_confirmation,
         showDialog = showDialog,
         setShowDialog = setShowDialog
-    ) {
-        navController.navigateUp()
-        homeViewModel.deleteNote(note.value.note)
-        Toast.makeText(context, R.string.note_removed, Toast.LENGTH_LONG).show()
-    }
+    ) { delete.invoke() }
 }
-
-data class Menu(val iconId: Int, val stringId: Int)
 
 @Composable
-fun AddMoreScreen(navHostController: NavHostController, nodeId: String? = null) {
-
-    val context = LocalContext.current
-    var list = listOf(
-        Menu(R.drawable.ic_more, R.string.take_photo),
-        Menu(R.drawable.ic_search, R.string.add_image),
-        Menu(R.drawable.ic_feather, R.string.add_doodle),
-    )
-    LazyColumn {
-        items(list) { it ->
-            IconButton(
-                onClick = {
-                    if (it.iconId == R.drawable.ic_feather) {
-                        navHostController.navigateUp()
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            navHostController.navigate(Destinations.DOODLE_ROUTE)
-                        }, 100L)
-
-                    } else {
-                        Toast.makeText(context, "Coming soon", Toast.LENGTH_LONG).show()
-                    }
-                }
-            ) {
-                Row {
-
-                    Icon(
-                        painterResource(id = it.iconId),
-                        contentDescription = stringResource(id = it.stringId),
-                        tint = MaterialTheme.colors.primary,
-                        modifier = Modifier.padding(10.dp, 3.dp)
-                    )
-                    Text(
-                        text = stringResource(id = it.stringId),
-                        color = MaterialTheme.colors.primary,
-                        modifier = Modifier
-                            .weight(1f, true)
-                            .padding(10.dp, 3.dp)
-                    )
-                }
-
+fun NotesTopBar(backPress: () -> Unit, save: () -> Unit, showDialog: () -> Unit) {
+    TopAppBar(
+        title = {},
+        navigationIcon = {
+            PaperIconButton(id = R.drawable.ic_back) {
+                backPress.invoke()
             }
-        }
+        },
+        actions = {
+            PaperIconButton(
+                id = R.drawable.ic_check,
+                /*   tint = if (description.value.text.trim()
+                           .isEmpty()
+                   ) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary*/
+            ) {
+                save.invoke()
+            }
+            PaperIconButton(
+                id = R.drawable.ic_trash,
+                /*tint = if (description.value.text.trim()
+                        .isEmpty()
+                ) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary*/
+            ) {
+                showDialog.invoke()
+                /*if (note != null) {
+                    setShowDialog(true)
+                }*/
+            }
+        },
+        backgroundColor = MaterialTheme.colors.background,
+        elevation = 0.dp
+    )
+}
+
+
+@Composable
+fun NotesBottomBar(note: Note, onClick: () -> Unit) {
+    Column(
+        Modifier
+            .navigationBarsPadding()
+            .imePadding()
+    ) {
+        BottomAppBar(
+            modifier = Modifier.height(46.dp),
+            backgroundColor = MaterialTheme.colors.background,
+            contentPadding = PaddingValues(4.dp, 4.dp),
+            content = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    PaperIconButton(id = R.drawable.ic_feather, onClick = onClick)
+                    note.updatedOn.timeAgoInSeconds().let {
+                        Text(
+                            text = "Last updated $it",
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.overline
+                        )
+                    }
+
+                }
+            }
+        )
     }
 }
+
+
+

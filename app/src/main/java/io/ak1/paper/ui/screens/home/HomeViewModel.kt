@@ -51,19 +51,22 @@ class HomeViewModel(
         }
     }
 
-    val currentNote = localRepository.currentNote
-    fun saveCurrentNote(currentNote: NoteWithDoodleAndImage?) {
+    fun saveCurrentNote(currentNoteId: String) {
         viewModelScope.launch {
-            localRepository.saveCurrentNote(currentNote ?: emptyNote)
+            localRepository.saveCurrentNote(currentNoteId)
         }
     }
+    fun saveCurrentNote() {
+        viewModelScope.launch {
+            localRepository.saveCurrentNote()
+        }
+    }
+
 
 
     val noteDao = db.noteDao()
     val doodleDao = db.doodleDao()
     val imageDao = db.imageDao()
-    val emptyNote = NoteWithDoodleAndImage(Note(DEFAULT, ""), ArrayList(), ArrayList())
-
 
     private suspend fun getNotesCount() = noteDao.getNotesCountByFolderId(DEFAULT)
 
@@ -99,8 +102,6 @@ class HomeViewModel(
     }
 
 
-    fun getNote(it: String?) = it?.let { noteDao.getNoteById(it) }
-
     fun saveNote(note: Note) = viewModelScope.launch {
         noteDao.insert(note = note)
     }
@@ -134,23 +135,4 @@ class HomeViewModel(
     }
 
 
-    fun deleteNote(value: Note?) {
-        value?.let {
-            viewModelScope.launch {
-                noteDao.deleteNote(it.noteId)
-                doodleDao.deleteDoodleByNote(it.noteId)
-                imageDao.deleteImageByNote(it.noteId)
-            }
-        }
-    }
-
-    fun deleteDoodle(value: Doodle?) {
-        value?.let {
-            viewModelScope.launch {
-                doodleDao.deleteDoodle(value.doodleid)
-            }
-        }
-    }
-
-    fun getDoodle(id: String) = id.let { doodleDao.getDoodleById(it) }
 }

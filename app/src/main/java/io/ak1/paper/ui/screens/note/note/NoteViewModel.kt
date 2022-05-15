@@ -1,4 +1,4 @@
-package io.ak1.paper.ui.screens.note
+package io.ak1.paper.ui.screens.note.note
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,7 +24,10 @@ data class NoteUiState(
     val loading: Boolean = false
 )
 
-fun getEmptyNote() = NoteWithDoodleAndImage(Note(DEFAULT, ""), ArrayList(), ArrayList())
+fun getEmptyNote(id: String? = null) = NoteWithDoodleAndImage(Note(DEFAULT, "").apply {
+    if (id != null) this.noteId = id
+}, ArrayList(), ArrayList())
+
 
 class NoteViewModel(
     private val notesRepository: NotesRepository,
@@ -37,8 +40,11 @@ class NoteViewModel(
 
     init {
         viewModelScope.launch {
-            localRepository.currentNote.collect { note ->
-                _uiState.update { it.copy(note = note) }
+            localRepository.currentNote.collect { id ->
+                notesRepository.getNoteByFlow(id).collect { note ->
+                    val newNote = note ?: getEmptyNote(localRepository.currentNote.value)
+                    _uiState.update { it.copy(note = newNote) }
+                }
             }
         }
     }
@@ -52,10 +58,16 @@ class NoteViewModel(
 
     }
 
+    fun saveCurrentDoodleId(currentDoodleId: String) {
+        viewModelScope.launch {
+            localRepository.saveCurrentDoodleId(currentDoodleId)
+        }
+    }
+
     fun deleteNote(note: Note) {
         viewModelScope.launch {
             notesRepository.delete(note.noteId)
-            localRepository.saveCurrentNote(getEmptyNote())
+            localRepository.saveCurrentNote()
         }
     }
 
