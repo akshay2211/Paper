@@ -12,6 +12,7 @@ import io.ak1.paper.models.Doodle
 import io.ak1.paper.models.Image
 import io.ak1.paper.models.Note
 import io.ak1.paper.models.NoteWithDoodleAndImage
+import io.ak1.paper.ui.screens.note.getEmptyNote
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -51,10 +52,9 @@ class HomeViewModel(
         }
     }
 
-    val currentNote = localRepository.currentNote
     fun saveCurrentNote(currentNote: NoteWithDoodleAndImage?) {
         viewModelScope.launch {
-            localRepository.saveCurrentNote(currentNote ?: emptyNote)
+            localRepository.saveCurrentNote(currentNote ?: getEmptyNote())
         }
     }
 
@@ -62,8 +62,6 @@ class HomeViewModel(
     val noteDao = db.noteDao()
     val doodleDao = db.doodleDao()
     val imageDao = db.imageDao()
-    val emptyNote = NoteWithDoodleAndImage(Note(DEFAULT, ""), ArrayList(), ArrayList())
-
 
     private suspend fun getNotesCount() = noteDao.getNotesCountByFolderId(DEFAULT)
 
