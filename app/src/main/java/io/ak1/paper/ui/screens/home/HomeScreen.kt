@@ -1,75 +1,82 @@
 package io.ak1.paper.ui.screens.home
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Scaffold
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavController
+import androidx.compose.ui.unit.dp
 import io.ak1.paper.R
-import io.ak1.paper.ui.component.CollapsibleTopBar
-import io.ak1.paper.ui.component.CollapsibleTopBarState
+import io.ak1.paper.models.NoteWithDoodleAndImage
 import io.ak1.paper.ui.component.NotesListComponent
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.Destinations
-import org.koin.java.KoinJavaComponent.inject
+import org.koin.androidx.compose.inject
 
 /**
  * Created by akshay on 27/11/21
  * https://ak1.io
  */
+val fabShape = RoundedCornerShape(30)
+@Composable
+fun HomeScreen(scrollState: LazyListState, navigateTo: (String) -> Unit) {
+    val homeViewModel by inject<HomeViewModel>()
+    val uiState by homeViewModel.uiState.collectAsState()
+
+    LocalTextInputService.current?.hideSoftwareKeyboard()
+    HomeScreen(uiState, scrollState, {
+        homeViewModel.saveCurrentNote(it.note.noteId)
+        navigateTo(Destinations.NOTE_ROUTE)
+    }, {
+        homeViewModel.saveCurrentNote()
+        navigateTo(Destinations.NOTE_ROUTE)
+    },navigateTo)
+}
 
 @Composable
-fun HomeScreen(navController: NavController) {
-    val homeViewModel by inject<HomeViewModel>(HomeViewModel::class.java)
-    val resultList = homeViewModel.getAllDefaultNotes().observeAsState(initial = listOf())
-    val scrollState = rememberLazyListState()
-    LaunchedEffect(resultList.value) {
-        homeViewModel.insertDefaultData()
-    }
-    var currentState = remember { mutableStateOf(CollapsibleTopBarState.Expanded) }
+fun HomeScreen(
+    uiState: HomeUiState,
+    scrollState: LazyListState,
+    saveNote: (NoteWithDoodleAndImage) -> Unit,
+    openNewNote: () -> Unit,
+    navigateTo: (String) -> Unit
+) {
 
-    LaunchedEffect(scrollState.firstVisibleItemIndex) {
-        if (scrollState.firstVisibleItemIndex == 0) {
-            currentState.value = CollapsibleTopBarState.Expanded
-        } else if (currentState.value == CollapsibleTopBarState.Expanded) {
-            currentState.value = CollapsibleTopBarState.Collapsed
-        }
-    }
-
-    val fabShape = RoundedCornerShape(30)
     Scaffold(
+        modifier = Modifier
+            .navigationBarsPadding(),
         topBar = {
-            CollapsibleTopBar(collapsibleTopBarState = currentState.value) {
-                PaperIconButton(id = R.drawable.ic_search, onClick = {
-                    navController.navigate(Destinations.SEARCH_ROUTE)
-                })
-                PaperIconButton(id = R.drawable.ic_more, onClick = {
-                    navController.navigate(Destinations.SETTING_ROUTE)
-                })
-            }
+            TopAppBar(modifier = Modifier.statusBarsPadding(),
+                title = { Text(text = stringResource(id = R.string.app_name)) },
+                actions = {
+                    PaperIconButton(
+                        id = R.drawable.ic_search,
+                    ) { navigateTo(Destinations.SEARCH_ROUTE) }
+                    PaperIconButton(
+                        id = R.drawable.ic_more,
+                    ) { navigateTo(Destinations.SETTING_ROUTE) }
+                },
+                backgroundColor = MaterialTheme.colors.surface,
+                elevation = 0.dp
+            )
         },
-
-        content = {
-            NotesListComponent(true, resultList, scrollState) {
-                navController.navigate("${Destinations.NOTE_ROUTE}/${it.noteId}")
-            }
+        content = { paddingValues ->
+            NotesListComponent(true, uiState.notes, scrollState, paddingValues, saveNote)
         },
-
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                    navController.navigate(Destinations.NOTE_ROUTE)
-                },
+                modifier = Modifier.navigationBarsPadding(),
+                onClick = openNewNote,
                 shape = fabShape,
             ) {
                 Image(
@@ -81,6 +88,5 @@ fun HomeScreen(navController: NavController) {
                 )
             }
         })
-
 }
 

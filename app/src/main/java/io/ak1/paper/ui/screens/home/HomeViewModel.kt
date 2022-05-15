@@ -6,27 +6,68 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.ak1.paper.R
 import io.ak1.paper.data.local.AppDatabase
+import io.ak1.paper.data.repositories.local.LocalRepository
+import io.ak1.paper.data.repositories.notes.NotesRepository
 import io.ak1.paper.models.Doodle
 import io.ak1.paper.models.Image
 import io.ak1.paper.models.Note
 import io.ak1.paper.models.NoteWithDoodleAndImage
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
  * Created by akshay on 27/11/21
  * https://ak1.io
  */
+data class HomeUiState(
+    val notes: List<NoteWithDoodleAndImage> = emptyList(),
+    val loading: Boolean = false
+)
+
 
 const val DEFAULT = "default"
 
-class HomeViewModel(private val db: AppDatabase, private val context: Context) : ViewModel() {
+class HomeViewModel(
+    private val db: AppDatabase,
+    private val context: Context,
+    private val localRepository: LocalRepository,
+    private val notesRepository: NotesRepository
+) : ViewModel() {
+
+    // UI state exposed to the UI
+    private val _uiState = MutableStateFlow(HomeUiState(loading = true))
+    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
+
+    init {
+        // Observe for Notes changes in the repo layer
+        viewModelScope.launch {
+            notesRepository.observeNotes().collect { notes ->
+                _uiState.update { it.copy(notes = notes) }
+            }
+        }
+    }
+
+    fun saveCurrentNote(currentNoteId: String) {
+        viewModelScope.launch {
+            localRepository.saveCurrentNote(currentNoteId)
+        }
+    }
+    fun saveCurrentNote() {
+        viewModelScope.launch {
+            localRepository.saveCurrentNote()
+        }
+    }
+
+
+
     val noteDao = db.noteDao()
     val doodleDao = db.doodleDao()
     val imageDao = db.imageDao()
-    val emptyNote = NoteWithDoodleAndImage(Note(DEFAULT, ""), ArrayList(), ArrayList())
 
-
-    fun getAllDefaultNotes() = noteDao.getAllNotesByFolderId(DEFAULT)
     private suspend fun getNotesCount() = noteDao.getNotesCountByFolderId(DEFAULT)
 
     fun getAllNotesByDescription(query: String) = if (query.trim().isEmpty()) MutableLiveData(
@@ -61,8 +102,6 @@ class HomeViewModel(private val db: AppDatabase, private val context: Context) :
     }
 
 
-    fun getNote(it: String?) = it?.let { noteDao.getNoteById(it) }
-
     fun saveNote(note: Note) = viewModelScope.launch {
         noteDao.insert(note = note)
     }
@@ -71,28 +110,29 @@ class HomeViewModel(private val db: AppDatabase, private val context: Context) :
         doodleDao.insertAll(doodle = doodle)
     }
 
+    fun saveDoodle(doodles: ArrayList<Doodle>, noteId: String) {
+        if (doodles.isNotEmpty()) {
+            val newDoodles = doodles.map {
+                it.attachedNoteId = noteId
+                it
+            }.toTypedArray()
+            saveDoodle(*newDoodles)
+        }
+    }
+
     fun saveImage(vararg image: Image) = viewModelScope.launch {
         imageDao.insertAll(image = image)
     }
 
-
-    fun deleteNote(value: Note?) {
-        value?.let {
-            viewModelScope.launch {
-                noteDao.deleteNote(it.noteId)
-                doodleDao.deleteDoodleByNote(it.noteId)
-                imageDao.deleteImageByNote(it.noteId)
-            }
+    fun saveImage(images: ArrayList<Image>, noteId: String) {
+        if (images.isNotEmpty()) {
+            val newImages = images.map {
+                it.attachedNoteId = noteId
+                it
+            }.toTypedArray()
+            saveImage(*newImages)
         }
     }
 
-    fun deleteDoodle(value: Doodle?) {
-        value?.let {
-            viewModelScope.launch {
-                doodleDao.deleteDoodle(value.doodleid)
-            }
-        }
-    }
 
-    fun getDoodle(id: String) = id.let { doodleDao.getDoodleById(it) }
 }

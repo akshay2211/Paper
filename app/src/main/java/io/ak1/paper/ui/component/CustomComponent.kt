@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,23 +39,14 @@ import io.ak1.paper.ui.utils.timeAgo
 @Composable
 fun NotesListComponent(
     includeHeader: Boolean = true,
-    resultList: State<List<NoteWithDoodleAndImage>>,
+    resultList: List<NoteWithDoodleAndImage>,
     scrollState: LazyListState = rememberLazyListState(),
-    callback: (Note) -> Unit,
+    padding: PaddingValues,
+    callback: (NoteWithDoodleAndImage) -> Unit,
 ) {
-    val modifier = Modifier.padding(12.dp, 0.dp)
+    val modifier = Modifier.padding(padding).padding(12.dp, 0.dp)
     LazyColumn(modifier = modifier.limitWidthInWideScreen(), state = scrollState) {
-        if (includeHeader) {
-            item {
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(10.dp)
-                )
-            }
-        }
-
-        itemsIndexed(resultList.value) { index, element ->
+        itemsIndexed(resultList) { index, element ->
             NoteView(element) {
                 callback(it)
             }
@@ -68,7 +58,7 @@ fun NotesListComponent(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun NoteView(element: NoteWithDoodleAndImage, callback: (Note) -> Unit) {
+fun NoteView(element: NoteWithDoodleAndImage, callback: (NoteWithDoodleAndImage) -> Unit) {
     val hasDoodle = element.doodleList.isNotEmpty()
     val hasImages = element.imageList.isNotEmpty()
     val hasDescription = element.note.description.trim().isNotBlank()
@@ -76,7 +66,7 @@ fun NoteView(element: NoteWithDoodleAndImage, callback: (Note) -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(0.dp, 5.dp),
-        onClick = { callback(element.note) },
+        onClick = { callback(element) },
     ) {
         Column {
             if (hasDoodle || hasImages) {
