@@ -1,9 +1,8 @@
 package io.ak1.paper.ui.screens.note
 
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -58,7 +57,6 @@ fun NoteContainerScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
     val description = remember { mutableStateOf(TextFieldValue()) }
 
     LaunchedEffect(uiState) {
-        Log.e("note", "note")
         uiState.note.let {
             description.value = TextFieldValue(
                 annotatedString = AnnotatedString(it.note.description),
@@ -67,7 +65,6 @@ fun NoteContainerScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
         }
     }
     fun saveAndExit(note: NoteWithDoodleAndImage) {
-        Log.e("saveAndExit", "${note.note.description != description.value.text.trim()}")
         if (note.note.description != description.value.text.trim()
         ) {
             note.note.description = description.value.text.trim()
@@ -76,7 +73,6 @@ fun NoteContainerScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
         if (description.value.text.isEmpty() && note.doodleList.isEmpty() && note.imageList.isEmpty()) {
             noteViewModel.deleteNote(note.note)
         }
-        backPress.invoke()
     }
 
     NoteScreen(uiState, description,
@@ -92,7 +88,6 @@ fun NoteContainerScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
             backPress.invoke()
         }, backPress, navigateTo
     )
-
 
 }
 
@@ -115,22 +110,27 @@ fun NoteScreen(
         fontSize = 20.sp,
         letterSpacing = 0.10.sp
     )
+
+    BackHandler(enabled = true) {
+        save.invoke()
+        backPress.invoke()
+    }
+
     Scaffold(
         modifier = Modifier.statusBarsPadding(),
         topBar = {
             NotesTopBar({ backPress.invoke() }, {
                 inputService?.hideSoftwareKeyboard()
                 save.invoke()
+                backPress.invoke()
             }, { setShowDialog(true) })
         },
         bottomBar = {
             NotesBottomBar(uiState.note.note) {
                 inputService?.hideSoftwareKeyboard()
-                focusRequester.freeFocus()
-                Handler(Looper.getMainLooper()).postDelayed({
-                    save.invoke()
-                    navigateTo(Destinations.INSERT_ROUTE)
-                }, 100L)
+                //  focusRequester.freeFocus()
+                save.invoke()
+                navigateTo(Destinations.OPTIONS_ROUTE)
             }
         },
         content = { paddingValues ->
@@ -179,21 +179,10 @@ fun NoteScreen(
                         .padding(14.dp, 3.dp, 14.dp, 50.dp)
                         .focusRequester(focusRequester)
                         .onFocusChanged { focusState ->
-
-                            Log.e(
-                                "focus",
-                                "focus.value != focusState.isFocused  ${(focus.value != focusState.isFocused)}"
-                            )
-                            Log.e("focus", "focus.value  ${focus.value}")
-                            Log.e(
-                                "focus",
-                                "!focusState.isFocused && !showDialog ${!focusState.isFocused} && ${!showDialog}"
-                            )
                             if (focus.value != focusState.isFocused) {
                                 focus.value = focusState.isFocused
                                 if (!focusState.isFocused && !showDialog) {
                                     inputService?.hideSoftwareKeyboard()
-                                    save.invoke()
                                 }
                             }
                         }
@@ -224,8 +213,6 @@ fun NotesTopBar(backPress: () -> Unit, save: () -> Unit, showDialog: () -> Unit)
                    ) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary*/
             ) {
                 save.invoke()
-                //saveAndExit(note.value)
-                //navController.navigateUp()
             }
             PaperIconButton(
                 id = R.drawable.ic_trash,
@@ -275,43 +262,6 @@ fun NotesBottomBar(note: Note, onClick: () -> Unit) {
         )
     }
 }
-
-/* val bottomSheetNavigator = rememberBottomSheetNavigator()
- val innerNavController = rememberNavController(bottomSheetNavigator)
- ModalBottomSheetLayout(bottomSheetNavigator) {
-     NavHost(
-         navController = innerNavController,
-         startDestination = Destinations.NOTE_ROUTE
-     ) {
-         composable(Destinations.NOTE_ROUTE) {
-             NoteScreen(navController, innerNavController, localNote)
-         }
-         composable(Destinations.DOODLE_ROUTE) {
-             DoodleScreen(innerNavController, true, localNote.value.note.noteId)
-         }
-         composable(
-             "${Destinations.DOODLE_ROUTE}/{${Destinations.NOTE_KEY}}",
-             arguments = listOf(navArgument(Destinations.NOTE_KEY) {
-                 type = NavType.StringType
-             })
-         ) {
-             val arg = requireNotNull(it.arguments)
-             val doodleId = requireNotNull(arg.getString(Destinations.NOTE_KEY))
-             DoodleScreen(innerNavController, false, doodleId)
-         }
-         bottomSheet(
-             "${Destinations.INSERT_ROUTE}/{${Destinations.NOTE_KEY}}",
-             arguments = listOf(navArgument(Destinations.NOTE_KEY) {
-                 type = NavType.StringType
-             })
-         ) {
-             val arg = requireNotNull(it.arguments)
-             val noteId = arg.getString(Destinations.NOTE_KEY)
-
-             AddMoreScreen(innerNavController, noteId)
-         }
-     }
- }*/
 
 
 
