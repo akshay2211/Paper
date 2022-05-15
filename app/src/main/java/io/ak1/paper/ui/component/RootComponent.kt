@@ -29,8 +29,8 @@ import io.ak1.paper.ui.theme.isSystemInDarkThemeCustom
 fun RootComponent() {
     val isDark = isSystemInDarkThemeCustom()
     val systemUiController = rememberSystemUiController()
-    val darkIcons = MaterialTheme.colors.isLight
     PaperTheme(isDark) {
+        val darkIcons = MaterialTheme.colors.isLight
         SideEffect { systemUiController.setSystemBarsColor(Color.Transparent, darkIcons) }
         Surface(color = MaterialTheme.colors.background) {
             val navController = rememberNavController()
