@@ -44,7 +44,6 @@ fun DoodleScreen(backPress: () -> Unit) {
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState) {
-        Log.e("LaunchedEffect", "${gsonBuilder.toJson(uiState.doodle)}")
         uiState.doodle.let {
             if (it.rawText.isNotEmpty()) {
                 val objList = object : TypeToken<ArrayList<PathWrapper>>() {}.type
@@ -59,8 +58,6 @@ fun DoodleScreen(backPress: () -> Unit) {
                 this.base64Text = base64
                 this.rawText = json
             }
-            Log.e("save", "${gsonBuilder.toJson(uiState.doodle)}")
-            Log.e("save", "${gsonBuilder.toJson(newDoodle)}")
             doodleViewModel.saveDoodle(newDoodle)
             backPress.invoke()
         },
@@ -90,7 +87,6 @@ private fun DoodleScreen(
     delete: () -> Unit,
     backPress: () -> Unit
 ) {
-    Log.e("DoodleScreen", "${gsonBuilder.toJson(doodle)}")
 
     var undoCount = remember { mutableStateOf(0) }
     val redoCount = remember { mutableStateOf(0) }

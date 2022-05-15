@@ -51,11 +51,17 @@ class HomeViewModel(
         }
     }
 
-    fun saveCurrentNote(currentNoteId: String = "") {
+    fun saveCurrentNote(currentNoteId: String) {
         viewModelScope.launch {
             localRepository.saveCurrentNote(currentNoteId)
         }
     }
+    fun saveCurrentNote() {
+        viewModelScope.launch {
+            localRepository.saveCurrentNote()
+        }
+    }
+
 
 
     val noteDao = db.noteDao()

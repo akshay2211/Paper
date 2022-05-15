@@ -32,4 +32,6 @@ interface NotesRepository {
     suspend fun delete(noteId: String)
 
     fun observeNotes(): Flow<List<NoteWithDoodleAndImage>>
+
+    fun getNoteByFlow(noteId: String): Flow<NoteWithDoodleAndImage?>
 }

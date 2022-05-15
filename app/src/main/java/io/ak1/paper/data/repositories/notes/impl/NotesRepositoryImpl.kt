@@ -20,9 +20,7 @@ import io.ak1.paper.data.local.ImageDao
 import io.ak1.paper.data.local.NoteDao
 import io.ak1.paper.data.repositories.notes.NotesRepository
 import io.ak1.paper.models.Note
-import io.ak1.paper.models.NoteWithDoodleAndImage
 import io.ak1.paper.ui.screens.home.DEFAULT
-import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by akshay on 10/05/22
@@ -47,4 +45,6 @@ class NotesRepositoryImpl(
     }
 
     override fun observeNotes() = notesDao.getAllNotesByFolderId(DEFAULT)
+
+    override fun getNoteByFlow(noteId: String) = notesDao.getNoteByIdByFlow(noteId)
 }

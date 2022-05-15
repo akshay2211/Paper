@@ -147,7 +147,7 @@ fun NoteScreen(
                                     bitmap = it.asImageBitmap(),
                                     contentDescription = "hi",
                                     modifier = Modifier
-                                        .size(170.dp)
+                                        .size(100.dp)
                                         .padding(5.dp)
                                         .clip(fabShape)
                                         .border(

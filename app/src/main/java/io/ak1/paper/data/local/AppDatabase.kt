@@ -74,6 +74,9 @@ interface NoteDao {
     @Query("SELECT * FROM notes_table WHERE noteId = :id")
     suspend fun getNoteById(id: String): NoteWithDoodleAndImage?
 
+    @Query("SELECT * FROM notes_table WHERE noteId = :id")
+    fun getNoteByIdByFlow(id: String): Flow<NoteWithDoodleAndImage?>
+
     @Query("SELECT * FROM notes_table ORDER BY updatedOn DESC")
     fun getAllNotes(): List<Note>
 

@@ -15,19 +15,17 @@
  */
 package io.ak1.paper.data.repositories.local
 
-import androidx.lifecycle.MutableLiveData
-import io.ak1.paper.models.Doodle
-import io.ak1.paper.models.NoteWithDoodleAndImage
 import kotlinx.coroutines.flow.MutableStateFlow
+import java.util.*
 
 /**
  * Created by akshay on 14/05/22
  * https://ak1.io
  */
 interface LocalRepository {
-    suspend fun saveCurrentNote(currentNote: String)
-    val currentNote : MutableStateFlow<String>
+    suspend fun saveCurrentNote(currentNote: String = UUID.randomUUID().toString())
+    val currentNote: MutableStateFlow<String>
 
     suspend fun saveCurrentDoodleId(currentDoodleId: String)
-    val currentDoodleId : MutableStateFlow<String>
+    val currentDoodleId: MutableStateFlow<String>
 }
