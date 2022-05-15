@@ -12,7 +12,7 @@ import io.ak1.paper.models.Doodle
 import io.ak1.paper.models.Image
 import io.ak1.paper.models.Note
 import io.ak1.paper.models.NoteWithDoodleAndImage
-import io.ak1.paper.ui.screens.note.getEmptyNote
+import io.ak1.paper.ui.screens.note.note.getEmptyNote
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -132,23 +132,6 @@ class HomeViewModel(
     }
 
 
-    fun deleteNote(value: Note?) {
-        value?.let {
-            viewModelScope.launch {
-                noteDao.deleteNote(it.noteId)
-                doodleDao.deleteDoodleByNote(it.noteId)
-                imageDao.deleteImageByNote(it.noteId)
-            }
-        }
-    }
 
-    fun deleteDoodle(value: Doodle?) {
-        value?.let {
-            viewModelScope.launch {
-                doodleDao.deleteDoodle(value.doodleid)
-            }
-        }
-    }
 
-    fun getDoodle(id: String) = id.let { doodleDao.getDoodleById(it) }
 }

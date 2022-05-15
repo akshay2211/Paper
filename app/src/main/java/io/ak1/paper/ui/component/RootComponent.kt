@@ -17,7 +17,8 @@ import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.home.HomeScreen
-import io.ak1.paper.ui.screens.note.NoteContainerScreen
+import io.ak1.paper.ui.screens.note.doodle.DoodleScreen
+import io.ak1.paper.ui.screens.note.note.NoteScreen
 import io.ak1.paper.ui.screens.note.options.OptionsScreen
 import io.ak1.paper.ui.screens.search.SearchScreen
 import io.ak1.paper.ui.screens.setting.SettingsScreen
@@ -51,12 +52,15 @@ fun RootComponent() {
                         HomeScreen(scrollState) { navController.navigate(it) }
                     }
                     composable(Destinations.NOTE_ROUTE) {
-                        NoteContainerScreen({ navController.navigate(it) })
+                        NoteScreen({ navController.navigate(it) })
                         { navController.navigateUp() }
                     }
                     composable(Destinations.SEARCH_ROUTE) { SearchScreen(navController) }
                     composable(Destinations.SETTING_ROUTE) { SettingsScreen(navController) }
 
+                    composable(Destinations.DOODLE_ROUTE) {
+                        DoodleScreen { navController.navigateUp() }
+                    }
                     bottomSheet(Destinations.OPTIONS_ROUTE) {
                         OptionsScreen({ navController.navigate(it) })
                         { navController.navigateUp() }

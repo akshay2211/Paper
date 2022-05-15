@@ -17,8 +17,9 @@ package io.ak1.paper.data.repositories.local.impl
 
 import io.ak1.paper.data.repositories.local.LocalRepository
 import io.ak1.paper.models.NoteWithDoodleAndImage
-import io.ak1.paper.ui.screens.note.getEmptyNote
+import io.ak1.paper.ui.screens.note.note.getEmptyNote
 import kotlinx.coroutines.flow.MutableStateFlow
+import java.util.*
 
 /**
  * Created by akshay on 10/05/22
@@ -27,9 +28,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 
 class LocalRepositoryImpl : LocalRepository {
+
     override val currentNote = MutableStateFlow(getEmptyNote())
     override suspend fun saveCurrentNote(currentNote: NoteWithDoodleAndImage) {
         this.currentNote.emit(currentNote)
+    }
+
+    override val currentDoodleId = MutableStateFlow(UUID.randomUUID().toString())
+    override suspend fun saveCurrentDoodleId(currentDoodleId: String) {
+        this.currentDoodleId.emit(currentDoodleId)
     }
 
 

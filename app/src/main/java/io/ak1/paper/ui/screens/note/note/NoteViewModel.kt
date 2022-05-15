@@ -1,4 +1,4 @@
-package io.ak1.paper.ui.screens.note
+package io.ak1.paper.ui.screens.note.note
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -50,6 +50,12 @@ class NoteViewModel(
             })
         }
 
+    }
+
+    fun saveCurrentDoodleId(currentDoodleId: String) {
+        viewModelScope.launch {
+            localRepository.saveCurrentDoodleId(currentDoodleId)
+        }
     }
 
     fun deleteNote(note: Note) {

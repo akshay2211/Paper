@@ -42,7 +42,7 @@ interface DoodleDao {
     suspend fun insertAll(vararg doodle: Doodle)
 
     @Query("SELECT * FROM doodle_table WHERE doodleid = :id")
-    fun getDoodleById(id: String): LiveData<Doodle>
+    suspend fun getDoodleById(id: String): Doodle?
 
     @Query("DELETE FROM doodle_table WHERE doodleid = :id")
     suspend fun deleteDoodle(id: String)

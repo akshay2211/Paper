@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ak1.paper.data.repositories.local
+package io.ak1.paper.data.repositories.doodles
 
-import androidx.lifecycle.MutableLiveData
 import io.ak1.paper.models.Doodle
-import io.ak1.paper.models.NoteWithDoodleAndImage
-import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
- * Created by akshay on 14/05/22
+ * Created by akshay on 15/05/22
  * https://ak1.io
  */
-interface LocalRepository {
-    suspend fun saveCurrentNote(currentNote: NoteWithDoodleAndImage)
-    val currentNote : MutableStateFlow<NoteWithDoodleAndImage>
-
-    suspend fun saveCurrentDoodleId(currentDoodleId: String)
-    val currentDoodleId : MutableStateFlow<String>
+interface DoodlesRepository {
+    suspend fun create(doodle: Doodle)
+    suspend fun getDoodleById(doodleId: String): Doodle?
+    suspend fun deleteDoodleById(doodleId: String)
+    suspend fun deleteDoodleByNoteId(noteId: String)
 }

@@ -34,6 +34,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.ak1.paper.R
 import io.ak1.paper.ui.screens.Destinations
+import io.ak1.paper.ui.screens.note.note.NoteViewModel
+import org.koin.androidx.compose.inject
 
 /**
  * Created by akshay on 15/05/22
@@ -42,7 +44,8 @@ import io.ak1.paper.ui.screens.Destinations
 data class Menu(val iconId: Int, val stringId: Int)
 
 @Composable
-fun OptionsScreen( navigateTo: (String) -> Unit,backPress: () -> Unit) {
+fun OptionsScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
+    val noteViewModel by inject<NoteViewModel>()
     val context = LocalContext.current
     var list = listOf(
         Menu(R.drawable.ic_more, R.string.take_photo),
@@ -56,6 +59,7 @@ fun OptionsScreen( navigateTo: (String) -> Unit,backPress: () -> Unit) {
                     if (it.iconId == R.drawable.ic_feather) {
                         backPress.invoke()
                         Handler(Looper.getMainLooper()).postDelayed({
+                            noteViewModel.saveCurrentDoodleId("")
                             navigateTo(Destinations.DOODLE_ROUTE)
                         }, 100L)
                     } else {
