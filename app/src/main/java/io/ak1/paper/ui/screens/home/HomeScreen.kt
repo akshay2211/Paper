@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import io.ak1.paper.R
 import io.ak1.paper.models.NoteWithDoodleAndImage
-import io.ak1.paper.ui.component.HomeHeader
 import io.ak1.paper.ui.component.NotesListComponent
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.Destinations
@@ -69,16 +68,20 @@ fun HomeScreen(
             Spacer(modifier = Modifier.statusBarsPadding())
         },
         content = { paddingValues ->
-            NotesListComponent(true, uiState.notes, scrollState, paddingValues, saveNote)
-            if (scrollState.firstVisibleItemIndex != 0 || (scrollState.firstVisibleItemIndex==0 && scrollState.firstVisibleItemScrollOffset>422)) {
+            NotesListComponent(true, uiState.notes, scrollState, paddingValues, navigateTo, saveNote)
+
+            if (scrollState.firstVisibleItemIndex != 0 || (scrollState.firstVisibleItemIndex == 0 && scrollState.firstVisibleItemScrollOffset > 422)) {
                 Box(
                     modifier = Modifier
-                        .height(50.dp).padding(12.dp,0.dp)
-                        .fillMaxWidth().background(MaterialTheme.colors.background),
+                        .height(50.dp)
+                        .padding(12.dp, 0.dp)
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colors.background),
                 ) {
                     Text(
                         text = stringResource(id = R.string.app_name),
-                        fontSize = TextUnit(20f,
+                        fontSize = TextUnit(
+                            24f,
                             TextUnitType.Sp
                         ),
                         modifier = Modifier
@@ -91,13 +94,13 @@ fun HomeScreen(
                             .align(Alignment.BottomStart),
                         verticalAlignment = Alignment.Bottom,
                         horizontalArrangement = Arrangement.End
-                    ){
+                    ) {
                         PaperIconButton(
                             id = R.drawable.ic_search,
-                        ) { }
+                        ) { navigateTo(Destinations.SEARCH_ROUTE) }
                         PaperIconButton(
                             id = R.drawable.ic_more,
-                        ) { }
+                        ) { navigateTo(Destinations.SETTING_ROUTE) }
                     }
                 }
             }
