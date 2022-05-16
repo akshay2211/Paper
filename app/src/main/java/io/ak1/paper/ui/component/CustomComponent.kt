@@ -1,6 +1,7 @@
 package io.ak1.paper.ui.component
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -20,6 +21,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.ExperimentalUnitApi
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import io.ak1.paper.R
 import io.ak1.paper.models.Note
@@ -36,6 +40,40 @@ import io.ak1.paper.ui.utils.timeAgo
  * https://ak1.io
  */
 
+@OptIn(ExperimentalUnitApi::class)
+@Composable
+fun HomeHeader(scrollState: LazyListState, actions: @Composable RowScope.() -> Unit = {}) {
+    val offset:Float = (scrollState.firstVisibleItemScrollOffset * 100 / (561-44))/100f
+    Log.e(
+        "scrollState",
+        "$offset   ${((30f * offset) + 20f)}  ${scrollState.firstVisibleItemScrollOffset}"
+    )
+    Box(
+        modifier = Modifier
+            .height(200.dp)
+            .fillMaxWidth(),
+    ) {
+        Text(
+            text = stringResource(id = R.string.app_name),
+            fontSize = TextUnit(
+                (30f * (1-offset) + 20f) ,
+                TextUnitType.Sp
+            ),
+            modifier = Modifier
+                .padding(12.dp)
+                .align(Alignment.BottomStart),
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomStart),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.End,
+            content = actions
+        )
+    }
+}
+
 @Composable
 fun NotesListComponent(
     includeHeader: Boolean = true,
@@ -44,8 +82,22 @@ fun NotesListComponent(
     padding: PaddingValues,
     callback: (NoteWithDoodleAndImage) -> Unit,
 ) {
-    val modifier = Modifier.padding(padding).padding(12.dp, 0.dp)
+    val modifier = Modifier
+        .padding(padding)
+        .padding(12.dp, 0.dp)
     LazyColumn(modifier = modifier.limitWidthInWideScreen(), state = scrollState) {
+        if (includeHeader) {
+            item {
+                HomeHeader(scrollState) {
+                    PaperIconButton(
+                        id = R.drawable.ic_search,
+                    ) { }
+                    PaperIconButton(
+                        id = R.drawable.ic_more,
+                    ) { }
+                }
+            }
+        }
         itemsIndexed(resultList) { index, element ->
             NoteView(element) {
                 callback(it)
