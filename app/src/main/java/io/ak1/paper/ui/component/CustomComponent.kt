@@ -42,18 +42,22 @@ import io.ak1.paper.ui.utils.timeAgo
 
 @OptIn(ExperimentalUnitApi::class)
 @Composable
-fun HomeHeader(scrollState: LazyListState, actions: @Composable RowScope.() -> Unit = {}) {
-    val offset: Float = (scrollState.firstVisibleItemScrollOffset * 100 / (561 - 44)) / 100f
+fun HomeHeader(scrollState: LazyListState? = null, actions: @Composable RowScope.() -> Unit = {}) {
+    val offset: Float = scrollState?.firstVisibleItemScrollOffset?.let {
+        val temp = (it * 100 / (561 - 44)) / 100f
+        (30f * (1 - temp) + 20f)
+    } ?: 20f
+    val height = if (scrollState == null) 50.dp else 200.dp
     // Log.e("scrollState", "$offset   ${((30f * offset) + 20f)}")
     Box(
         modifier = Modifier
-            .height(200.dp)
+            .height(height)
             .fillMaxWidth(),
     ) {
         Text(
             text = stringResource(id = R.string.app_name),
             fontSize = TextUnit(
-                (30f * (1 - offset) + 20f),
+                offset,
                 TextUnitType.Sp
             ),
             modifier = Modifier
@@ -89,10 +93,10 @@ fun NotesListComponent(
                 HomeHeader(scrollState) {
                     PaperIconButton(
                         id = R.drawable.ic_search,
-                    ) { navigateTo(Destinations.SEARCH_ROUTE)}
+                    ) { navigateTo(Destinations.SEARCH_ROUTE) }
                     PaperIconButton(
                         id = R.drawable.ic_more,
-                    ) {navigateTo(Destinations.SETTING_ROUTE) }
+                    ) { navigateTo(Destinations.SETTING_ROUTE) }
                 }
             }
         }
