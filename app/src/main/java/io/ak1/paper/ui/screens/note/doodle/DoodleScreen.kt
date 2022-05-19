@@ -87,16 +87,17 @@ private fun DoodleScreen(
     delete: () -> Unit,
     backPress: () -> Unit
 ) {
+    val bgColor = MaterialTheme.colors.surface
 
     var undoCount = remember { mutableStateOf(0) }
     val redoCount = remember { mutableStateOf(0) }
     val defaultColor = remember { mutableStateOf(colors500[0]) }
     val colorBarVisibility = remember { mutableStateOf(false) }
 
-    Scaffold(modifier = Modifier
-        .statusBarsPadding(),
+    Scaffold(backgroundColor = bgColor,
         topBar = {
             TopAppBar(
+                modifier = Modifier.statusBarsPadding(),
                 title = { Text(text = "Doodle", color = MaterialTheme.colors.primary) },
                 navigationIcon = {
                     PaperIconButton(id = R.drawable.ic_back) {
@@ -126,14 +127,14 @@ private fun DoodleScreen(
                         if (doodle.rawText.isNotBlank()) delete.invoke() else backPress.invoke()
                     }
                 },
-                backgroundColor = MaterialTheme.colors.background,
+                backgroundColor = bgColor,
                 elevation = 0.dp
             )
         },
         bottomBar = {
             Column {
                 BottomAppBar(
-                    backgroundColor = MaterialTheme.colors.background,
+                    backgroundColor = bgColor,
                     elevation = 0.dp
                 ) {
                     PaperIconButton(id = R.drawable.ic_undo, enabled = undoCount.value != 0) {
@@ -148,9 +149,11 @@ private fun DoodleScreen(
                     }
                 }
 
-                ColorRow(isVisible = colorBarVisibility.value, colors = colors500.apply {
-                    // add(0, MaterialTheme.colors.primary)
-                }) {
+                ColorRow(isVisible = colorBarVisibility.value,
+                    backgroundColor = bgColor,
+                    colors = colors500.apply {
+                        // add(0, MaterialTheme.colors.primary)
+                    }) {
                     defaultColor.value = it
                     drawController.changeColor(it)
                 }
@@ -162,6 +165,7 @@ private fun DoodleScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
+            backgroundColor = bgColor,
             bitmapCallback = { bitmap, error ->
                 val base64 = bitmap?.asAndroidBitmap()?.getEncodedString() ?: ""
                 val list = drawController.exportPath()

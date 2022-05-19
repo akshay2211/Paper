@@ -8,25 +8,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.ExperimentalUnitApi
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import io.ak1.paper.R
 import io.ak1.paper.models.NoteWithDoodleAndImage
-import io.ak1.paper.ui.component.NotesListComponent
-import io.ak1.paper.ui.component.PaperIconButton
+import io.ak1.paper.ui.component.*
 import io.ak1.paper.ui.screens.Destinations
 import org.koin.androidx.compose.inject
 
@@ -51,7 +46,6 @@ fun HomeScreen(scrollState: LazyListState, navigateTo: (String) -> Unit) {
     }, navigateTo)
 }
 
-@OptIn(ExperimentalUnitApi::class)
 @Composable
 fun HomeScreen(
     uiState: HomeUiState,
@@ -60,6 +54,8 @@ fun HomeScreen(
     openNewNote: () -> Unit,
     navigateTo: (String) -> Unit
 ) {
+    val maxHeightInPX = with(LocalDensity.current) { headerBarExpandedHeight.toPx() }
+    val minHeightInPx = with(LocalDensity.current) { headerBarCollapsedHeight.toPx() }
 
     Scaffold(
         modifier = Modifier
@@ -68,33 +64,18 @@ fun HomeScreen(
             Spacer(modifier = Modifier.statusBarsPadding())
         },
         content = { paddingValues ->
-            NotesListComponent(true, uiState.notes, scrollState, paddingValues, navigateTo, saveNote)
+            NotesListComponent(
+                true,
+                uiState.notes,
+                scrollState,
+                paddingValues,
+                navigateTo,
+                saveNote
+            )
 
-            if (scrollState.firstVisibleItemIndex != 0 || (scrollState.firstVisibleItemIndex == 0 && scrollState.firstVisibleItemScrollOffset > 422)) {
-                Box(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .padding(12.dp, 0.dp)
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colors.background),
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.app_name),
-                        fontSize = TextUnit(
-                            24f,
-                            TextUnitType.Sp
-                        ),
-                        modifier = Modifier
-                            .padding(12.dp)
-                            .align(Alignment.BottomStart),
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.BottomStart),
-                        verticalAlignment = Alignment.Bottom,
-                        horizontalArrangement = Arrangement.End
-                    ) {
+            if (scrollState.firstVisibleItemIndex != 0 || (scrollState.firstVisibleItemIndex == 0 && scrollState.firstVisibleItemScrollOffset > maxHeightInPX - minHeightInPx)) {
+                    HomeHeader(modifier = Modifier
+                        .background(MaterialTheme.colors.background)) {
                         PaperIconButton(
                             id = R.drawable.ic_search,
                         ) { navigateTo(Destinations.SEARCH_ROUTE) }
@@ -103,7 +84,6 @@ fun HomeScreen(
                         ) { navigateTo(Destinations.SETTING_ROUTE) }
                     }
                 }
-            }
         },
         floatingActionButton = {
             FloatingActionButton(
