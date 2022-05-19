@@ -14,10 +14,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
 import io.ak1.paper.R
 import io.ak1.paper.models.NoteWithDoodleAndImage
@@ -48,7 +48,6 @@ fun HomeScreen(scrollState: LazyListState, navigateTo: (String) -> Unit) {
     }, navigateTo)
 }
 
-@OptIn(ExperimentalUnitApi::class)
 @Composable
 fun HomeScreen(
     uiState: HomeUiState,
@@ -57,6 +56,8 @@ fun HomeScreen(
     openNewNote: () -> Unit,
     navigateTo: (String) -> Unit
 ) {
+    val headerTopbar = with(LocalDensity.current) { 200.dp.toPx() }
+    val heightTopbar = with(LocalDensity.current) { 50.dp.toPx() }
 
     Scaffold(
         modifier = Modifier
@@ -74,8 +75,12 @@ fun HomeScreen(
                 saveNote
             )
 
-            if (scrollState.firstVisibleItemIndex != 0 || (scrollState.firstVisibleItemIndex == 0 && scrollState.firstVisibleItemScrollOffset > 422)) {
-                Box(modifier = Modifier.padding(12.dp,0.dp).background(MaterialTheme.colors.background)) {
+            if (scrollState.firstVisibleItemIndex != 0 || (scrollState.firstVisibleItemIndex == 0 && scrollState.firstVisibleItemScrollOffset > headerTopbar - heightTopbar)) {
+                Box(
+                    modifier = Modifier
+                        .padding(12.dp, 0.dp)
+                        .background(MaterialTheme.colors.background)
+                ) {
                     HomeHeader {
                         PaperIconButton(
                             id = R.drawable.ic_search,
