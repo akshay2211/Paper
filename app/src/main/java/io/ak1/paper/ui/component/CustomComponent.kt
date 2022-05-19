@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -46,7 +47,11 @@ import io.ak1.paper.ui.utils.toPercent
 
 @OptIn(ExperimentalUnitApi::class)
 @Composable
-fun HomeHeader(scrollState: LazyListState? = null, actions: @Composable RowScope.() -> Unit = {}) {
+fun HomeHeader(
+    modifier: Modifier = Modifier,
+    scrollState: LazyListState? = null,
+    actions: @Composable RowScope.() -> Unit = {}
+) {
     val headerSize = if (scrollState == null) 20f else 40f
     val headerPadding = 11.dp
     var textSize by remember { mutableStateOf(headerSize) }
@@ -54,7 +59,7 @@ fun HomeHeader(scrollState: LazyListState? = null, actions: @Composable RowScope
     val loc = LocalDensity.current
     val height = if (scrollState == null) headerBarCollapsedHeight else headerBarExpandedHeight
     Box(
-        modifier = Modifier
+        modifier = modifier
             .height(height)
             .fillMaxWidth()
             .onGloballyPositioned {
@@ -62,7 +67,8 @@ fun HomeHeader(scrollState: LazyListState? = null, actions: @Composable RowScope
                 val actualHeight = it.size.height - topBarHeight
 
                 if ((scrollState?.firstVisibleItemScrollOffset ?: 0) < actualHeight.toInt()) {
-                    val local = scrollState?.firstVisibleItemScrollOffset?.toPercent(actualHeight) ?: 0f
+                    val local =
+                        scrollState?.firstVisibleItemScrollOffset?.toPercent(actualHeight) ?: 0f
                     textSize = (headerSize * local) + 20f
                     with(loc) {
                         textPadding = (((it.size.height / 2) - 30f) * local).toDp() + 11.dp
@@ -77,7 +83,7 @@ fun HomeHeader(scrollState: LazyListState? = null, actions: @Composable RowScope
                 TextUnitType.Sp
             ),
             modifier = Modifier
-                .padding(12.dp, 11.dp, 12.dp, textPadding)
+                .padding(16.dp, 11.dp, 12.dp, textPadding)
                 .align(Alignment.BottomStart),
         )
         Row(
@@ -102,11 +108,10 @@ fun NotesListComponent(
 ) {
     val modifier = Modifier
         .padding(padding)
-        .padding(12.dp, 0.dp)
     LazyColumn(modifier = modifier.limitWidthInWideScreen(), state = scrollState) {
         if (includeHeader) {
             item {
-                HomeHeader(scrollState) {
+                HomeHeader(scrollState = scrollState) {
                     PaperIconButton(
                         id = R.drawable.ic_search,
                     ) { navigateTo(Destinations.SEARCH_ROUTE) }
@@ -122,8 +127,6 @@ fun NotesListComponent(
             }
         }
     }
-
-
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -135,7 +138,9 @@ fun NoteView(element: NoteWithDoodleAndImage, callback: (NoteWithDoodleAndImage)
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(0.dp, 5.dp),
+            .padding(16.dp, 8.dp),
+        shape = RoundedCornerShape(10),
+        elevation = 0.dp,
         onClick = { callback(element) },
     ) {
         Column {
@@ -147,7 +152,7 @@ fun NoteView(element: NoteWithDoodleAndImage, callback: (NoteWithDoodleAndImage)
                     Text(
                         text = element.note.description.trim().gridTrim(),
                         modifier = Modifier.fillMaxWidth(),
-                        style = MaterialTheme.typography.h6,
+                        style = MaterialTheme.typography.body1,
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis
                     )

@@ -74,12 +74,8 @@ fun HomeScreen(
             )
 
             if (scrollState.firstVisibleItemIndex != 0 || (scrollState.firstVisibleItemIndex == 0 && scrollState.firstVisibleItemScrollOffset > maxHeightInPX - minHeightInPx)) {
-                Box(
-                    modifier = Modifier
-                        .padding(12.dp, 0.dp)
-                        .background(MaterialTheme.colors.background)
-                ) {
-                    HomeHeader {
+                    HomeHeader(modifier = Modifier
+                        .background(MaterialTheme.colors.background)) {
                         PaperIconButton(
                             id = R.drawable.ic_search,
                         ) { navigateTo(Destinations.SEARCH_ROUTE) }
@@ -88,7 +84,6 @@ fun HomeScreen(
                         ) { navigateTo(Destinations.SETTING_ROUTE) }
                     }
                 }
-            }
         },
         floatingActionButton = {
             FloatingActionButton(
