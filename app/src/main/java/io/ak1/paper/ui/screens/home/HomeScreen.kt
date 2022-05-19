@@ -21,9 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.ak1.paper.R
 import io.ak1.paper.models.NoteWithDoodleAndImage
-import io.ak1.paper.ui.component.HomeHeader
-import io.ak1.paper.ui.component.NotesListComponent
-import io.ak1.paper.ui.component.PaperIconButton
+import io.ak1.paper.ui.component.*
 import io.ak1.paper.ui.screens.Destinations
 import org.koin.androidx.compose.inject
 
@@ -56,8 +54,8 @@ fun HomeScreen(
     openNewNote: () -> Unit,
     navigateTo: (String) -> Unit
 ) {
-    val headerTopbar = with(LocalDensity.current) { 200.dp.toPx() }
-    val heightTopbar = with(LocalDensity.current) { 50.dp.toPx() }
+    val maxHeightInPX = with(LocalDensity.current) { headerBarExpandedHeight.toPx() }
+    val minHeightInPx = with(LocalDensity.current) { headerBarCollapsedHeight.toPx() }
 
     Scaffold(
         modifier = Modifier
@@ -75,7 +73,7 @@ fun HomeScreen(
                 saveNote
             )
 
-            if (scrollState.firstVisibleItemIndex != 0 || (scrollState.firstVisibleItemIndex == 0 && scrollState.firstVisibleItemScrollOffset > headerTopbar - heightTopbar)) {
+            if (scrollState.firstVisibleItemIndex != 0 || (scrollState.firstVisibleItemIndex == 0 && scrollState.firstVisibleItemScrollOffset > maxHeightInPX - minHeightInPx)) {
                 Box(
                     modifier = Modifier
                         .padding(12.dp, 0.dp)

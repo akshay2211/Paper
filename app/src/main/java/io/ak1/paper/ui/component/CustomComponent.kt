@@ -43,6 +43,7 @@ import io.ak1.paper.ui.utils.toPercent
  * https://ak1.io
  */
 
+
 @OptIn(ExperimentalUnitApi::class)
 @Composable
 fun HomeHeader(scrollState: LazyListState? = null, actions: @Composable RowScope.() -> Unit = {}) {
@@ -51,16 +52,16 @@ fun HomeHeader(scrollState: LazyListState? = null, actions: @Composable RowScope
     var textSize by remember { mutableStateOf(headerSize) }
     var textPadding by remember { mutableStateOf(headerPadding) }
     val loc = LocalDensity.current
-    val height = if (scrollState == null) 50.dp else 200.dp
+    val height = if (scrollState == null) headerBarCollapsedHeight else headerBarExpandedHeight
     Box(
         modifier = Modifier
             .height(height)
             .fillMaxWidth()
             .onGloballyPositioned {
-                val topBarHeight = with(loc) { 50.dp.toPx() }
+                val topBarHeight = with(loc) { headerBarCollapsedHeight.toPx() }
                 val actualHeight = it.size.height - topBarHeight
 
-                if (scrollState?.firstVisibleItemScrollOffset ?: 0 < actualHeight.toInt()) {
+                if ((scrollState?.firstVisibleItemScrollOffset ?: 0) < actualHeight.toInt()) {
                     val local = scrollState?.firstVisibleItemScrollOffset?.toPercent(actualHeight) ?: 0f
                     textSize = (headerSize * local) + 20f
                     with(loc) {
@@ -261,7 +262,7 @@ fun ImageGridView(element: NoteWithDoodleAndImage) {
 @Preview("Home screen (big font)", fontScale = 1.5f)
 @Preview("Home screen (large screen)", device = Devices.PIXEL_C)
 @Composable
-fun preview() {
+fun Preview() {
     PaperTheme {
         Surface(color = MaterialTheme.colors.background) {
             Column {
@@ -294,3 +295,6 @@ fun PaperIconButton(
         )
     }
 }
+
+val headerBarCollapsedHeight = 50.dp
+val headerBarExpandedHeight = 200.dp
