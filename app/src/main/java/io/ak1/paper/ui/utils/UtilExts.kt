@@ -67,3 +67,6 @@ fun Modifier.paddingBottom(paddingValues: PaddingValues): Modifier {
     return padding(0.dp, 0.dp, 0.dp, if (pv > 46.dp) pv - 46.dp else pv)
 }
 
+fun Int.toPercent(dependency: Float) =
+    this.let { it -> 1 - ((it * 100 / dependency) / 100f) }
+

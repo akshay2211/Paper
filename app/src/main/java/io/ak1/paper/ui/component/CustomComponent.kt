@@ -9,12 +9,14 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -34,34 +36,48 @@ import io.ak1.paper.ui.theme.PaperTheme
 import io.ak1.paper.ui.utils.gridTrim
 import io.ak1.paper.ui.utils.limitWidthInWideScreen
 import io.ak1.paper.ui.utils.timeAgo
+import io.ak1.paper.ui.utils.toPercent
 
 /**
  * Created by akshay on 27/11/21
  * https://ak1.io
  */
 
+
 @OptIn(ExperimentalUnitApi::class)
 @Composable
 fun HomeHeader(scrollState: LazyListState? = null, actions: @Composable RowScope.() -> Unit = {}) {
-    val offset: Float = scrollState?.firstVisibleItemScrollOffset?.let {
-        val temp = (it * 100 / (561 - 44)) / 100f
-        (30f * (1 - temp) + 20f)
-    } ?: 20f
-    val height = if (scrollState == null) 50.dp else 200.dp
-    // Log.e("scrollState", "$offset   ${((30f * offset) + 20f)}")
+    val headerSize = if (scrollState == null) 20f else 40f
+    val headerPadding = 11.dp
+    var textSize by remember { mutableStateOf(headerSize) }
+    var textPadding by remember { mutableStateOf(headerPadding) }
+    val loc = LocalDensity.current
+    val height = if (scrollState == null) headerBarCollapsedHeight else headerBarExpandedHeight
     Box(
         modifier = Modifier
             .height(height)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .onGloballyPositioned {
+                val topBarHeight = with(loc) { headerBarCollapsedHeight.toPx() }
+                val actualHeight = it.size.height - topBarHeight
+
+                if ((scrollState?.firstVisibleItemScrollOffset ?: 0) < actualHeight.toInt()) {
+                    val local = scrollState?.firstVisibleItemScrollOffset?.toPercent(actualHeight) ?: 0f
+                    textSize = (headerSize * local) + 20f
+                    with(loc) {
+                        textPadding = (((it.size.height / 2) - 30f) * local).toDp() + 11.dp
+                    }
+                }
+            },
     ) {
         Text(
             text = stringResource(id = R.string.app_name),
             fontSize = TextUnit(
-                offset,
+                textSize,
                 TextUnitType.Sp
             ),
             modifier = Modifier
-                .padding(12.dp, 6.dp)
+                .padding(12.dp, 11.dp, 12.dp, textPadding)
                 .align(Alignment.BottomStart),
         )
         Row(
@@ -246,7 +262,7 @@ fun ImageGridView(element: NoteWithDoodleAndImage) {
 @Preview("Home screen (big font)", fontScale = 1.5f)
 @Preview("Home screen (large screen)", device = Devices.PIXEL_C)
 @Composable
-fun preview() {
+fun Preview() {
     PaperTheme {
         Surface(color = MaterialTheme.colors.background) {
             Column {
@@ -279,3 +295,6 @@ fun PaperIconButton(
         )
     }
 }
+
+val headerBarCollapsedHeight = 50.dp
+val headerBarExpandedHeight = 200.dp
