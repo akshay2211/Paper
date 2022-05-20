@@ -24,7 +24,7 @@ var databaseModule = module {
 }
 
 var viewModel = module {
-    viewModel { HomeViewModel(get(), get(), get(), get()) }
+    viewModel { HomeViewModel(get(), get()) }
     viewModel { NoteViewModel(get(), get()) }
     viewModel { DoodleViewModel(get(), get(), get()) }
 }

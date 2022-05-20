@@ -45,6 +45,7 @@ class NotesRepositoryImpl(
     }
 
     override fun observeNotes() = notesDao.getAllNotesByFolderId(DEFAULT)
+    override fun getNotesBySearch(query: String) = notesDao.getNotesBySearch(query)
 
     override fun getNoteByFlow(noteId: String) = notesDao.getNoteByIdByFlow(noteId)
 }

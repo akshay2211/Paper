@@ -33,5 +33,7 @@ interface NotesRepository {
 
     fun observeNotes(): Flow<List<NoteWithDoodleAndImage>>
 
+    fun getNotesBySearch(query:String): Flow<List<NoteWithDoodleAndImage>>
+
     fun getNoteByFlow(noteId: String): Flow<NoteWithDoodleAndImage?>
 }

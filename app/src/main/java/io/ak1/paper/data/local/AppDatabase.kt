@@ -1,6 +1,5 @@
 package io.ak1.paper.data.local
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.room.migration.AutoMigrationSpec
 import io.ak1.paper.models.*
@@ -86,7 +85,7 @@ interface NoteDao {
 
     @Transaction
     @Query("SELECT * FROM notes_table WHERE description LIKE '%' || :query || '%' ORDER BY updatedOn DESC")
-    fun getNotesBySearch(query: String): LiveData<List<NoteWithDoodleAndImage>>
+    fun getNotesBySearch(query: String): Flow<List<NoteWithDoodleAndImage>>
 
     @Query("DELETE FROM notes_table WHERE noteId = :id")
     suspend fun deleteNote(id: String)

@@ -6,11 +6,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -48,7 +44,7 @@ fun SearchScreen(navController: NavController) {
         focusRequester.requestFocus()
     }
     val resultList = homeViewModel.getAllNotesByDescription(description.value)
-        .observeAsState(initial = listOf())
+        .collectAsState(initial = emptyList())
 
     Scaffold(topBar = {
         TextField(
@@ -99,7 +95,7 @@ fun SearchScreen(navController: NavController) {
             )
         )
     }) { paddingValues ->
-        NotesListComponent(false, resultList.value, scrollState, paddingValues,{}) {
+        NotesListComponent(false, resultList.value, scrollState, paddingValues, {}) {
             focus.value = false
             homeViewModel.saveCurrentNote(it.note.noteId)
             navController.navigate(Destinations.NOTE_ROUTE)
