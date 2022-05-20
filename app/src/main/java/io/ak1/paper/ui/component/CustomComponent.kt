@@ -1,13 +1,17 @@
+@file:OptIn(ExperimentalMaterialApi::class, ExperimentalUnitApi::class)
+
 package io.ak1.paper.ui.component
 
 import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -45,7 +49,6 @@ import io.ak1.paper.ui.utils.toPercent
  */
 
 
-@OptIn(ExperimentalUnitApi::class)
 @Composable
 fun HomeHeader(
     modifier: Modifier = Modifier,
@@ -129,7 +132,6 @@ fun NotesListComponent(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun NoteView(element: NoteWithDoodleAndImage, callback: (NoteWithDoodleAndImage) -> Unit) {
     val hasDoodle = element.doodleList.isNotEmpty()
@@ -171,6 +173,7 @@ fun NoteView(element: NoteWithDoodleAndImage, callback: (NoteWithDoodleAndImage)
 
 @Composable
 fun ImageGridView(element: NoteWithDoodleAndImage) {
+    val defaultHeight = 120.dp
     Box {
         val bitmapList = element.getBitmapList()
         val totalSize = bitmapList.size
@@ -181,11 +184,11 @@ fun ImageGridView(element: NoteWithDoodleAndImage) {
                     contentDescription = null, // decorative
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .height(180.dp)
+                        .height(defaultHeight)
                         .fillMaxWidth()
                 )
             }
-        } else if (totalSize == 2 || totalSize == 3) {
+        } else if (totalSize == 2 || totalSize == 3 || totalSize == 4) {
             Row {
                 bitmapList.forEach {
                     it?.let {
@@ -194,56 +197,9 @@ fun ImageGridView(element: NoteWithDoodleAndImage) {
                             contentDescription = null, // decorative
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
-                                .height(180.dp)
+                                .height(defaultHeight)
                                 .fillMaxWidth()
                                 .weight(1f, true)
-                        )
-                    }
-                }
-            }
-        } else if (totalSize >= 4) {
-            Row {
-                Column(Modifier.weight(1f, true)) {
-                    bitmapList[0]?.let {
-                        Image(
-                            bitmap = it.asImageBitmap(),
-                            contentDescription = null, // decorative
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .height(150.dp)
-                                .fillMaxWidth()
-                        )
-                    }
-                    bitmapList[2]?.let {
-                        Image(
-                            bitmap = it.asImageBitmap(),
-                            contentDescription = null, // decorative
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .height(150.dp)
-                                .fillMaxWidth()
-                        )
-                    }
-                }
-                Column(Modifier.weight(1f, true)) {
-                    bitmapList[1]?.let {
-                        Image(
-                            bitmap = it.asImageBitmap(),
-                            contentDescription = null, // decorative
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .height(150.dp)
-                                .fillMaxWidth()
-                        )
-                    }
-                    bitmapList[3]?.let {
-                        Image(
-                            bitmap = it.asImageBitmap(),
-                            contentDescription = null, // decorative
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .height(150.dp)
-                                .fillMaxWidth()
                         )
                     }
                 }
@@ -286,17 +242,19 @@ fun Preview() {
 fun PaperIconButton(
     @DrawableRes id: Int,
     enabled: Boolean = true,
+    border: Boolean = false,
     tint: Color = if (enabled) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant,
     onClick: () -> Unit
 ) {
     IconButton(
         onClick = onClick,
-        enabled = enabled
+        enabled = enabled,
     ) {
         Icon(
             painterResource(id = id),
             contentDescription = stringResource(id = R.string.image_desc),
-            tint = tint
+            tint = tint,
+            modifier = if (border) Modifier.border(0.5.dp, Color.White, CircleShape) else Modifier
         )
     }
 }

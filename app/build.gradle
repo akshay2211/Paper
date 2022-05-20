@@ -113,7 +113,10 @@ dependencies {
     implementation 'io.coil-kt:coil-compose:2.0.0'
 
     // Drawbox
-    implementation 'io.ak1:drawbox:1.0.3-rc-1'
+    implementation 'io.ak1:drawbox:1.0.3'
+
+    //RangVikalp
+    implementation 'io.ak1:rang-vikalp:1.0.0-alpha02'
 
     // Gson
     implementation 'com.google.code.gson:gson:2.9.0'

@@ -2,29 +2,30 @@ package io.ak1.paper.ui.screens.note.doodle
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
-import io.ak1.drawbox.DrawBox
-import io.ak1.drawbox.DrawController
-import io.ak1.drawbox.PathWrapper
-import io.ak1.drawbox.rememberDrawController
+import io.ak1.drawbox.*
 import io.ak1.paper.R
 import io.ak1.paper.models.Doodle
-import io.ak1.paper.ui.component.ColorRow
 import io.ak1.paper.ui.component.CustomAlertDialog
 import io.ak1.paper.ui.component.PaperIconButton
-import io.ak1.paper.ui.theme.colors500
 import io.ak1.paper.ui.utils.getEncodedString
+import io.ak1.rangvikalp.RangVikalp
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.inject
 
 
@@ -38,16 +39,26 @@ private val gsonBuilder = GsonBuilder().create()
 fun DoodleScreen(backPress: () -> Unit) {
     val doodleViewModel by inject<DoodleViewModel>()
     val uiState by doodleViewModel.uiState.collectAsState()
-
+    val defaultColor = MaterialTheme.colors.surface
     val drawController = rememberDrawController()
 
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState) {
+        drawController.changeBgColor(defaultColor)
         uiState.doodle.let {
             if (it.rawText.isNotEmpty()) {
-                val objList = object : TypeToken<ArrayList<PathWrapper>>() {}.type
-                drawController.importPath(gsonBuilder.fromJson(it.rawText, objList))
+                val payload = try {
+                    gsonBuilder.fromJson(
+                        it.rawText,
+                        DrawBoxPayLoad::class.java
+                    )
+                } catch (i: JsonSyntaxException) {
+                    val objList = object : TypeToken<ArrayList<PathWrapper>>() {}.type
+                    DrawBoxPayLoad(defaultColor, gsonBuilder.fromJson(it.rawText, objList))
+
+                }
+                drawController.importPath(payload)
             }
         }
     }
@@ -87,14 +98,21 @@ private fun DoodleScreen(
     delete: () -> Unit,
     backPress: () -> Unit
 ) {
-    val bgColor = MaterialTheme.colors.surface
 
-    var undoCount = remember { mutableStateOf(0) }
+    val undoCount = remember { mutableStateOf(0) }
     val redoCount = remember { mutableStateOf(0) }
-    val defaultColor = remember { mutableStateOf(colors500[0]) }
-    val colorBarVisibility = remember { mutableStateOf(false) }
+    val defaultTextColor = remember { Animatable(drawController.color) }
+    val defaultBgColor = remember { Animatable(drawController.bgColor) }
+    var colorIsBg by remember { mutableStateOf(false) }
+    var colorBarVisibility by remember { mutableStateOf(false) }
+    val coroutine = rememberCoroutineScope()
+    LaunchedEffect(drawController) {
+        defaultBgColor.snapTo(drawController.bgColor)
+        defaultTextColor.snapTo(drawController.color)
+    }
 
-    Scaffold(backgroundColor = bgColor,
+    Scaffold(
+        backgroundColor = defaultBgColor.value,
         topBar = {
             TopAppBar(
                 modifier = Modifier.statusBarsPadding(),
@@ -108,11 +126,9 @@ private fun DoodleScreen(
                     PaperIconButton(
                         id = R.drawable.ic_check,
                     ) {
-                        if (drawController.exportPath()
-                                .isNotEmpty()
-                        ) {
-                            if (colorBarVisibility.value) {
-                                colorBarVisibility.value = false
+                        if (drawController.exportPath().path.isNotEmpty()) {
+                            if (colorBarVisibility) {
+                                colorBarVisibility = false
                                 Handler(Looper.getMainLooper()).postDelayed({
                                     drawController.saveBitmap()
                                 }, 500L)
@@ -127,14 +143,14 @@ private fun DoodleScreen(
                         if (doodle.rawText.isNotBlank()) delete.invoke() else backPress.invoke()
                     }
                 },
-                backgroundColor = bgColor,
+                backgroundColor = defaultBgColor.value,
                 elevation = 0.dp
             )
         },
         bottomBar = {
-            Column {
+            Column(Modifier.background(MaterialTheme.colors.surface.copy(0.1f))) {
                 BottomAppBar(
-                    backgroundColor = bgColor,
+                    backgroundColor = Color.Transparent,
                     elevation = 0.dp
                 ) {
                     PaperIconButton(id = R.drawable.ic_undo, enabled = undoCount.value != 0) {
@@ -144,42 +160,73 @@ private fun DoodleScreen(
                         drawController.reDo()
                     }
                     Spacer(modifier = Modifier.weight(1f, fill = true))
-                    PaperIconButton(id = R.drawable.ic_color, tint = defaultColor.value) {
-                        colorBarVisibility.value = !colorBarVisibility.value
+                    PaperIconButton(
+                        id = R.drawable.ic_color,
+                        tint = defaultBgColor.value,
+                        border = defaultBgColor.value == drawController.bgColor
+                    ) {
+                        colorBarVisibility = when (colorBarVisibility) {
+                            false -> true
+                            !colorIsBg -> true
+                            else -> false
+                        }
+                        colorIsBg = true
+                        drawController.changeBgColor(defaultBgColor.value)
+
+                    }
+                    PaperIconButton(id = R.drawable.ic_text, tint = defaultTextColor.value) {
+                        colorBarVisibility = when (colorBarVisibility) {
+                            false -> true
+                            colorIsBg -> true
+                            else -> false
+                        }
+                        colorIsBg = false
+                        drawController.changeColor(defaultTextColor.value)
                     }
                 }
 
-                ColorRow(isVisible = colorBarVisibility.value,
-                    backgroundColor = bgColor,
-                    colors = colors500.apply {
-                        // add(0, MaterialTheme.colors.primary)
-                    }) {
-                    defaultColor.value = it
-                    drawController.changeColor(it)
+                RangVikalp(
+                    isVisible = colorBarVisibility,
+                    defaultColor = if (colorIsBg) defaultBgColor.value else defaultTextColor.value,
+                    colorIntensity = if (colorIsBg) 1 else 7
+                ) {
+                    coroutine.launch {
+                        if (colorIsBg) {
+                            defaultBgColor.animateTo(it, animationSpec = tween(1000)) {
+                                drawController.changeBgColor(this.value)
+                            }
+
+                        } else {
+                            defaultTextColor.animateTo(it, animationSpec = tween(1000)) {
+                                drawController.changeColor(this.value)
+                            }
+
+                        }
+
+                    }
                 }
             }
         }) { padding ->
-
+        val fakeModifier = Modifier.padding(padding)
         DrawBox(
             drawController = drawController,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            backgroundColor = bgColor,
+                .fillMaxSize(),
+            backgroundColor = defaultBgColor.value,
             bitmapCallback = { bitmap, error ->
                 val base64 = bitmap?.asAndroidBitmap()?.getEncodedString() ?: ""
                 val list = drawController.exportPath()
                 val json = gsonBuilder.toJson(list)
-                Log.e("before save", "${gsonBuilder.toJson(doodle)}")
+                //Log.e("before save", "${gsonBuilder.toJson(doodle)}")
                 save.invoke(base64, json)
             }) { undo_count, redo_count ->
-            colorBarVisibility.value = false
+            colorBarVisibility = false
             undoCount.value = undo_count
             redoCount.value = redo_count
         }
     }
     BackHandler(enabled = true) {
-        if (drawController.exportPath().isNotEmpty())
+        if (drawController.exportPath().path.isNotEmpty())
             drawController.saveBitmap()
         else
             backPress.invoke()
