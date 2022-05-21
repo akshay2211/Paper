@@ -17,8 +17,8 @@ import kotlinx.coroutines.launch
  */
 data class HomeUiState(
     val notes: List<NoteWithDoodleAndImage> = emptyList(),
-    val loading: Boolean = false
-)
+    val loading: Boolean = true
+){ val isEmpty  = !loading && notes.isEmpty() }
 
 
 const val DEFAULT = "default"
@@ -37,7 +37,7 @@ class HomeViewModel(
         // Observe for Notes changes in the repo layer
         viewModelScope.launch {
             notesRepository.observeNotes().collect { notes ->
-                _uiState.update { it.copy(notes = notes) }
+                _uiState.update { it.copy(notes = notes,false) }
             }
         }
     }
