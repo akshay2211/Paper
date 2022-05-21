@@ -19,6 +19,7 @@ import io.ak1.paper.R
 import io.ak1.paper.ui.component.NotesListComponent
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.Destinations
+import io.ak1.paper.ui.screens.home.HomeUiState
 import io.ak1.paper.ui.screens.home.HomeViewModel
 import org.koin.androidx.compose.inject
 
@@ -43,8 +44,7 @@ fun SearchScreen(navController: NavController) {
         inputService?.showSoftwareKeyboard()
         focusRequester.requestFocus()
     }
-    val resultList = homeViewModel.getAllNotesByDescription(description.value)
-        .collectAsState(initial = emptyList())
+    val resultList = homeViewModel.getAllNotesByDescription(description.value).collectAsState(initial = listOf())
 
     Scaffold(topBar = {
         TextField(
@@ -95,7 +95,7 @@ fun SearchScreen(navController: NavController) {
             )
         )
     }) { paddingValues ->
-        NotesListComponent(false, resultList.value, scrollState, paddingValues, {}) {
+        NotesListComponent(false, HomeUiState(resultList.value,false), scrollState, paddingValues, {}) {
             focus.value = false
             homeViewModel.saveCurrentNote(it.note.noteId)
             navController.navigate(Destinations.NOTE_ROUTE)
