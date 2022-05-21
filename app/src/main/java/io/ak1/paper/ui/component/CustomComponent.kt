@@ -41,7 +41,6 @@ import io.ak1.paper.ui.screens.home.DEFAULT
 import io.ak1.paper.ui.screens.home.HomeUiState
 import io.ak1.paper.ui.theme.PaperTheme
 import io.ak1.paper.ui.utils.gridTrim
-import io.ak1.paper.ui.utils.limitWidthInWideScreen
 import io.ak1.paper.ui.utils.timeAgo
 import io.ak1.paper.ui.utils.toPercent
 
@@ -115,7 +114,9 @@ fun NotesListComponent(
         .padding(padding)
     Column {
         LazyColumn(modifier = modifier
-            .limitWidthInWideScreen(), state = scrollState) {
+            .width(600.dp)
+            .fillMaxWidth()
+            .align(Alignment.CenterHorizontally), state = scrollState) {
             if (includeHeader) {
                 item {
                     HomeHeader(scrollState = scrollState) {

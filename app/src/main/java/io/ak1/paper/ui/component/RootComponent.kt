@@ -1,12 +1,18 @@
 package io.ak1.paper.ui.component
 
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -15,6 +21,7 @@ import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import io.ak1.paper.R
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.home.HomeScreen
 import io.ak1.paper.ui.screens.note.doodle.DoodleScreen
@@ -31,11 +38,12 @@ import io.ak1.paper.ui.theme.isSystemInDarkThemeCustom
  */
 
 
-@OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
 fun RootComponent() {
     val isDark = isSystemInDarkThemeCustom()
     val systemUiController = rememberSystemUiController()
+    val uriHandler = LocalUriHandler.current
     PaperTheme(isDark) {
         val darkIcons = MaterialTheme.colors.isLight
         SideEffect { systemUiController.setSystemBarsColor(Color.Transparent, darkIcons) }
@@ -56,8 +64,9 @@ fun RootComponent() {
                         { navController.navigateUp() }
                     }
                     composable(Destinations.SEARCH_ROUTE) { SearchScreen(navController) }
-                    composable(Destinations.SETTING_ROUTE) { SettingsScreen(navController) }
-
+                    composable(Destinations.SETTING_ROUTE) {
+                        SettingsScreen({ navController.navigateUp() }) { uri -> uriHandler.openUri(uri) }
+                    }
                     composable(Destinations.DOODLE_ROUTE) {
                         DoodleScreen { navController.navigateUp() }
                     }

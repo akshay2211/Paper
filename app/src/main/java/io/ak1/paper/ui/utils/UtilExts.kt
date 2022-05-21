@@ -50,11 +50,6 @@ fun String.convert(): Bitmap? {
     return BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.size)
 }
 
-fun Modifier.limitWidthInWideScreen(width: Dp = 640.dp) = this
-    .fillMaxWidth()
-    .widthIn(max = width)
-    .wrapContentWidth(align = Alignment.CenterHorizontally)
-
 fun String.withArg(arg: String, isDef: Boolean = false) =
     if (isDef) "$this/{$arg}" else "$this/$arg"
 
