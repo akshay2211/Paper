@@ -37,10 +37,10 @@ fun String.gridTrim(maxDigits: Int = 100) =
 
 
 fun Bitmap.getEncodedString(): String? = Base64.encodeToString(ByteArrayOutputStream().apply {
-    val w = 240
+    val w = 360
     val h = this@getEncodedString.height * w / this@getEncodedString.width
     Bitmap.createScaledBitmap(this@getEncodedString, w, h, false)
-        .compress(Bitmap.CompressFormat.PNG, 70, this)
+        .compress(Bitmap.CompressFormat.PNG,99 , this)
 }.toByteArray(), Base64.NO_WRAP)
 
 
@@ -49,11 +49,6 @@ fun String.convert(): Bitmap? {
     val decodedByteArray: ByteArray = Base64.decode(this, Base64.NO_WRAP)
     return BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.size)
 }
-
-fun Modifier.limitWidthInWideScreen(width: Dp = 640.dp) = this
-    .fillMaxWidth()
-    .widthIn(max = width)
-    .wrapContentWidth(align = Alignment.CenterHorizontally)
 
 fun String.withArg(arg: String, isDef: Boolean = false) =
     if (isDef) "$this/{$arg}" else "$this/$arg"

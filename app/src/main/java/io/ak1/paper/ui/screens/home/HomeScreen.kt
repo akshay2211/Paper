@@ -2,7 +2,9 @@ package io.ak1.paper.ui.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FloatingActionButton
@@ -18,7 +20,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import io.ak1.paper.R
 import io.ak1.paper.models.NoteWithDoodleAndImage
 import io.ak1.paper.ui.component.*
@@ -66,7 +67,7 @@ fun HomeScreen(
         content = { paddingValues ->
             NotesListComponent(
                 true,
-                uiState.notes,
+                uiState,
                 scrollState,
                 paddingValues,
                 navigateTo,
@@ -74,16 +75,17 @@ fun HomeScreen(
             )
 
             if (scrollState.firstVisibleItemIndex != 0 || (scrollState.firstVisibleItemIndex == 0 && scrollState.firstVisibleItemScrollOffset > maxHeightInPX - minHeightInPx)) {
-                    HomeHeader(modifier = Modifier
-                        .background(MaterialTheme.colors.background)) {
-                        PaperIconButton(
-                            id = R.drawable.ic_search,
-                        ) { navigateTo(Destinations.SEARCH_ROUTE) }
-                        PaperIconButton(
-                            id = R.drawable.ic_more,
-                        ) { navigateTo(Destinations.SETTING_ROUTE) }
-                    }
+                HomeHeader(modifier = Modifier
+                        .background(MaterialTheme.colors.background)
+                ) {
+                    PaperIconButton(
+                        id = R.drawable.ic_search,
+                    ) { navigateTo(Destinations.SEARCH_ROUTE) }
+                    PaperIconButton(
+                        id = R.drawable.ic_more,
+                    ) { navigateTo(Destinations.SETTING_ROUTE) }
                 }
+            }
         },
         floatingActionButton = {
             FloatingActionButton(

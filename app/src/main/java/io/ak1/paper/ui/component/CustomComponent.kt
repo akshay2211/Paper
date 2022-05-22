@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,9 +38,9 @@ import io.ak1.paper.models.NoteWithDoodleAndImage
 import io.ak1.paper.models.getBitmapList
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.home.DEFAULT
+import io.ak1.paper.ui.screens.home.HomeUiState
 import io.ak1.paper.ui.theme.PaperTheme
 import io.ak1.paper.ui.utils.gridTrim
-import io.ak1.paper.ui.utils.limitWidthInWideScreen
 import io.ak1.paper.ui.utils.timeAgo
 import io.ak1.paper.ui.utils.toPercent
 
@@ -103,7 +104,7 @@ fun HomeHeader(
 @Composable
 fun NotesListComponent(
     includeHeader: Boolean = true,
-    resultList: List<NoteWithDoodleAndImage>,
+    homeUiState: HomeUiState,
     scrollState: LazyListState = rememberLazyListState(),
     padding: PaddingValues,
     navigateTo: (String) -> Unit,
@@ -111,23 +112,42 @@ fun NotesListComponent(
 ) {
     val modifier = Modifier
         .padding(padding)
-    LazyColumn(modifier = modifier.limitWidthInWideScreen(), state = scrollState) {
-        if (includeHeader) {
-            item {
-                HomeHeader(scrollState = scrollState) {
-                    PaperIconButton(
-                        id = R.drawable.ic_search,
-                    ) { navigateTo(Destinations.SEARCH_ROUTE) }
-                    PaperIconButton(
-                        id = R.drawable.ic_more,
-                    ) { navigateTo(Destinations.SETTING_ROUTE) }
+    Column {
+        LazyColumn(modifier = modifier
+            .width(600.dp)
+            .fillMaxWidth()
+            .align(Alignment.CenterHorizontally), state = scrollState) {
+            if (includeHeader) {
+                item {
+                    HomeHeader(scrollState = scrollState) {
+                        PaperIconButton(
+                            id = R.drawable.ic_search,
+                        ) { navigateTo(Destinations.SEARCH_ROUTE) }
+                        PaperIconButton(
+                            id = R.drawable.ic_more,
+                        ) { navigateTo(Destinations.SETTING_ROUTE) }
+                    }
+                }
+            }
+            itemsIndexed(homeUiState.notes) { index, element ->
+                NoteView(element) {
+                    callback(it)
                 }
             }
         }
-        itemsIndexed(resultList) { index, element ->
-            NoteView(element) {
-                callback(it)
-            }
+        if (homeUiState.isEmpty) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_not_found),
+                contentDescription = stringResource(
+                    id = R.string.image_desc
+                ),
+                alignment = Alignment.Center,
+                modifier = Modifier
+                    .padding(60.dp)
+                    .fillMaxSize()
+                    .weight(1f, true)
+                    .imePadding()
+            )
         }
     }
 }

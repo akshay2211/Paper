@@ -17,7 +17,7 @@
     <string name="take_photo">Take Photo</string>
     <string name="add_image">Add Image</string>
     <string name="add_doodle">Add Doodle</string>
-
+    <string name="chooser_title">Open with</string>
 
 
 </resources>
