@@ -54,11 +54,12 @@ import io.ak1.paper.ui.utils.toPercent
 @Composable
 fun HomeHeader(
     modifier: Modifier = Modifier,
+    headerColor: Color,
     scrollState: LazyListState? = null,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
-    val headerSize = if (scrollState == null) 20f else 40f
-    val headerPadding = 11.dp
+    val headerSize = if (scrollState == null) 22f else 40f
+    val headerPadding = 5.5.dp
     var textSize by remember { mutableStateOf(headerSize) }
     var textPadding by remember { mutableStateOf(headerPadding) }
     val loc = LocalDensity.current
@@ -74,9 +75,9 @@ fun HomeHeader(
                 if ((scrollState?.firstVisibleItemScrollOffset ?: 0) < actualHeight.toInt()) {
                     val local =
                         scrollState?.firstVisibleItemScrollOffset?.toPercent(actualHeight) ?: 0f
-                    textSize = (headerSize * local) + 20f
+                    textSize = (headerSize * local) + 22f
                     with(loc) {
-                        textPadding = (((it.size.height / 2) - 30f) * local).toDp() + 11.dp
+                        textPadding = (((it.size.height / 2) - 30f) * local).toDp() + headerPadding
                     }
                 }
             },
@@ -87,8 +88,9 @@ fun HomeHeader(
                 textSize,
                 TextUnitType.Sp
             ),
+            color = headerColor,
             modifier = Modifier
-                .padding(16.dp, 11.dp, 12.dp, textPadding)
+                .padding(16.dp, headerPadding, 12.dp, textPadding)
                 .align(Alignment.BottomStart),
             fontFamily = FontFamily(Font(R.font.lavishly_yours_regular))
         )
@@ -106,6 +108,7 @@ fun HomeHeader(
 @Composable
 fun NotesListComponent(
     includeHeader: Boolean = true,
+    headerColor: Color,
     homeUiState: HomeUiState,
     scrollState: LazyListState = rememberLazyListState(),
     padding: PaddingValues,
@@ -118,7 +121,7 @@ fun NotesListComponent(
         LazyColumn(modifier = modifier, state = scrollState) {
             if (includeHeader) {
                 item {
-                    HomeHeader(scrollState = scrollState) {
+                    HomeHeader(headerColor = headerColor,scrollState = scrollState) {
                         PaperIconButton(
                             id = R.drawable.ic_search,
                         ) { navigateTo(Destinations.SEARCH_ROUTE) }
@@ -283,4 +286,4 @@ fun PaperIconButton(
 }
 
 val headerBarCollapsedHeight = 50.dp
-val headerBarExpandedHeight = 200.dp
+val headerBarExpandedHeight = 220.dp

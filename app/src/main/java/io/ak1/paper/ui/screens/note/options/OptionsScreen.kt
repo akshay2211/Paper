@@ -17,18 +17,13 @@ package io.ak1.paper.ui.screens.note.options
 
 import android.os.Handler
 import android.os.Looper
-import android.widget.Toast
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -46,44 +41,49 @@ data class Menu(val iconId: Int, val stringId: Int)
 @Composable
 fun OptionsScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
     val noteViewModel by inject<NoteViewModel>()
-    val context = LocalContext.current
-    var list = listOf(
-        Menu(R.drawable.ic_more, R.string.take_photo),
-        Menu(R.drawable.ic_search, R.string.add_image),
-        Menu(R.drawable.ic_feather, R.string.add_doodle),
+    val list = listOf(
+        Menu(R.drawable.ic_camera, R.string.take_photo),
+        Menu(R.drawable.ic_image, R.string.add_image),
+        Menu(R.drawable.ic_doodle, R.string.add_doodle),
     )
-    LazyColumn {
+    val elevation = ButtonDefaults.elevation(
+        defaultElevation = 0.dp,
+        pressedElevation = 0.dp,
+        hoveredElevation = 0.dp,
+        focusedElevation = 0.dp
+    )
+    val colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
+    LazyColumn(modifier = Modifier.padding(12.dp)) {
         items(list) { it ->
-            IconButton(
+            Button(
                 onClick = {
-                    if (it.iconId == R.drawable.ic_feather) {
-                        backPress.invoke()
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            noteViewModel.saveCurrentDoodleId("")
-                            navigateTo(Destinations.DOODLE_ROUTE)
-                        }, 100L)
-                    } else {
-                        Toast.makeText(context, "Coming soon", Toast.LENGTH_LONG).show()
-                    }
-                }
+                    backPress.invoke()
+                    noteViewModel.saveCurrentDoodleId("")
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        when (it.iconId) {
+                            //    R.drawable.ic_camera -> navigateTo("image")
+                            //    R.drawable.ic_image -> navigateTo("gallery")
+                            R.drawable.ic_doodle -> navigateTo(Destinations.DOODLE_ROUTE)
+                        }
+
+                    }, 100L)
+                },
+                elevation = elevation,
+                colors = colors,
             ) {
-                Row {
-
-                    Icon(
-                        painterResource(id = it.iconId),
-                        contentDescription = stringResource(id = it.stringId),
-                        tint = MaterialTheme.colors.primary,
-                        modifier = Modifier.padding(10.dp, 3.dp)
-                    )
-                    Text(
-                        text = stringResource(id = it.stringId),
-                        color = MaterialTheme.colors.primary,
-                        modifier = Modifier
-                            .weight(1f, true)
-                            .padding(10.dp, 3.dp)
-                    )
-                }
-
+                Icon(
+                    painterResource(id = it.iconId),
+                    contentDescription = stringResource(id = it.stringId),
+                    tint = MaterialTheme.colors.primary,
+                    modifier = Modifier.padding(10.dp, 3.dp)
+                )
+                Text(
+                    text = stringResource(id = it.stringId),
+                    color = MaterialTheme.colors.primary,
+                    modifier = Modifier
+                        .weight(1f, true)
+                        .padding(10.dp, 3.dp)
+                )
             }
         }
     }
