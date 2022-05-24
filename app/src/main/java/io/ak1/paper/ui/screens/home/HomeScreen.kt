@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalTextInputService
@@ -24,6 +23,8 @@ import io.ak1.paper.R
 import io.ak1.paper.models.NoteWithDoodleAndImage
 import io.ak1.paper.ui.component.*
 import io.ak1.paper.ui.screens.Destinations
+import io.ak1.paper.ui.theme.randomInt
+import io.ak1.rangvikalp.colorArray
 import org.koin.androidx.compose.inject
 
 /**
@@ -32,13 +33,15 @@ import org.koin.androidx.compose.inject
  */
 val fabShape = RoundedCornerShape(30)
 
+const val darkerToneIndex = 7
+const val lighterToneIndex = 1
+
 @Composable
-fun HomeScreen(scrollState: LazyListState, navigateTo: (String) -> Unit) {
+fun HomeScreen(isDark: Boolean, scrollState: LazyListState, navigateTo: (String) -> Unit) {
     val homeViewModel by inject<HomeViewModel>()
     val uiState by homeViewModel.uiState.collectAsState()
-
     LocalTextInputService.current?.hideSoftwareKeyboard()
-    HomeScreen(uiState, scrollState, {
+    HomeScreen(isDark, uiState, scrollState, {
         homeViewModel.saveCurrentNote(it.note.noteId)
         navigateTo(Destinations.NOTE_ROUTE)
     }, {
@@ -49,6 +52,7 @@ fun HomeScreen(scrollState: LazyListState, navigateTo: (String) -> Unit) {
 
 @Composable
 fun HomeScreen(
+    isDark: Boolean,
     uiState: HomeUiState,
     scrollState: LazyListState,
     saveNote: (NoteWithDoodleAndImage) -> Unit,
@@ -57,7 +61,8 @@ fun HomeScreen(
 ) {
     val maxHeightInPX = with(LocalDensity.current) { headerBarExpandedHeight.toPx() }
     val minHeightInPx = with(LocalDensity.current) { headerBarCollapsedHeight.toPx() }
-
+    val headerColor = colorArray[randomInt][if (isDark) lighterToneIndex else darkerToneIndex]
+    val tintColor = colorArray[randomInt][if (isDark) darkerToneIndex else lighterToneIndex]
     Scaffold(
         modifier = Modifier
             .navigationBarsPadding(),
@@ -67,6 +72,7 @@ fun HomeScreen(
         content = { paddingValues ->
             NotesListComponent(
                 true,
+                headerColor,
                 uiState,
                 scrollState,
                 paddingValues,
@@ -75,8 +81,9 @@ fun HomeScreen(
             )
 
             if (scrollState.firstVisibleItemIndex != 0 || (scrollState.firstVisibleItemIndex == 0 && scrollState.firstVisibleItemScrollOffset > maxHeightInPX - minHeightInPx)) {
-                HomeHeader(modifier = Modifier
-                        .background(MaterialTheme.colors.background)
+                HomeHeader(
+                    modifier = Modifier
+                        .background(MaterialTheme.colors.background), headerColor
                 ) {
                     PaperIconButton(
                         id = R.drawable.ic_search,
@@ -92,13 +99,14 @@ fun HomeScreen(
                 modifier = Modifier.navigationBarsPadding(),
                 onClick = openNewNote,
                 shape = fabShape,
+                backgroundColor = headerColor
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_feather),
                     contentDescription = stringResource(
                         id = R.string.image_desc
                     ),
-                    colorFilter = ColorFilter.tint(Color.White)
+                    colorFilter = ColorFilter.tint(tintColor)
                 )
             }
         })

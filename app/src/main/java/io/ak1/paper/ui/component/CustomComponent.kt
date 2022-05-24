@@ -21,10 +21,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,11 +54,12 @@ import io.ak1.paper.ui.utils.toPercent
 @Composable
 fun HomeHeader(
     modifier: Modifier = Modifier,
+    headerColor: Color,
     scrollState: LazyListState? = null,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
-    val headerSize = if (scrollState == null) 20f else 40f
-    val headerPadding = 11.dp
+    val headerSize = if (scrollState == null) 22f else 40f
+    val headerPadding = 5.5.dp
     var textSize by remember { mutableStateOf(headerSize) }
     var textPadding by remember { mutableStateOf(headerPadding) }
     val loc = LocalDensity.current
@@ -73,9 +75,9 @@ fun HomeHeader(
                 if ((scrollState?.firstVisibleItemScrollOffset ?: 0) < actualHeight.toInt()) {
                     val local =
                         scrollState?.firstVisibleItemScrollOffset?.toPercent(actualHeight) ?: 0f
-                    textSize = (headerSize * local) + 20f
+                    textSize = (headerSize * local) + 22f
                     with(loc) {
-                        textPadding = (((it.size.height / 2) - 30f) * local).toDp() + 11.dp
+                        textPadding = (((it.size.height / 2) - 30f) * local).toDp() + headerPadding
                     }
                 }
             },
@@ -86,9 +88,11 @@ fun HomeHeader(
                 textSize,
                 TextUnitType.Sp
             ),
+            color = headerColor,
             modifier = Modifier
-                .padding(16.dp, 11.dp, 12.dp, textPadding)
+                .padding(16.dp, headerPadding, 12.dp, textPadding)
                 .align(Alignment.BottomStart),
+            fontFamily = FontFamily(Font(R.font.lavishly_yours_regular))
         )
         Row(
             modifier = Modifier
@@ -104,6 +108,7 @@ fun HomeHeader(
 @Composable
 fun NotesListComponent(
     includeHeader: Boolean = true,
+    headerColor: Color,
     homeUiState: HomeUiState,
     scrollState: LazyListState = rememberLazyListState(),
     padding: PaddingValues,
@@ -113,13 +118,10 @@ fun NotesListComponent(
     val modifier = Modifier
         .padding(padding)
     Column {
-        LazyColumn(modifier = modifier
-            .width(600.dp)
-            .fillMaxWidth()
-            .align(Alignment.CenterHorizontally), state = scrollState) {
+        LazyColumn(modifier = modifier, state = scrollState) {
             if (includeHeader) {
                 item {
-                    HomeHeader(scrollState = scrollState) {
+                    HomeHeader(headerColor = headerColor,scrollState = scrollState) {
                         PaperIconButton(
                             id = R.drawable.ic_search,
                         ) { navigateTo(Destinations.SEARCH_ROUTE) }
@@ -274,10 +276,14 @@ fun PaperIconButton(
             painterResource(id = id),
             contentDescription = stringResource(id = R.string.image_desc),
             tint = tint,
-            modifier = if (border) Modifier.border(0.5.dp, Color.White, CircleShape) else Modifier
+            modifier = if (border) Modifier.border(
+                0.5.dp,
+                MaterialTheme.colors.primary,
+                CircleShape
+            ) else Modifier
         )
     }
 }
 
 val headerBarCollapsedHeight = 50.dp
-val headerBarExpandedHeight = 200.dp
+val headerBarExpandedHeight = 220.dp

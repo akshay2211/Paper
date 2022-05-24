@@ -57,7 +57,7 @@ fun RootComponent() {
                     startDestination = Destinations.HOME_ROUTE
                 ) {
                     composable(Destinations.HOME_ROUTE) {
-                        HomeScreen(scrollState) { navController.navigate(it) }
+                        HomeScreen(isDark,scrollState) { navController.navigate(it) }
                     }
                     composable(Destinations.NOTE_ROUTE) {
                         NoteScreen({ navController.navigate(it) })
