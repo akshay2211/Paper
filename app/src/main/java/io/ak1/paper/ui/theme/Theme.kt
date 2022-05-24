@@ -1,16 +1,13 @@
 package io.ak1.paper.ui.theme
 
 import android.content.res.Configuration
-import android.view.Window
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.view.WindowInsetsControllerCompat
 import io.ak1.paper.data.local.dataStore
 import io.ak1.paper.data.local.isDarkThemeOn
 import io.ak1.paper.data.local.themePreferenceKey
@@ -25,8 +22,8 @@ private val DarkColorPalette = darkColors(
     secondaryVariant = WhiteDark,
     background = BlackDark,
     surface = BlackLite,
-    onPrimary = BlackDark,
-    onSecondary = BlackDark,
+    onPrimary = WhiteDark,
+    onSecondary = WhiteDark,
     onBackground = WhiteDark,
     onSurface = WhiteDark,
 )
@@ -38,8 +35,8 @@ private val LightColorPalette = lightColors(
     secondaryVariant = BlackDark,
     background = WhiteDark,
     surface = WhiteLite,
-    onPrimary = WhiteDark,
-    onSecondary = WhiteDark,
+    onPrimary = Accent,
+    onSecondary = Accent,
     onBackground = BlackDark,
     onSurface = BlackDark,
 
@@ -69,10 +66,13 @@ fun PaperTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable(
 fun isSystemInDarkThemeCustom(): Boolean {
     val context = LocalContext.current
     val exampleData = runBlocking { context.dataStore.data.first() }
-    val theme = context.isDarkThemeOn().collectAsState(initial = exampleData[themePreferenceKey] ?: 0)
+    val theme =
+        context.isDarkThemeOn().collectAsState(initial = exampleData[themePreferenceKey] ?: 0)
     return when (theme.value) {
         2 -> true
         1 -> false
         else -> context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
     }
 }
+
+var randomInt = 0

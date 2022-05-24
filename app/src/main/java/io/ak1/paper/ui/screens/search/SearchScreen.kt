@@ -44,7 +44,8 @@ fun SearchScreen(navController: NavController) {
         inputService?.showSoftwareKeyboard()
         focusRequester.requestFocus()
     }
-    val resultList = homeViewModel.getAllNotesByDescription(description.value).collectAsState(initial = listOf())
+    val resultList =
+        homeViewModel.getAllNotesByDescription(description.value).collectAsState(initial = listOf())
 
     Scaffold(topBar = {
         TextField(
@@ -95,7 +96,13 @@ fun SearchScreen(navController: NavController) {
             )
         )
     }) { paddingValues ->
-        NotesListComponent(false, HomeUiState(resultList.value,false), scrollState, paddingValues, {}) {
+        NotesListComponent(
+            false,
+            MaterialTheme.colors.onPrimary,
+            HomeUiState(resultList.value, false),
+            scrollState,
+            paddingValues,
+            {}) {
             focus.value = false
             homeViewModel.saveCurrentNote(it.note.noteId)
             navController.navigate(Destinations.NOTE_ROUTE)
