@@ -1,17 +1,24 @@
 package io.ak1.paper.ui.utils
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Environment
 import android.text.format.DateUtils
 import android.util.Base64
-import androidx.compose.foundation.layout.*
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -40,7 +47,7 @@ fun Bitmap.getEncodedString(): String? = Base64.encodeToString(ByteArrayOutputSt
     val w = 360
     val h = this@getEncodedString.height * w / this@getEncodedString.width
     Bitmap.createScaledBitmap(this@getEncodedString, w, h, false)
-        .compress(Bitmap.CompressFormat.PNG,99 , this)
+        .compress(Bitmap.CompressFormat.PNG, 99, this)
 }.toByteArray(), Base64.NO_WRAP)
 
 
@@ -64,4 +71,34 @@ fun Modifier.paddingBottom(paddingValues: PaddingValues): Modifier {
 
 fun Int.toPercent(dependency: Float) =
     this.let { it -> 1 - ((it * 100 / dependency) / 100f) }
+
+
+fun Context.clickImage(currentPhotoPath: MutableState<String>, callback: (Uri) -> Unit) {
+
+    val photoFile: File? = try {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date())
+        val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        File.createTempFile(
+                "JPEG_${timeStamp}_", /* prefix */
+                ".jpg", /* suffix */
+                storageDir /* directory */
+            )
+            .apply {
+                // Save a file: path for use with ACTION_VIEW intents
+                currentPhotoPath.value = absolutePath
+            }
+    } catch (ex: IOException) {
+        // Error occurred while creating the File
+        null
+    }
+    // Continue only if the File was successfully created
+    photoFile?.also {
+        val photoURI: Uri = FileProvider.getUriForFile(
+            this,
+            "io.ak1.paper.fileprovider",
+            it
+        )
+        callback.invoke(photoURI)
+    }
+}
 
