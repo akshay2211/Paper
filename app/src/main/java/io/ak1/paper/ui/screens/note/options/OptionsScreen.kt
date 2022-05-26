@@ -72,7 +72,7 @@ fun OptionsScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
     { result -> imageData.value = result }
 
     val colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
-    LazyColumn(modifier = Modifier.padding(12.dp)) {
+    LazyColumn(modifier = Modifier.padding(3.dp, 12.dp)) {
         items(list) { it ->
             Button(
                 onClick = {
