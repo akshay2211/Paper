@@ -3,6 +3,7 @@ package io.ak1.paper.di
 import io.ak1.paper.ui.screens.home.HomeViewModel
 import io.ak1.paper.ui.screens.note.doodle.DoodleViewModel
 import io.ak1.paper.ui.screens.note.note.NoteViewModel
+import io.ak1.paper.ui.screens.note.options.OptionsViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -26,6 +27,7 @@ var databaseModule = module {
 var viewModel = module {
     viewModel { HomeViewModel(get(), get()) }
     viewModel { NoteViewModel(get(), get()) }
+    viewModel { OptionsViewModel(get()) }
     viewModel { DoodleViewModel(get(), get(), get()) }
 }
 var repositories = module {

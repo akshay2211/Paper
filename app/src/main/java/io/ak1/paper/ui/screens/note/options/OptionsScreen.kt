@@ -15,28 +15,21 @@
  */
 package io.ak1.paper.ui.screens.note.options
 
-import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.ak1.paper.R
 import io.ak1.paper.ui.screens.Destinations
-import io.ak1.paper.ui.screens.note.note.NoteViewModel
-import io.ak1.paper.ui.utils.clickImage
+import io.ak1.paper.ui.screens.note.image.ImageChooserType
 import org.koin.androidx.compose.inject
 
 /**
@@ -48,10 +41,8 @@ data class Menu(val iconId: Int, val stringId: Int)
 
 @Composable
 fun OptionsScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
-    val noteViewModel by inject<NoteViewModel>()
-    val context = LocalContext.current
-    val imageData = remember { mutableStateOf<Uri?>(null) }
-    val currentPhotoPath = remember { mutableStateOf("") }
+    val optionsViewModel by inject<OptionsViewModel>()
+
 
     val list = listOf(
         Menu(R.drawable.ic_camera, R.string.take_photo),
@@ -66,10 +57,6 @@ fun OptionsScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
         focusedElevation = 0.dp
     )
 
-    val image = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture())
-    { result -> if (result) imageData.value = Uri.parse("file://${currentPhotoPath.value}") }
-    val gallery = rememberLauncherForActivityResult(ActivityResultContracts.GetContent())
-    { result -> imageData.value = result }
 
     val colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
     LazyColumn(modifier = Modifier.padding(3.dp, 12.dp)) {
@@ -77,12 +64,18 @@ fun OptionsScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
             Button(
                 onClick = {
                     backPress.invoke()
-                    noteViewModel.saveCurrentDoodleId("")
+                    optionsViewModel.saveCurrentDoodleId()
+                    optionsViewModel.saveCurrentImageId()
                     Handler(Looper.getMainLooper()).postDelayed({
                         when (it.iconId) {
-                            R.drawable.ic_camera -> context.clickImage(currentPhotoPath)
-                            { image.launch(it) }
-                            R.drawable.ic_image -> gallery.launch("image/*")
+                            R.drawable.ic_camera -> {
+                                optionsViewModel.saveCurrentImageType(ImageChooserType.CAMERA)
+                                navigateTo(Destinations.IMAGE_ROUTE)
+                            }
+                            R.drawable.ic_image -> {
+                                optionsViewModel.saveCurrentImageType(ImageChooserType.GALLERY)
+                                navigateTo(Destinations.IMAGE_ROUTE)
+                            }
                             R.drawable.ic_doodle -> navigateTo(Destinations.DOODLE_ROUTE)
                         }
                     }, 100L)
