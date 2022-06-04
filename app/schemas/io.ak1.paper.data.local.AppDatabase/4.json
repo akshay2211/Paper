@@ -1,0 +1,224 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 4,
+    "identityHash": "860d7a8624e1b56eacac32c55ae7981b",
+    "entities": [
+      {
+        "tableName": "notes_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`folderId` TEXT NOT NULL, `description` TEXT NOT NULL, `noteId` TEXT NOT NULL, `createdOn` INTEGER NOT NULL, `updatedOn` INTEGER NOT NULL, PRIMARY KEY(`noteId`))",
+        "fields": [
+          {
+            "fieldPath": "folderId",
+            "columnName": "folderId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "noteId",
+            "columnName": "noteId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdOn",
+            "columnName": "createdOn",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedOn",
+            "columnName": "updatedOn",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "noteId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_notes_table_noteId",
+            "unique": true,
+            "columnNames": [
+              "noteId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_notes_table_noteId` ON `${TABLE_NAME}` (`noteId`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "doodle_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`attachedNoteId` TEXT NOT NULL, `rawText` TEXT NOT NULL, `base64Text` TEXT NOT NULL, `doodleid` TEXT NOT NULL, `createdOn` INTEGER NOT NULL, `updatedOn` INTEGER NOT NULL, PRIMARY KEY(`doodleid`))",
+        "fields": [
+          {
+            "fieldPath": "attachedNoteId",
+            "columnName": "attachedNoteId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rawText",
+            "columnName": "rawText",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "base64Text",
+            "columnName": "base64Text",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "doodleid",
+            "columnName": "doodleid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdOn",
+            "columnName": "createdOn",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedOn",
+            "columnName": "updatedOn",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "doodleid"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_doodle_table_doodleid",
+            "unique": true,
+            "columnNames": [
+              "doodleid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_doodle_table_doodleid` ON `${TABLE_NAME}` (`doodleid`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "image_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`attachedNoteId` TEXT NOT NULL, `imageText` TEXT NOT NULL, `imageDesc` TEXT, `imageId` TEXT NOT NULL, `createdOn` INTEGER NOT NULL, `updatedOn` INTEGER NOT NULL, PRIMARY KEY(`imageId`))",
+        "fields": [
+          {
+            "fieldPath": "attachedNoteId",
+            "columnName": "attachedNoteId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "imageText",
+            "columnName": "imageText",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "imageDesc",
+            "columnName": "imageDesc",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "imageId",
+            "columnName": "imageId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdOn",
+            "columnName": "createdOn",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedOn",
+            "columnName": "updatedOn",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "imageId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_image_table_imageId",
+            "unique": true,
+            "columnNames": [
+              "imageId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_image_table_imageId` ON `${TABLE_NAME}` (`imageId`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "folder_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `id` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_folder_table_id",
+            "unique": true,
+            "columnNames": [
+              "id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_folder_table_id` ON `${TABLE_NAME}` (`id`)"
+          }
+        ],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '860d7a8624e1b56eacac32c55ae7981b')"
+    ]
+  }
+}
