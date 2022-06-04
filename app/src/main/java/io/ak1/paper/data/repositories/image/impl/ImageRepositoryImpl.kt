@@ -17,9 +17,26 @@ package io.ak1.paper.data.repositories.image.impl
 
 import io.ak1.paper.data.local.ImageDao
 import io.ak1.paper.data.repositories.image.ImageRepository
+import io.ak1.paper.models.Image
 
 /**
  * Created by akshay on 04/06/22
  * https://ak1.io
  */
-class ImageRepositoryImpl(imageDao: ImageDao) : ImageRepository
+class ImageRepositoryImpl(private val imageDao: ImageDao) : ImageRepository {
+    override suspend fun create(image: Image) {
+        imageDao.insert(image)
+    }
+
+    override suspend fun getImageById(imageId: String): Image? {
+        return imageDao.getImageById(imageId)
+    }
+
+    override suspend fun deleteImageById(imageId: String) {
+        imageDao.deleteImage(imageId)
+    }
+
+    override suspend fun deleteImageByNoteId(noteId: String) {
+        imageDao.deleteImageByNote(noteId)
+    }
+}

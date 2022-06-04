@@ -15,10 +15,15 @@
  */
 package io.ak1.paper.data.repositories.image
 
+import io.ak1.paper.models.Image
+
 /**
  * Created by akshay on 04/06/22
  * https://ak1.io
  */
 interface ImageRepository {
-
+    suspend fun create(image: Image)
+    suspend fun getImageById(imageId: String): Image?
+    suspend fun deleteImageById(imageId: String)
+    suspend fun deleteImageByNoteId(noteId: String)
 }

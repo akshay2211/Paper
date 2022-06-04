@@ -16,6 +16,7 @@
 package io.ak1.paper.ui.screens.note.image
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import io.ak1.paper.data.repositories.image.ImageRepository
 import io.ak1.paper.data.repositories.local.LocalRepository
 import io.ak1.paper.models.Image
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 /**
  * Created by akshay on 04/06/22
@@ -38,8 +40,19 @@ enum class ImageChooserType {
     CAMERA, GALLERY, NONE
 }
 
-class ImageViewModel(imageRepository: ImageRepository, localRepository: LocalRepository) :
+class ImageViewModel(
+    private val imageRepository: ImageRepository,
+    private val localRepository: LocalRepository
+) :
     ViewModel() {
+    fun save(encodedString: String?) {
+        _uiState.update { it.copy(image = it.image.copy(imageText = encodedString.toString())) }
+        encodedString?.let {
+            viewModelScope.launch {
+                imageRepository.create(_uiState.value.image)
+            }
+        }
+    }
 
     // UI state exposed to the UI
     private val _uiState = MutableStateFlow(ImageUiState(loading = true))
@@ -47,13 +60,17 @@ class ImageViewModel(imageRepository: ImageRepository, localRepository: LocalRep
 
     init {
         if (localRepository.currentImageId.value.isNullOrEmpty()) {
-            _uiState.update { it.copy(openImageChooser = localRepository.currentImageType.value) }
-        } else {
             _uiState.update {
                 it.copy(image = Image(localRepository.currentNote.value, "", ""))
             }
+            _uiState.update { it.copy(openImageChooser = localRepository.currentImageType.value) }
         }
     }
 
-
+    fun saveCurrentImageType(imageChooserType: ImageChooserType = ImageChooserType.NONE) {
+        viewModelScope.launch {
+            localRepository.saveCurrentImageType(imageChooserType)
+        }
+        _uiState.update { it.copy(openImageChooser = imageChooserType) }
+    }
 }

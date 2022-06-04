@@ -164,6 +164,29 @@ fun NoteScreen(
                             }
 
                         }
+                        items(uiState.note.imageList) { image ->
+                            image.imageText.convert()?.let {
+                                Image(
+                                    bitmap = it.asImageBitmap(),
+                                    contentDescription = "hi",
+                                    modifier = Modifier
+                                        .size(100.dp)
+                                        .padding(5.dp)
+                                        .clip(fabShape)
+                                        .border(
+                                            0.5.dp,
+                                            MaterialTheme.colors.primary,
+                                            fabShape
+                                        )
+                                        .clickable {
+                                            saveDoodleId(image.imageId)
+                                            navigateTo(Destinations.DOODLE_ROUTE)
+                                        },
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+
+                        }
                     }
                 }
                 BasicTextField(

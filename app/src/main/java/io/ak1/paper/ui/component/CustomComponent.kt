@@ -52,6 +52,7 @@ import io.ak1.paper.ui.utils.toPercent
  */
 
 
+@OptIn(ExperimentalUnitApi::class)
 @Composable
 fun HomeHeader(
     modifier: Modifier = Modifier,
@@ -221,33 +222,21 @@ fun ImageGridView(element: NoteWithDoodleAndImage) {
     val defaultHeight = 120.dp
     Box {
         val bitmapList = element.getBitmapList()
-        val totalSize = bitmapList.size
-        if (totalSize == 1) {
-            bitmapList[0]?.let {
-                Image(
-                    bitmap = it.asImageBitmap(),
-                    contentDescription = null, // decorative
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .height(defaultHeight)
-                        .fillMaxWidth()
-                )
-            }
-        } else if (totalSize == 2 || totalSize == 3 || totalSize == 4) {
-            Row {
-                bitmapList.forEach {
-                    it?.let {
-                        Image(
-                            bitmap = it.asImageBitmap(),
-                            contentDescription = null, // decorative
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .height(defaultHeight)
-                                .fillMaxWidth()
-                                .weight(1f, true)
-                        )
-                    }
+        Row {
+            bitmapList.forEachIndexed { index, bitmap ->
+                bitmap?.let {
+                    Image(
+                        bitmap = bitmap.asImageBitmap(),
+                        contentDescription = null, // decorative
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .height(defaultHeight)
+                            .fillMaxWidth()
+                            .weight(1f, true)
+                    )
                 }
+                if (index == 4){
+                    return@forEachIndexed}
             }
         }
         if (element.note.description.trim().isEmpty())
