@@ -25,6 +25,7 @@ import io.ak1.paper.R
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.home.HomeScreen
 import io.ak1.paper.ui.screens.note.doodle.DoodleScreen
+import io.ak1.paper.ui.screens.note.image.PreviewScreen
 import io.ak1.paper.ui.screens.note.note.NoteScreen
 import io.ak1.paper.ui.screens.note.options.OptionsScreen
 import io.ak1.paper.ui.screens.search.SearchScreen
@@ -69,6 +70,9 @@ fun RootComponent() {
                     }
                     composable(Destinations.DOODLE_ROUTE) {
                         DoodleScreen { navController.navigateUp() }
+                    }
+                    composable(Destinations.IMAGE_ROUTE) {
+                        PreviewScreen { navController.navigateUp() }
                     }
                     bottomSheet(Destinations.OPTIONS_ROUTE) {
                         OptionsScreen({ navController.navigate(it) })

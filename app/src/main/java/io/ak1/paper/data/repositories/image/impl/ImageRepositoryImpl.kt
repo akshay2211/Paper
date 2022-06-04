@@ -13,24 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ak1.paper.ui.screens.note.image
+package io.ak1.paper.data.repositories.image.impl
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
-import org.koin.androidx.compose.inject
+import io.ak1.paper.data.local.ImageDao
+import io.ak1.paper.data.repositories.image.ImageRepository
 
 /**
- * Created by akshay on 28/05/22
+ * Created by akshay on 04/06/22
  * https://ak1.io
  */
-
-@Composable
-fun PreviewScreen(backPress: () -> Unit) {
-    val imageViewModel by inject<ImageViewModel>()
-    val uiState by imageViewModel.uiState.collectAsState()
-    val context = LocalContext.current
-
-
-}
+class ImageRepositoryImpl(imageDao: ImageDao) : ImageRepository
