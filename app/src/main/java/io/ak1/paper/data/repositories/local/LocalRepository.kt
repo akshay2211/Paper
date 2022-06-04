@@ -15,6 +15,7 @@
  */
 package io.ak1.paper.data.repositories.local
 
+import io.ak1.paper.ui.screens.note.image.ImageChooserType
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.*
 
@@ -28,4 +29,10 @@ interface LocalRepository {
 
     suspend fun saveCurrentDoodleId(currentDoodleId: String)
     val currentDoodleId: MutableStateFlow<String>
+
+    suspend fun saveCurrentImageId(currentImageId: String)
+    val currentImageId: MutableStateFlow<String>
+
+    suspend fun saveCurrentImageType(imageChooserType: ImageChooserType)
+    val currentImageType: MutableStateFlow<ImageChooserType>
 }
