@@ -1,9 +1,9 @@
 package io.ak1.paper.models
 
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Parcelable
 import androidx.room.*
+import io.ak1.paper.ui.screens.note.note.ClickableUri
 import io.ak1.paper.ui.utils.convert
 import kotlinx.parcelize.Parcelize
 import java.util.*
@@ -60,12 +60,15 @@ fun NoteWithDoodleAndImage.getBitmapList(): MutableList<Bitmap?> {
         addAll(doodleList.map { it.base64Text.convert() })
     }
 }
-fun NoteWithDoodleAndImage.getUriList(): MutableList<Uri?> {
-    return imageList.map {
-        Uri.parse(it.uri)
-    }.toMutableList().apply {
-        addAll(doodleList.map { Uri.parse(it.uri) })
-    }
+fun NoteWithDoodleAndImage.getUriList(): MutableList<ClickableUri> {
+    val list = doodleList.map {
+        ClickableUri(it.doodleid,it.uri,it.updatedOn,true)
+    }.toMutableList()
+    val list2 = imageList.map {  ClickableUri(it.imageId,it.uri,it.updatedOn, false)}
+    list.addAll(list2)
+    list.sortBy { it.updatedOn }
+    list.reverse()
+    return list
 }
 
 @Parcelize

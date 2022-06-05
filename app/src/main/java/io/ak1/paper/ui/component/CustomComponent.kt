@@ -3,7 +3,6 @@
 package io.ak1.paper.ui.component
 
 import android.content.res.Configuration
-import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -38,6 +37,7 @@ import coil.compose.rememberAsyncImagePainter
 import io.ak1.paper.R
 import io.ak1.paper.models.Note
 import io.ak1.paper.models.NoteWithDoodleAndImage
+import io.ak1.paper.models.getUriList
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.home.DEFAULT
 import io.ak1.paper.ui.screens.home.HomeUiState
@@ -222,23 +222,20 @@ fun NoteView(element: NoteWithDoodleAndImage, callback: (NoteWithDoodleAndImage)
 fun ImageGridView(element: NoteWithDoodleAndImage) {
     val defaultHeight = 120.dp
     Box {
-        val list = element.doodleList.map { it.uri }.toMutableList()
-        val list2 = element.imageList.map { it.uri }
-        list.addAll(list2)
+        val list = element.getUriList()
         Row {
-            list.forEachIndexed { index, bitmap ->
-                bitmap.let {
-                    Image(
-                        painter = rememberAsyncImagePainter(model = Uri.parse(bitmap)),
-                        contentDescription = null, // decorative
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .height(defaultHeight)
-                            .fillMaxWidth()
-                            .weight(1f, true)
-                    )
-                }
-                if (index == 4) { return@forEachIndexed }
+            list.forEachIndexed { index, clickableUri ->
+                if (index == 4) return@forEachIndexed
+                Image(
+                    painter = rememberAsyncImagePainter(model = clickableUri.uri),
+                    contentDescription = null, // decorative
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(defaultHeight)
+                        .fillMaxWidth()
+                        .weight(1f, true)
+                )
+
             }
         }
         if (element.note.description.trim().isEmpty())

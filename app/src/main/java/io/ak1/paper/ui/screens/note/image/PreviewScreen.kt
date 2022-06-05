@@ -60,7 +60,6 @@ fun PreviewScreen(backPress: () -> Unit) {
 
     val image = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture())
     { result ->
-        Log.e("image call", "$result    file://${currentPhotoPath.value}")
         if (result) {
             imageData.value = imageClickedUri.value
             imageViewModel.saveCurrentImageType()
@@ -76,7 +75,6 @@ fun PreviewScreen(backPress: () -> Unit) {
             return@rememberLauncherForActivityResult
         }
         imageViewModel.saveCurrentImageType()
-        Log.e("gallery call", "$result")
 
         imageData.value = result
     }
@@ -84,7 +82,6 @@ fun PreviewScreen(backPress: () -> Unit) {
     LaunchedEffect(uiState) {
         when (uiState.openImageChooser) {
             ImageChooserType.CAMERA -> context.clickImage(currentPhotoPath) {
-                Log.e("photo uri", "$it")
                 imageClickedUri.value = it
                 image.launch(it)
             }
