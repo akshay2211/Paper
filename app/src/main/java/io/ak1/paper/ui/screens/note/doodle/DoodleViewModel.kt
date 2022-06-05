@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
  */
 
 data class DoodleUiState(
-    val doodle: Doodle = Doodle("", "", ""),
+    val doodle: Doodle = Doodle("", "", "", ""),
     val loading: Boolean = false
 )
 
@@ -53,7 +53,7 @@ class DoodleViewModel(
         viewModelScope.launch {
             localRepository.currentDoodleId.collect { doodleId ->
                 val doodle = doodlesRepository.getDoodleById(doodleId)
-                    ?: Doodle(localRepository.currentNote.value, "", "")
+                    ?: Doodle(localRepository.currentNote.value, "", "", "")
                 _uiState.update { it.copy(doodle = doodle) }
             }
 

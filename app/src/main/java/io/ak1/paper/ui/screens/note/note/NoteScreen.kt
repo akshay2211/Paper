@@ -1,6 +1,5 @@
 package io.ak1.paper.ui.screens.note.note
 
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -19,7 +18,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalTextInputService
@@ -31,7 +29,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import coil.compose.rememberAsyncImagePainter
 import io.ak1.paper.R
 import io.ak1.paper.models.Note
 import io.ak1.paper.models.NoteWithDoodleAndImage
@@ -39,7 +37,6 @@ import io.ak1.paper.ui.component.CustomAlertDialog
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.home.fabShape
-import io.ak1.paper.ui.utils.convert
 import io.ak1.paper.ui.utils.timeAgoInSeconds
 import org.koin.androidx.compose.inject
 
@@ -48,7 +45,6 @@ import org.koin.androidx.compose.inject
  * https://ak1.io
  */
 
-@OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
 fun NoteScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
     val noteViewModel by inject<NoteViewModel>()
@@ -65,7 +61,6 @@ fun NoteScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
         }
     }
     fun saveAndExit(note: NoteWithDoodleAndImage) {
-        Log.e("saveAndExit", "${note.note.noteId}   --${note.note.description}--")
         if (note.note.description != description.value.text.trim()
         ) {
             note.note.description = description.value.text.trim()
@@ -99,7 +94,6 @@ fun NoteScreen(
     backPress: () -> Unit,
     navigateTo: (String) -> Unit
 ) {
-    Log.e("NoteScreen", "${uiState.note.note.noteId}   --${uiState.note.note.description}--")
     val focusRequester = remember { FocusRequester() }
     val inputService = LocalTextInputService.current
     val focus = remember { mutableStateOf(false) }
@@ -142,9 +136,9 @@ fun NoteScreen(
                 if (uiState.note.doodleList.isNotEmpty()) {
                     LazyRow(modifier = Modifier.padding(5.dp, 15.dp)) {
                         items(uiState.note.doodleList) { doodle ->
-                            doodle.base64Text.convert()?.let {
+                            if (!doodle.uri.isEmpty()) {
                                 Image(
-                                    bitmap = it.asImageBitmap(),
+                                    painter = rememberAsyncImagePainter(model = doodle.uri),
                                     contentDescription = "hi",
                                     modifier = Modifier
                                         .size(100.dp)
@@ -165,9 +159,9 @@ fun NoteScreen(
 
                         }
                         items(uiState.note.imageList) { image ->
-                            image.imageText.convert()?.let {
+                            if (!image.uri.isEmpty()) {
                                 Image(
-                                    bitmap = it.asImageBitmap(),
+                                    painter = rememberAsyncImagePainter(model = image.uri),
                                     contentDescription = "hi",
                                     modifier = Modifier
                                         .size(100.dp)
@@ -179,13 +173,12 @@ fun NoteScreen(
                                             fabShape
                                         )
                                         .clickable {
-                                            saveDoodleId(image.imageId)
-                                            navigateTo(Destinations.DOODLE_ROUTE)
+                                            // saveDoodleId(doodle.doodleid)
+                                            //navigateTo(Destinations.IMAGE_ROUTE)
                                         },
                                     contentScale = ContentScale.Crop
                                 )
                             }
-
                         }
                     }
                 }

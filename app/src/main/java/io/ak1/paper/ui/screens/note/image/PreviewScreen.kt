@@ -37,7 +37,7 @@ import coil.compose.rememberAsyncImagePainter
 import io.ak1.paper.R
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.utils.clickImage
-import io.ak1.paper.ui.utils.getEncodedString
+import io.ak1.paper.ui.utils.saveImage
 import org.koin.androidx.compose.inject
 
 /**
@@ -111,8 +111,8 @@ fun PreviewScreen(backPress: () -> Unit) {
                         if (bitmap.value == null) {
                             Log.e("Bitmap", "Is null")
                         }
-
-                        imageViewModel.save(bitmap.value?.getEncodedString())
+                        val uri = context.saveImage(bitmap.value, uiState.image.imageId)
+                        imageViewModel.save(uri, bitmap.value)
                         backPress.invoke()
                     }
                     PaperIconButton(

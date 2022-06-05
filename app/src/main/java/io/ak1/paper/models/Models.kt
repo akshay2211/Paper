@@ -1,6 +1,7 @@
 package io.ak1.paper.models
 
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Parcelable
 import androidx.room.*
 import io.ak1.paper.ui.utils.convert
@@ -29,15 +30,16 @@ data class Note(
 
 @Parcelize
 @Entity(tableName = "doodle_table", indices = [Index(value = ["doodleid"], unique = true)])
-data class Doodle(var attachedNoteId: String, var rawText: String, var base64Text: String) :
-    Parent() {
+data class Doodle(var attachedNoteId: String, var rawText: String, var base64Text: String,
+                  @ColumnInfo(defaultValue = "") var uri:String) : Parent() {
     @PrimaryKey
     var doodleid: String = UUID.randomUUID().toString()
 }
 
 @Parcelize
 @Entity(tableName = "image_table", indices = [Index(value = ["imageId"], unique = true)])
-data class Image(var attachedNoteId: String, var imageText: String, var imageDesc: String?) :
+data class Image(var attachedNoteId: String, var imageText: String, var imageDesc: String?,
+                 @ColumnInfo(defaultValue = "") var uri:String) :
     Parent() {
     @PrimaryKey
     var imageId: String = UUID.randomUUID().toString()
@@ -56,6 +58,13 @@ fun NoteWithDoodleAndImage.getBitmapList(): MutableList<Bitmap?> {
         it.imageText.convert()
     }.toMutableList().apply {
         addAll(doodleList.map { it.base64Text.convert() })
+    }
+}
+fun NoteWithDoodleAndImage.getUriList(): MutableList<Uri?> {
+    return imageList.map {
+        Uri.parse(it.uri)
+    }.toMutableList().apply {
+        addAll(doodleList.map { Uri.parse(it.uri) })
     }
 }
 
