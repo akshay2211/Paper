@@ -26,7 +26,7 @@ fun getDb(context: Context): AppDatabase {
         Room.databaseBuilder(
             context,
             AppDatabase::class.java, "database-paper"
-        ).addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
+        ).fallbackToDestructiveMigration().addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
     }
 }
 
