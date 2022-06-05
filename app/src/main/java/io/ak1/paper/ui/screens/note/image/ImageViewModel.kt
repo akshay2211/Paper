@@ -15,11 +15,14 @@
  */
 package io.ak1.paper.ui.screens.note.image
 
+import android.graphics.Bitmap
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.ak1.paper.data.repositories.image.ImageRepository
 import io.ak1.paper.data.repositories.local.LocalRepository
 import io.ak1.paper.models.Image
+import io.ak1.paper.ui.utils.getEncodedString
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,7 +34,7 @@ import kotlinx.coroutines.launch
  * https://ak1.io
  */
 data class ImageUiState(
-    val image: Image = Image("", "", ""),
+    val image: Image = Image("", "", "", ""),
     val openImageChooser: ImageChooserType = ImageChooserType.NONE,
     val loading: Boolean = false
 )
@@ -45,23 +48,15 @@ class ImageViewModel(
     private val localRepository: LocalRepository
 ) :
     ViewModel() {
-    fun save(encodedString: String?) {
-        _uiState.update { it.copy(image = it.image.copy(imageText = encodedString.toString())) }
-        encodedString?.let {
-            viewModelScope.launch {
-                imageRepository.create(_uiState.value.image)
-            }
-        }
-    }
 
     // UI state exposed to the UI
     private val _uiState = MutableStateFlow(ImageUiState(loading = true))
     val uiState: StateFlow<ImageUiState> = _uiState.asStateFlow()
 
     init {
-        if (localRepository.currentImageId.value.isNullOrEmpty()) {
+        if (localRepository.currentImageId.value.isEmpty()) {
             _uiState.update {
-                it.copy(image = Image(localRepository.currentNote.value, "", ""))
+                it.copy(image = Image(localRepository.currentNote.value, "", "", ""))
             }
             _uiState.update { it.copy(openImageChooser = localRepository.currentImageType.value) }
         }
@@ -72,5 +67,22 @@ class ImageViewModel(
             localRepository.saveCurrentImageType(imageChooserType)
         }
         _uiState.update { it.copy(openImageChooser = imageChooserType) }
+    }
+
+    fun save(uri: Uri?, bitmap: Bitmap?) {
+        val encodedString = bitmap?.getEncodedString()
+        _uiState.update {
+            it.copy(
+                image = it.image.copy(
+                    imageText = encodedString.toString(),
+                    uri = uri.toString()
+                )
+            )
+        }
+        encodedString?.let {
+            viewModelScope.launch {
+                imageRepository.create(_uiState.value.image)
+            }
+        }
     }
 }

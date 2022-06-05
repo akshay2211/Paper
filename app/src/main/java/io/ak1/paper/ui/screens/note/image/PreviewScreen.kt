@@ -37,7 +37,7 @@ import coil.compose.rememberAsyncImagePainter
 import io.ak1.paper.R
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.utils.clickImage
-import io.ak1.paper.ui.utils.getEncodedString
+import io.ak1.paper.ui.utils.saveImage
 import org.koin.androidx.compose.inject
 
 /**
@@ -60,7 +60,6 @@ fun PreviewScreen(backPress: () -> Unit) {
 
     val image = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture())
     { result ->
-        Log.e("image call", "$result    file://${currentPhotoPath.value}")
         if (result) {
             imageData.value = imageClickedUri.value
             imageViewModel.saveCurrentImageType()
@@ -76,7 +75,6 @@ fun PreviewScreen(backPress: () -> Unit) {
             return@rememberLauncherForActivityResult
         }
         imageViewModel.saveCurrentImageType()
-        Log.e("gallery call", "$result")
 
         imageData.value = result
     }
@@ -84,7 +82,6 @@ fun PreviewScreen(backPress: () -> Unit) {
     LaunchedEffect(uiState) {
         when (uiState.openImageChooser) {
             ImageChooserType.CAMERA -> context.clickImage(currentPhotoPath) {
-                Log.e("photo uri", "$it")
                 imageClickedUri.value = it
                 image.launch(it)
             }
@@ -111,8 +108,8 @@ fun PreviewScreen(backPress: () -> Unit) {
                         if (bitmap.value == null) {
                             Log.e("Bitmap", "Is null")
                         }
-
-                        imageViewModel.save(bitmap.value?.getEncodedString())
+                        val uri = context.saveImage(bitmap.value, uiState.image.imageId)
+                        imageViewModel.save(uri, bitmap.value)
                         backPress.invoke()
                     }
                     PaperIconButton(

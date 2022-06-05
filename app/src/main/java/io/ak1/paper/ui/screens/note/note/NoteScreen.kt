@@ -1,14 +1,13 @@
 package io.ak1.paper.ui.screens.note.note
 
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -19,7 +18,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalTextInputService
@@ -31,15 +29,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import coil.compose.rememberAsyncImagePainter
 import io.ak1.paper.R
 import io.ak1.paper.models.Note
 import io.ak1.paper.models.NoteWithDoodleAndImage
+import io.ak1.paper.models.getUriList
 import io.ak1.paper.ui.component.CustomAlertDialog
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.Destinations
-import io.ak1.paper.ui.screens.home.fabShape
-import io.ak1.paper.ui.utils.convert
 import io.ak1.paper.ui.utils.timeAgoInSeconds
 import org.koin.androidx.compose.inject
 
@@ -48,7 +45,6 @@ import org.koin.androidx.compose.inject
  * https://ak1.io
  */
 
-@OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
 fun NoteScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
     val noteViewModel by inject<NoteViewModel>()
@@ -65,7 +61,6 @@ fun NoteScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
         }
     }
     fun saveAndExit(note: NoteWithDoodleAndImage) {
-        Log.e("saveAndExit", "${note.note.noteId}   --${note.note.description}--")
         if (note.note.description != description.value.text.trim()
         ) {
             note.note.description = description.value.text.trim()
@@ -82,12 +77,19 @@ fun NoteScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
             noteViewModel.deleteNote(uiState.note.note)
             Toast.makeText(context, R.string.note_removed, Toast.LENGTH_LONG).show()
             backPress.invoke()
-        }, {
-            noteViewModel.saveCurrentDoodleId(it)
+        }, { id, isDoodle ->
+            if (isDoodle) {
+                noteViewModel.saveCurrentDoodleId(id)
+            } else {
+                noteViewModel.saveCurrentImageId(id)
+            }
+
         }, backPress, navigateTo
     )
 
 }
+
+class ClickableUri(var id: String, var uri: String, var updatedOn: Long, var isDoodle: Boolean)
 
 @Composable
 fun NoteScreen(
@@ -95,11 +97,10 @@ fun NoteScreen(
     description: MutableState<TextFieldValue>,
     save: () -> Unit,
     delete: () -> Unit,
-    saveDoodleId: (id: String) -> Unit,
+    saveId: (id: String, isDoodle: Boolean) -> Unit,
     backPress: () -> Unit,
     navigateTo: (String) -> Unit
 ) {
-    Log.e("NoteScreen", "${uiState.note.note.noteId}   --${uiState.note.note.description}--")
     val focusRequester = remember { FocusRequester() }
     val inputService = LocalTextInputService.current
     val focus = remember { mutableStateOf(false) }
@@ -110,6 +111,8 @@ fun NoteScreen(
         fontSize = 20.sp,
         letterSpacing = 0.10.sp
     )
+    val context = LocalContext.current
+
 
     BackHandler(enabled = true) {
         save.invoke()
@@ -139,54 +142,41 @@ fun NoteScreen(
                     .padding(0.dp, 0.dp, 0.dp, if (pv > 45.dp) pv - 45.dp else pv)
                     .fillMaxSize()
             ) {
-                if (uiState.note.doodleList.isNotEmpty()) {
+                val data = uiState.note.getUriList()
+                if (data.isNotEmpty()) {
                     LazyRow(modifier = Modifier.padding(5.dp, 15.dp)) {
-                        items(uiState.note.doodleList) { doodle ->
-                            doodle.base64Text.convert()?.let {
-                                Image(
-                                    bitmap = it.asImageBitmap(),
-                                    contentDescription = "hi",
-                                    modifier = Modifier
-                                        .size(100.dp)
-                                        .padding(5.dp)
-                                        .clip(fabShape)
-                                        .border(
-                                            0.5.dp,
-                                            MaterialTheme.colors.primary,
-                                            fabShape
-                                        )
-                                        .clickable {
-                                            saveDoodleId(doodle.doodleid)
-                                            navigateTo(Destinations.DOODLE_ROUTE)
-                                        },
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
+                        items(data) { item ->
 
-                        }
-                        items(uiState.note.imageList) { image ->
-                            image.imageText.convert()?.let {
-                                Image(
-                                    bitmap = it.asImageBitmap(),
-                                    contentDescription = "hi",
-                                    modifier = Modifier
-                                        .size(100.dp)
-                                        .padding(5.dp)
-                                        .clip(fabShape)
-                                        .border(
-                                            0.5.dp,
-                                            MaterialTheme.colors.primary,
-                                            fabShape
-                                        )
-                                        .clickable {
-                                            saveDoodleId(image.imageId)
+                            Image(
+                                painter = rememberAsyncImagePainter(model = item.uri),
+                                contentScale = ContentScale.Crop,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .width(120.dp)
+                                    .height(150.dp)
+                                    .padding(5.dp)
+                                    .clip(RoundedCornerShape(5.dp))
+                                    .clickable {
+                                        if (item.isDoodle) {
+                                            saveId(item.id, true)
                                             navigateTo(Destinations.DOODLE_ROUTE)
-                                        },
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
-
+                                        } else {
+                                            // TODO: add functionality to edit and preview image and doodle
+                                            Toast
+                                                .makeText(
+                                                    context,
+                                                    "Coming soon",
+                                                    Toast.LENGTH_SHORT
+                                                )
+                                                .show()
+                                            return@clickable
+                                            saveId(item.id, false)
+                                            navigateTo(Destinations.IMAGE_ROUTE)
+                                        }
+                                    },
+                            )
                         }
+
                     }
                 }
                 BasicTextField(

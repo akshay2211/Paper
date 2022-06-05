@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -34,10 +33,11 @@ import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import io.ak1.paper.R
 import io.ak1.paper.models.Note
 import io.ak1.paper.models.NoteWithDoodleAndImage
-import io.ak1.paper.models.getBitmapList
+import io.ak1.paper.models.getUriList
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.home.DEFAULT
 import io.ak1.paper.ui.screens.home.HomeUiState
@@ -178,6 +178,7 @@ fun PlaceHolderBox(modifier: Modifier, colorFilter: ColorFilter) {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun NoteView(element: NoteWithDoodleAndImage, callback: (NoteWithDoodleAndImage) -> Unit) {
     val hasDoodle = element.doodleList.isNotEmpty()
@@ -221,22 +222,20 @@ fun NoteView(element: NoteWithDoodleAndImage, callback: (NoteWithDoodleAndImage)
 fun ImageGridView(element: NoteWithDoodleAndImage) {
     val defaultHeight = 120.dp
     Box {
-        val bitmapList = element.getBitmapList()
+        val list = element.getUriList()
         Row {
-            bitmapList.forEachIndexed { index, bitmap ->
-                bitmap?.let {
-                    Image(
-                        bitmap = bitmap.asImageBitmap(),
-                        contentDescription = null, // decorative
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .height(defaultHeight)
-                            .fillMaxWidth()
-                            .weight(1f, true)
-                    )
-                }
-                if (index == 4){
-                    return@forEachIndexed}
+            list.forEachIndexed { index, clickableUri ->
+                if (index == 4) return@forEachIndexed
+                Image(
+                    painter = rememberAsyncImagePainter(model = clickableUri.uri),
+                    contentDescription = null, // decorative
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(defaultHeight)
+                        .fillMaxWidth()
+                        .weight(1f, true)
+                )
+
             }
         }
         if (element.note.description.trim().isEmpty())

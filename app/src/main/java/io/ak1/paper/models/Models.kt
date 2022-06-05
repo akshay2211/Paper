@@ -3,6 +3,7 @@ package io.ak1.paper.models
 import android.graphics.Bitmap
 import android.os.Parcelable
 import androidx.room.*
+import io.ak1.paper.ui.screens.note.note.ClickableUri
 import io.ak1.paper.ui.utils.convert
 import kotlinx.parcelize.Parcelize
 import java.util.*
@@ -29,15 +30,16 @@ data class Note(
 
 @Parcelize
 @Entity(tableName = "doodle_table", indices = [Index(value = ["doodleid"], unique = true)])
-data class Doodle(var attachedNoteId: String, var rawText: String, var base64Text: String) :
-    Parent() {
+data class Doodle(var attachedNoteId: String, var rawText: String, var base64Text: String,
+                  @ColumnInfo(defaultValue = "") var uri:String) : Parent() {
     @PrimaryKey
     var doodleid: String = UUID.randomUUID().toString()
 }
 
 @Parcelize
 @Entity(tableName = "image_table", indices = [Index(value = ["imageId"], unique = true)])
-data class Image(var attachedNoteId: String, var imageText: String, var imageDesc: String?) :
+data class Image(var attachedNoteId: String, var imageText: String, var imageDesc: String?,
+                 @ColumnInfo(defaultValue = "") var uri:String) :
     Parent() {
     @PrimaryKey
     var imageId: String = UUID.randomUUID().toString()
@@ -57,6 +59,16 @@ fun NoteWithDoodleAndImage.getBitmapList(): MutableList<Bitmap?> {
     }.toMutableList().apply {
         addAll(doodleList.map { it.base64Text.convert() })
     }
+}
+fun NoteWithDoodleAndImage.getUriList(): MutableList<ClickableUri> {
+    val list = doodleList.map {
+        ClickableUri(it.doodleid,it.uri,it.updatedOn,true)
+    }.toMutableList()
+    val list2 = imageList.map {  ClickableUri(it.imageId,it.uri,it.updatedOn, false)}
+    list.addAll(list2)
+    list.sortBy { it.updatedOn }
+    list.reverse()
+    return list
 }
 
 @Parcelize

@@ -64,6 +64,12 @@ class NoteViewModel(
         }
     }
 
+    fun saveCurrentImageId(currentImageId: String) {
+        viewModelScope.launch {
+            localRepository.saveCurrentImageId(currentImageId)
+        }
+    }
+
     fun deleteNote(note: Note) {
         viewModelScope.launch {
             notesRepository.delete(note.noteId)
