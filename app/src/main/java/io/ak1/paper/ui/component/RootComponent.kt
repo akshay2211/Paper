@@ -1,11 +1,5 @@
 package io.ak1.paper.ui.component
 
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.content.pm.ResolveInfo
-import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -21,11 +15,12 @@ import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import io.ak1.paper.R
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.home.HomeScreen
 import io.ak1.paper.ui.screens.note.doodle.DoodleScreen
+import io.ak1.paper.ui.screens.note.image.ImageScreen
 import io.ak1.paper.ui.screens.note.note.NoteScreen
+import io.ak1.paper.ui.screens.note.note.PreviewScreen
 import io.ak1.paper.ui.screens.note.options.OptionsScreen
 import io.ak1.paper.ui.screens.search.SearchScreen
 import io.ak1.paper.ui.screens.setting.SettingsScreen
@@ -57,7 +52,7 @@ fun RootComponent() {
                     startDestination = Destinations.HOME_ROUTE
                 ) {
                     composable(Destinations.HOME_ROUTE) {
-                        HomeScreen(isDark,scrollState) { navController.navigate(it) }
+                        HomeScreen(isDark, scrollState) { navController.navigate(it) }
                     }
                     composable(Destinations.NOTE_ROUTE) {
                         NoteScreen({ navController.navigate(it) })
@@ -65,10 +60,21 @@ fun RootComponent() {
                     }
                     composable(Destinations.SEARCH_ROUTE) { SearchScreen(navController) }
                     composable(Destinations.SETTING_ROUTE) {
-                        SettingsScreen({ navController.navigateUp() }) { uri -> uriHandler.openUri(uri) }
+                        SettingsScreen({ navController.navigateUp() }) { uri ->
+                            uriHandler.openUri(
+                                uri
+                            )
+                        }
                     }
                     composable(Destinations.DOODLE_ROUTE) {
                         DoodleScreen { navController.navigateUp() }
+                    }
+                    composable(Destinations.IMAGE_ROUTE) {
+                        ImageScreen { navController.navigateUp() }
+                    }
+                    composable(Destinations.PREVIEW_ROUTE) {
+                        PreviewScreen({ navController.navigate(it) })
+                        { navController.navigateUp() }
                     }
                     bottomSheet(Destinations.OPTIONS_ROUTE) {
                         OptionsScreen({ navController.navigate(it) })

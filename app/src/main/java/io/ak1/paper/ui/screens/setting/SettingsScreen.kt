@@ -37,7 +37,8 @@ fun SettingsScreen(navigateUp: () -> Unit,openWith:(String)->Unit) {
     Scaffold(
         Modifier
             .fillMaxSize()
-            .statusBarsPadding(),
+            .statusBarsPadding()
+            .navigationBarsPadding(),
         topBar = {
             TopAppBar(
                 title = {

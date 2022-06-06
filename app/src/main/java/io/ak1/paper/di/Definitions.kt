@@ -5,6 +5,8 @@ import androidx.room.Room
 import io.ak1.paper.data.local.*
 import io.ak1.paper.data.repositories.doodles.DoodlesRepository
 import io.ak1.paper.data.repositories.doodles.impl.DoodlesRepositoryImpl
+import io.ak1.paper.data.repositories.image.ImageRepository
+import io.ak1.paper.data.repositories.image.impl.ImageRepositoryImpl
 import io.ak1.paper.data.repositories.local.LocalRepository
 import io.ak1.paper.data.repositories.local.impl.LocalRepositoryImpl
 import io.ak1.paper.data.repositories.notes.NotesRepository
@@ -24,7 +26,7 @@ fun getDb(context: Context): AppDatabase {
         Room.databaseBuilder(
             context,
             AppDatabase::class.java, "database-paper"
-        ).addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
+        ).fallbackToDestructiveMigration().addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
     }
 }
 
@@ -41,5 +43,6 @@ fun getNotesRepository(
 ): NotesRepository = NotesRepositoryImpl(notesDao, doodleDao, imageDao)
 
 fun getDoodleRepository(doodleDao: DoodleDao): DoodlesRepository = DoodlesRepositoryImpl(doodleDao)
+fun getImageRepository(imageDao: ImageDao): ImageRepository = ImageRepositoryImpl(imageDao)
 
 fun getLocalRepository(): LocalRepository = LocalRepositoryImpl()

@@ -18,24 +18,14 @@ package io.ak1.paper.data.repositories.doodles.impl
 import io.ak1.paper.data.local.DoodleDao
 import io.ak1.paper.data.repositories.doodles.DoodlesRepository
 import io.ak1.paper.models.Doodle
-import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by akshay on 15/05/22
  * https://ak1.io
  */
 class DoodlesRepositoryImpl(private val doodleDao: DoodleDao) : DoodlesRepository {
-    override suspend fun create(doodle: Doodle) {
-        doodleDao.insert(doodle)
-    }
-
+    override suspend fun create(doodle: Doodle) = doodleDao.insert(doodle)
     override suspend fun getDoodleById(doodleId: String) = doodleDao.getDoodleById(doodleId)
-
-    override suspend fun deleteDoodleById(doodleId: String) {
-        doodleDao.deleteDoodle(doodleId)
-    }
-
-    override suspend fun deleteDoodleByNoteId(noteId: String) {
-        doodleDao.deleteDoodleByNote(noteId)
-    }
+    override suspend fun deleteDoodleById(doodleId: String) = doodleDao.deleteDoodle(doodleId)
+    override suspend fun deleteDoodleByNoteId(noteId: String) = doodleDao.deleteDoodleByNote(noteId)
 }

@@ -17,7 +17,9 @@ package io.ak1.paper.ui.screens.note.options
 
 import android.os.Handler
 import android.os.Looper
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -29,7 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.ak1.paper.R
 import io.ak1.paper.ui.screens.Destinations
-import io.ak1.paper.ui.screens.note.note.NoteViewModel
+import io.ak1.paper.ui.screens.note.image.ImageChooserType
 import org.koin.androidx.compose.inject
 
 /**
@@ -38,34 +40,46 @@ import org.koin.androidx.compose.inject
  */
 data class Menu(val iconId: Int, val stringId: Int)
 
+
 @Composable
 fun OptionsScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
-    val noteViewModel by inject<NoteViewModel>()
+    val optionsViewModel by inject<OptionsViewModel>()
+
+
     val list = listOf(
         Menu(R.drawable.ic_camera, R.string.take_photo),
         Menu(R.drawable.ic_image, R.string.add_image),
         Menu(R.drawable.ic_doodle, R.string.add_doodle),
     )
+
     val elevation = ButtonDefaults.elevation(
         defaultElevation = 0.dp,
         pressedElevation = 0.dp,
         hoveredElevation = 0.dp,
         focusedElevation = 0.dp
     )
+
+
     val colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
-    LazyColumn(modifier = Modifier.padding(3.dp, 12.dp)) {
+    LazyColumn(modifier = Modifier.padding(3.dp, 12.dp).statusBarsPadding().navigationBarsPadding()) {
         items(list) { it ->
             Button(
                 onClick = {
                     backPress.invoke()
-                    noteViewModel.saveCurrentDoodleId("")
+                    optionsViewModel.saveCurrentDoodleId()
+                    optionsViewModel.saveCurrentImageId()
                     Handler(Looper.getMainLooper()).postDelayed({
                         when (it.iconId) {
-                            //    R.drawable.ic_camera -> navigateTo("image")
-                            //    R.drawable.ic_image -> navigateTo("gallery")
+                            R.drawable.ic_camera -> {
+                                optionsViewModel.saveCurrentImageType(ImageChooserType.CAMERA)
+                                navigateTo(Destinations.IMAGE_ROUTE)
+                            }
+                            R.drawable.ic_image -> {
+                                optionsViewModel.saveCurrentImageType(ImageChooserType.GALLERY)
+                                navigateTo(Destinations.IMAGE_ROUTE)
+                            }
                             R.drawable.ic_doodle -> navigateTo(Destinations.DOODLE_ROUTE)
                         }
-
                     }, 100L)
                 },
                 elevation = elevation,

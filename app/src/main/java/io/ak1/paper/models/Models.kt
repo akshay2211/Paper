@@ -29,15 +29,16 @@ data class Note(
 
 @Parcelize
 @Entity(tableName = "doodle_table", indices = [Index(value = ["doodleid"], unique = true)])
-data class Doodle(var attachedNoteId: String, var rawText: String, var base64Text: String) :
-    Parent() {
+data class Doodle(var attachedNoteId: String, var rawText: String, var base64Text: String,
+                  @ColumnInfo(defaultValue = "") var uri:String) : Parent() {
     @PrimaryKey
     var doodleid: String = UUID.randomUUID().toString()
 }
 
 @Parcelize
 @Entity(tableName = "image_table", indices = [Index(value = ["imageId"], unique = true)])
-data class Image(var attachedNoteId: String, var imageText: String, var imageDesc: String?) :
+data class Image(var attachedNoteId: String, var imageText: String, var imageDesc: String?,
+                 @ColumnInfo(defaultValue = "") var uri:String) :
     Parent() {
     @PrimaryKey
     var imageId: String = UUID.randomUUID().toString()
@@ -58,6 +59,7 @@ fun NoteWithDoodleAndImage.getBitmapList(): MutableList<Bitmap?> {
         addAll(doodleList.map { it.base64Text.convert() })
     }
 }
+class ClickableUri(var id: String, var uri: String, var updatedOn: Long, var isDoodle: Boolean)
 
 @Parcelize
 @Entity(tableName = "folder_table", indices = [Index(value = ["id"], unique = true)])

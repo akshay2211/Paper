@@ -11,10 +11,11 @@ import kotlinx.coroutines.flow.Flow
  */
 
 @Database(
-    version = 4,
+    version = 5,
     entities = [Note::class, Doodle::class, Image::class, Folder::class],
     autoMigrations = [
-        AutoMigration(from = 3, to = 4, spec = AppDatabase.MIGRATION_3_4::class)
+        AutoMigration(from = 3, to = 4, spec = AppDatabase.MIGRATION_3_4::class),
+        AutoMigration(from = 4, to = 5, spec = AppDatabase.MIGRATION_4_5::class),
     ]
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -29,6 +30,8 @@ abstract class AppDatabase : RoomDatabase() {
         DeleteColumn(tableName = "notes_table", columnName = "doodle"),
     )
     class MIGRATION_3_4 : AutoMigrationSpec
+
+    class MIGRATION_4_5 : AutoMigrationSpec
 
 }
 
@@ -57,6 +60,9 @@ interface ImageDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg image: Image)
+
+    @Query("SELECT * FROM image_table WHERE imageId = :id")
+    suspend fun getImageById(id: String): Image?
 
     @Query("DELETE FROM image_table WHERE imageId = :id")
     suspend fun deleteImage(id: String)

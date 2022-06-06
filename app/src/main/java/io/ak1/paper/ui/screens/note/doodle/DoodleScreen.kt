@@ -1,5 +1,6 @@
 package io.ak1.paper.ui.screens.note.doodle
 
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
@@ -24,6 +25,7 @@ import io.ak1.paper.models.Doodle
 import io.ak1.paper.ui.component.CustomAlertDialog
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.utils.getEncodedString
+import io.ak1.paper.ui.utils.saveImage
 import io.ak1.rangvikalp.RangVikalp
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.inject
@@ -64,10 +66,11 @@ fun DoodleScreen(backPress: () -> Unit) {
     }
     DoodleScreen(
         uiState.doodle, drawController,
-        { base64, json ->
+        { base64, json, uri ->
             val newDoodle = uiState.doodle.apply {
                 this.base64Text = base64
                 this.rawText = json
+                this.uri = uri.toString()
             }
             doodleViewModel.saveDoodle(newDoodle)
             backPress.invoke()
@@ -94,7 +97,7 @@ fun DoodleScreen(backPress: () -> Unit) {
 private fun DoodleScreen(
     doodle: Doodle,
     drawController: DrawController,
-    save: (base64: String, json: String) -> Unit,
+    save: (base64: String, json: String, uri: Uri?) -> Unit,
     delete: () -> Unit,
     backPress: () -> Unit
 ) {
@@ -106,6 +109,7 @@ private fun DoodleScreen(
     var colorIsBg by remember { mutableStateOf(false) }
     var colorBarVisibility by remember { mutableStateOf(false) }
     val coroutine = rememberCoroutineScope()
+    val context = LocalContext.current
     LaunchedEffect(drawController) {
         defaultBgColor.snapTo(drawController.bgColor)
         defaultTextColor.snapTo(drawController.color)
@@ -210,15 +214,14 @@ private fun DoodleScreen(
         val fakeModifier = Modifier.padding(padding)
         DrawBox(
             drawController = drawController,
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             backgroundColor = defaultBgColor.value,
             bitmapCallback = { bitmap, error ->
                 val base64 = bitmap?.asAndroidBitmap()?.getEncodedString() ?: ""
+                val uri = context.saveImage(bitmap?.asAndroidBitmap(), doodle.doodleid)
                 val list = drawController.exportPath()
                 val json = gsonBuilder.toJson(list)
-                //Log.e("before save", "${gsonBuilder.toJson(doodle)}")
-                save.invoke(base64, json)
+                save.invoke(base64, json, uri)
             }) { undo_count, redo_count ->
             colorBarVisibility = false
             undoCount.value = undo_count

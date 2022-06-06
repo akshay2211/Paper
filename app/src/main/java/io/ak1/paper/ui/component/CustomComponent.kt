@@ -18,7 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -33,14 +33,15 @@ import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import io.ak1.paper.R
 import io.ak1.paper.models.Note
 import io.ak1.paper.models.NoteWithDoodleAndImage
-import io.ak1.paper.models.getBitmapList
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.home.DEFAULT
 import io.ak1.paper.ui.screens.home.HomeUiState
 import io.ak1.paper.ui.theme.PaperTheme
+import io.ak1.paper.ui.utils.getUriList
 import io.ak1.paper.ui.utils.gridTrim
 import io.ak1.paper.ui.utils.timeAgo
 import io.ak1.paper.ui.utils.toPercent
@@ -51,6 +52,7 @@ import io.ak1.paper.ui.utils.toPercent
  */
 
 
+@OptIn(ExperimentalUnitApi::class)
 @Composable
 fun HomeHeader(
     modifier: Modifier = Modifier,
@@ -121,7 +123,7 @@ fun NotesListComponent(
         LazyColumn(modifier = modifier, state = scrollState) {
             if (includeHeader) {
                 item {
-                    HomeHeader(headerColor = headerColor,scrollState = scrollState) {
+                    HomeHeader(headerColor = headerColor, scrollState = scrollState) {
                         PaperIconButton(
                             id = R.drawable.ic_search,
                         ) { navigateTo(Destinations.SEARCH_ROUTE) }
@@ -138,22 +140,45 @@ fun NotesListComponent(
             }
         }
         if (homeUiState.isEmpty) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_not_found),
-                contentDescription = stringResource(
-                    id = R.string.image_desc
-                ),
-                alignment = Alignment.Center,
+            PlaceHolderBox(
                 modifier = Modifier
-                    .padding(60.dp)
-                    .fillMaxSize()
                     .weight(1f, true)
-                    .imePadding()
+                    .padding(60.dp),
+                colorFilter = ColorFilter.tint(headerColor)
             )
+
         }
     }
 }
 
+@Composable
+fun PlaceHolderBox(modifier: Modifier, colorFilter: ColorFilter) {
+    Box(modifier = modifier) {
+        val fillMaxSizeModifier = Modifier.fillMaxSize()
+        val placeholderDescription = stringResource(id = R.string.image_desc)
+        Image(
+            painter = painterResource(id = R.drawable.ic_not_found),
+            contentDescription = placeholderDescription,
+            alignment = Alignment.Center,
+            modifier = fillMaxSizeModifier,
+        )
+        Image(
+            painter = painterResource(id = R.drawable.ic_not_found_tint),
+            contentDescription = placeholderDescription,
+            alignment = Alignment.Center,
+            modifier = fillMaxSizeModifier,
+            colorFilter = colorFilter
+        )
+        Image(
+            painter = painterResource(id = R.drawable.ic_not_found_three),
+            contentDescription = placeholderDescription,
+            alignment = Alignment.Center,
+            modifier = fillMaxSizeModifier
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun NoteView(element: NoteWithDoodleAndImage, callback: (NoteWithDoodleAndImage) -> Unit) {
     val hasDoodle = element.doodleList.isNotEmpty()
@@ -197,34 +222,20 @@ fun NoteView(element: NoteWithDoodleAndImage, callback: (NoteWithDoodleAndImage)
 fun ImageGridView(element: NoteWithDoodleAndImage) {
     val defaultHeight = 120.dp
     Box {
-        val bitmapList = element.getBitmapList()
-        val totalSize = bitmapList.size
-        if (totalSize == 1) {
-            bitmapList[0]?.let {
+        val list = element.getUriList()
+        Row {
+            list.forEachIndexed { index, clickableUri ->
+                if (index == 3) return@forEachIndexed
                 Image(
-                    bitmap = it.asImageBitmap(),
+                    painter = rememberAsyncImagePainter(model = clickableUri.uri),
                     contentDescription = null, // decorative
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .height(defaultHeight)
                         .fillMaxWidth()
+                        .weight(1f, true)
                 )
-            }
-        } else if (totalSize == 2 || totalSize == 3 || totalSize == 4) {
-            Row {
-                bitmapList.forEach {
-                    it?.let {
-                        Image(
-                            bitmap = it.asImageBitmap(),
-                            contentDescription = null, // decorative
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .height(defaultHeight)
-                                .fillMaxWidth()
-                                .weight(1f, true)
-                        )
-                    }
-                }
+
             }
         }
         if (element.note.description.trim().isEmpty())
@@ -236,7 +247,6 @@ fun ImageGridView(element: NoteWithDoodleAndImage) {
                     .align(Alignment.BottomStart)
                     .padding(14.dp)
             )
-
     }
 }
 
