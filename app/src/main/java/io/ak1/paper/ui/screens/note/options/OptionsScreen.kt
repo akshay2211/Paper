@@ -17,7 +17,9 @@ package io.ak1.paper.ui.screens.note.options
 
 import android.os.Handler
 import android.os.Looper
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -59,7 +61,7 @@ fun OptionsScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
 
 
     val colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
-    LazyColumn(modifier = Modifier.padding(3.dp, 12.dp)) {
+    LazyColumn(modifier = Modifier.padding(3.dp, 12.dp).statusBarsPadding().navigationBarsPadding()) {
         items(list) { it ->
             Button(
                 onClick = {

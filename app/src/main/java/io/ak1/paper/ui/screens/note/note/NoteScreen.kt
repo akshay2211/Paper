@@ -1,12 +1,13 @@
 package io.ak1.paper.ui.screens.note.note
 
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
@@ -33,10 +34,10 @@ import coil.compose.rememberAsyncImagePainter
 import io.ak1.paper.R
 import io.ak1.paper.models.Note
 import io.ak1.paper.models.NoteWithDoodleAndImage
-import io.ak1.paper.models.getUriList
 import io.ak1.paper.ui.component.CustomAlertDialog
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.Destinations
+import io.ak1.paper.ui.utils.getUriList
 import io.ak1.paper.ui.utils.timeAgoInSeconds
 import org.koin.androidx.compose.inject
 
@@ -77,19 +78,14 @@ fun NoteScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
             noteViewModel.deleteNote(uiState.note.note)
             Toast.makeText(context, R.string.note_removed, Toast.LENGTH_LONG).show()
             backPress.invoke()
-        }, { id, isDoodle ->
-            if (isDoodle) {
-                noteViewModel.saveCurrentDoodleId(id)
-            } else {
-                noteViewModel.saveCurrentImageId(id)
-            }
-
+        }, { pos ->
+            noteViewModel.setSelectedImage(pos)
+            noteViewModel.setCurrentMediaList(uiState.note.getUriList())
         }, backPress, navigateTo
     )
 
 }
 
-class ClickableUri(var id: String, var uri: String, var updatedOn: Long, var isDoodle: Boolean)
 
 @Composable
 fun NoteScreen(
@@ -97,7 +93,7 @@ fun NoteScreen(
     description: MutableState<TextFieldValue>,
     save: () -> Unit,
     delete: () -> Unit,
-    saveId: (id: String, isDoodle: Boolean) -> Unit,
+    selection: (id: Int) -> Unit,
     backPress: () -> Unit,
     navigateTo: (String) -> Unit
 ) {
@@ -111,8 +107,6 @@ fun NoteScreen(
         fontSize = 20.sp,
         letterSpacing = 0.10.sp
     )
-    val context = LocalContext.current
-
 
     BackHandler(enabled = true) {
         save.invoke()
@@ -145,7 +139,7 @@ fun NoteScreen(
                 val data = uiState.note.getUriList()
                 if (data.isNotEmpty()) {
                     LazyRow(modifier = Modifier.padding(5.dp, 15.dp)) {
-                        items(data) { item ->
+                        itemsIndexed(data) { index, item ->
 
                             Image(
                                 painter = rememberAsyncImagePainter(model = item.uri),
@@ -157,22 +151,9 @@ fun NoteScreen(
                                     .padding(5.dp)
                                     .clip(RoundedCornerShape(5.dp))
                                     .clickable {
-                                        if (item.isDoodle) {
-                                            saveId(item.id, true)
-                                            navigateTo(Destinations.DOODLE_ROUTE)
-                                        } else {
-                                            // TODO: add functionality to edit and preview image and doodle
-                                            Toast
-                                                .makeText(
-                                                    context,
-                                                    "Coming soon",
-                                                    Toast.LENGTH_SHORT
-                                                )
-                                                .show()
-                                            return@clickable
-                                            saveId(item.id, false)
-                                            navigateTo(Destinations.IMAGE_ROUTE)
-                                        }
+                                        Log.e("uiState.selection","NoteScreen=>  $index")
+                                        selection(index)
+                                        navigateTo(Destinations.PREVIEW_ROUTE)
                                     },
                             )
                         }

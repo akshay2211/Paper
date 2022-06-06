@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import io.ak1.paper.models.ClickableUri
+import io.ak1.paper.models.NoteWithDoodleAndImage
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
@@ -149,5 +151,16 @@ internal fun Context.saveImage(bitmap: Bitmap?, imageName: String): Uri? {
         }
         throw e
     }
+}
+
+fun NoteWithDoodleAndImage.getUriList(): MutableList<ClickableUri> {
+    val list = doodleList.map {
+        ClickableUri(it.doodleid,it.uri,it.updatedOn,true)
+    }.toMutableList()
+    val list2 = imageList.map {  ClickableUri(it.imageId,it.uri,it.updatedOn, false) }
+    list.addAll(list2)
+    list.sortBy { it.updatedOn }
+    list.reverse()
+    return list
 }
 
