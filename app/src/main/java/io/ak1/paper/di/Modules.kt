@@ -5,6 +5,7 @@ import io.ak1.paper.ui.screens.note.doodle.DoodleViewModel
 import io.ak1.paper.ui.screens.note.image.ImageViewModel
 import io.ak1.paper.ui.screens.note.note.NoteViewModel
 import io.ak1.paper.ui.screens.note.options.OptionsViewModel
+import io.ak1.paper.ui.screens.note.preview.PreviewViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -30,6 +31,7 @@ var viewModel = module {
     viewModel { NoteViewModel(get(), get()) }
     viewModel { OptionsViewModel(get()) }
     viewModel { ImageViewModel(get(),get()) }
+    viewModel { PreviewViewModel(get()) }
     viewModel { DoodleViewModel(get(), get(), get()) }
 }
 var repositories = module {

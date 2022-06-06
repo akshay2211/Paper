@@ -37,11 +37,11 @@ import coil.compose.rememberAsyncImagePainter
 import io.ak1.paper.R
 import io.ak1.paper.models.Note
 import io.ak1.paper.models.NoteWithDoodleAndImage
-import io.ak1.paper.models.getUriList
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.home.DEFAULT
 import io.ak1.paper.ui.screens.home.HomeUiState
 import io.ak1.paper.ui.theme.PaperTheme
+import io.ak1.paper.ui.utils.getUriList
 import io.ak1.paper.ui.utils.gridTrim
 import io.ak1.paper.ui.utils.timeAgo
 import io.ak1.paper.ui.utils.toPercent
@@ -225,7 +225,7 @@ fun ImageGridView(element: NoteWithDoodleAndImage) {
         val list = element.getUriList()
         Row {
             list.forEachIndexed { index, clickableUri ->
-                if (index == 4) return@forEachIndexed
+                if (index == 3) return@forEachIndexed
                 Image(
                     painter = rememberAsyncImagePainter(model = clickableUri.uri),
                     contentDescription = null, // decorative
@@ -247,7 +247,6 @@ fun ImageGridView(element: NoteWithDoodleAndImage) {
                     .align(Alignment.BottomStart)
                     .padding(14.dp)
             )
-
     }
 }
 

@@ -46,7 +46,7 @@ import org.koin.androidx.compose.inject
  */
 
 @Composable
-fun PreviewScreen(backPress: () -> Unit) {
+fun ImageScreen(backPress: () -> Unit) {
     val imageViewModel by inject<ImageViewModel>()
     val uiState by imageViewModel.uiState.collectAsState()
     val context = LocalContext.current

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.ak1.paper.data.repositories.local.LocalRepository
 import io.ak1.paper.data.repositories.notes.NotesRepository
+import io.ak1.paper.models.ClickableUri
 import io.ak1.paper.models.Note
 import io.ak1.paper.models.NoteWithDoodleAndImage
 import io.ak1.paper.ui.screens.home.DEFAULT
@@ -21,7 +22,7 @@ import kotlinx.coroutines.launch
 
 data class NoteUiState(
     val note: NoteWithDoodleAndImage = getEmptyNote(),
-    val loading: Boolean = false
+    val loading: Boolean = false,
 )
 
 fun getEmptyNote(id: String? = null) = NoteWithDoodleAndImage(Note(DEFAULT, "").apply {
@@ -49,6 +50,12 @@ class NoteViewModel(
         }
     }
 
+    fun setSelectedImage(pos: Int) {
+        viewModelScope.launch {
+            localRepository.saveSelectedPosition(pos)
+        }
+    }
+
     fun saveNote(note: Note) {
         viewModelScope.launch {
             notesRepository.create(note.apply {
@@ -58,22 +65,17 @@ class NoteViewModel(
 
     }
 
-    fun saveCurrentDoodleId(currentDoodleId: String) {
-        viewModelScope.launch {
-            localRepository.saveCurrentDoodleId(currentDoodleId)
-        }
-    }
-
-    fun saveCurrentImageId(currentImageId: String) {
-        viewModelScope.launch {
-            localRepository.saveCurrentImageId(currentImageId)
-        }
-    }
 
     fun deleteNote(note: Note) {
         viewModelScope.launch {
             notesRepository.delete(note.noteId)
             localRepository.saveCurrentNote()
+        }
+    }
+
+    fun setCurrentMediaList(uriList: MutableList<ClickableUri>) {
+        viewModelScope.launch {
+            localRepository.saveCurrentMediaList(uriList)
         }
     }
 

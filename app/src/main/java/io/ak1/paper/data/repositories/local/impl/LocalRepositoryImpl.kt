@@ -16,6 +16,7 @@
 package io.ak1.paper.data.repositories.local.impl
 
 import io.ak1.paper.data.repositories.local.LocalRepository
+import io.ak1.paper.models.ClickableUri
 import io.ak1.paper.ui.screens.note.image.ImageChooserType
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.*
@@ -47,6 +48,16 @@ class LocalRepositoryImpl : LocalRepository {
     override val currentImageType = MutableStateFlow(ImageChooserType.NONE)
     override suspend fun saveCurrentImageType(imageChooserType: ImageChooserType) {
         this.currentImageType.emit(imageChooserType)
+    }
+
+    override val currentMediaList = MutableStateFlow(emptyList<ClickableUri>())
+    override suspend fun saveCurrentMediaList(list: List<ClickableUri>) {
+        currentMediaList.value = list
+    }
+
+    override val currentSelectedPosition = MutableStateFlow(0)
+    override suspend fun saveSelectedPosition(position: Int) {
+        currentSelectedPosition.value = position
     }
 
 
