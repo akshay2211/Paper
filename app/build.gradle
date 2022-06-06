@@ -118,6 +118,9 @@ dependencies {
     // Drawbox
     implementation 'io.ak1:drawbox:1.0.3'
 
+    // Snapper
+    implementation 'dev.chrisbanes.snapper:snapper:0.2.1'
+
     //RangVikalp
     implementation 'io.ak1:rang-vikalp:1.0.0-alpha02'
 
