@@ -192,7 +192,7 @@ private fun DoodleScreen(
                 RangVikalp(
                     isVisible = colorBarVisibility,
                     defaultColor = if (colorIsBg) defaultBgColor.value else defaultTextColor.value,
-                    colorIntensity = if (colorIsBg) 1 else 7
+                    colorIntensity = if (colorIsBg) 0 else 7
                 ) {
                     coroutine.launch {
                         if (colorIsBg) {
@@ -211,10 +211,9 @@ private fun DoodleScreen(
                 }
             }
         }) { padding ->
-        val fakeModifier = Modifier.padding(padding)
         DrawBox(
             drawController = drawController,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(padding),
             backgroundColor = defaultBgColor.value,
             bitmapCallback = { bitmap, error ->
                 val base64 = bitmap?.asAndroidBitmap()?.getEncodedString() ?: ""
