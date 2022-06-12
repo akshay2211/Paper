@@ -4,6 +4,9 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
 }
+def paperPropertiesFile = rootProject.file("../keys/paper.properties")
+def properties = new Properties()
+properties.load(new FileInputStream(paperPropertiesFile))
 
 android {
     compileSdk 32
@@ -26,10 +29,24 @@ android {
         }
     }
 
+    signingConfigs {
+        release {
+            def path = properties['STORE_PATH']
+            def store_pass = properties['STORE_PASSWORD']
+            def key_alias = properties['KEY_ALIAS']
+            def key_pass = properties['KEY_PASSWORD']
+            storeFile file(path)
+            storePassword store_pass
+            keyAlias key_alias
+            keyPassword key_pass
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
