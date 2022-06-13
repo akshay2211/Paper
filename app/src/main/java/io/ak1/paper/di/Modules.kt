@@ -40,3 +40,6 @@ var repositories = module {
     single { getImageRepository(get()) }
     single { getNotesRepository(get(), get(), get()) }
 }
+var utils  = module {
+    factory { getRandomNumber() }
+}

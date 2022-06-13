@@ -74,5 +74,3 @@ fun isSystemInDarkThemeCustom(): Boolean {
         else -> context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
     }
 }
-
-var randomInt = 0
