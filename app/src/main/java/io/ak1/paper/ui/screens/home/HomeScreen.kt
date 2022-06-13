@@ -23,7 +23,6 @@ import io.ak1.paper.R
 import io.ak1.paper.models.NoteWithDoodleAndImage
 import io.ak1.paper.ui.component.*
 import io.ak1.paper.ui.screens.Destinations
-import io.ak1.paper.ui.theme.randomInt
 import io.ak1.rangvikalp.colorArray
 import org.koin.androidx.compose.inject
 
@@ -59,6 +58,7 @@ fun HomeScreen(
     openNewNote: () -> Unit,
     navigateTo: (String) -> Unit
 ) {
+    val randomInt by inject<Int>()
     val maxHeightInPX = with(LocalDensity.current) { headerBarExpandedHeight.toPx() }
     val minHeightInPx = with(LocalDensity.current) { headerBarCollapsedHeight.toPx() }
     val headerColor = colorArray[randomInt][if (isDark) lighterToneIndex else darkerToneIndex]

@@ -5,6 +5,7 @@ package io.ak1.paper
 import android.app.Application
 import io.ak1.paper.di.databaseModule
 import io.ak1.paper.di.repositories
+import io.ak1.paper.di.utils
 import io.ak1.paper.di.viewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -19,13 +20,7 @@ class App : Application() {
         startKoin {
             //inject Android context
             androidContext(applicationContext)
-            koin.loadModules(
-                listOf(
-                    databaseModule,
-                    viewModel,
-                    repositories
-                )
-            )
+            koin.loadModules(listOf(databaseModule, viewModel, repositories, utils))
         }
     }
 }

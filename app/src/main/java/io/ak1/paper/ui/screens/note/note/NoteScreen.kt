@@ -151,7 +151,7 @@ fun NoteScreen(
                                     .padding(5.dp)
                                     .clip(RoundedCornerShape(5.dp))
                                     .clickable {
-                                        Log.e("uiState.selection","NoteScreen=>  $index")
+                                        Log.e("uiState.selection", "NoteScreen=>  $index")
                                         selection(index)
                                         navigateTo(Destinations.PREVIEW_ROUTE)
                                     },
@@ -245,12 +245,13 @@ fun NotesBottomBar(note: Note, onClick: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    PaperIconButton(id = R.drawable.ic_feather, onClick = onClick)
+                    PaperIconButton(id = R.drawable.ic_more, onClick = onClick)
                     note.updatedOn.timeAgoInSeconds().let {
                         Text(
                             text = "Last updated $it",
                             textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.overline
+                            style = MaterialTheme.typography.overline,
+                            modifier = Modifier.padding(8.dp, 0.dp)
                         )
                     }
 
