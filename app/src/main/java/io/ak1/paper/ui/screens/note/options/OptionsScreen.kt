@@ -61,7 +61,7 @@ fun OptionsScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
 
 
     val colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
-    LazyColumn(modifier = Modifier.padding(3.dp, 12.dp).statusBarsPadding().navigationBarsPadding()) {
+    LazyColumn(modifier = Modifier.padding(3.dp, 12.dp).navigationBarsPadding()) {
         items(list) { it ->
             Button(
                 onClick = {
