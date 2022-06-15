@@ -26,7 +26,7 @@
         </activity>
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="io.ak1.paper.fileprovider"
+            android:authorities="@string/paper_file_provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
