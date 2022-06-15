@@ -245,7 +245,7 @@ fun NotesBottomBar(note: Note, onClick: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    PaperIconButton(id = R.drawable.ic_more, onClick = onClick)
+
                     note.updatedOn.timeAgoInSeconds().let {
                         Text(
                             text = "Last updated $it",
@@ -254,7 +254,8 @@ fun NotesBottomBar(note: Note, onClick: () -> Unit) {
                             modifier = Modifier.padding(8.dp, 0.dp)
                         )
                     }
-
+                    Spacer(modifier = Modifier.weight(1f, true))
+                    PaperIconButton(id = R.drawable.ic_more, onClick = onClick)
                 }
             }
         )
