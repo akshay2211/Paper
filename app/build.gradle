@@ -44,10 +44,17 @@ android {
 
     buildTypes {
         release {
+            resValue "string", "app_name", "Paper"
+            resValue "string", "paper_file_provider", "io.ak1.paper.file_provider"
             minifyEnabled true
             shrinkResources true
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            resValue "string", "app_name", "Paper Debug"
+            resValue "string", "paper_file_provider", "io.ak1.paper.debug.file_provider"
+            applicationIdSuffix '.debug'
         }
     }
     compileOptions {

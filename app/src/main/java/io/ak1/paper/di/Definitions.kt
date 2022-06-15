@@ -11,6 +11,8 @@ import io.ak1.paper.data.repositories.local.LocalRepository
 import io.ak1.paper.data.repositories.local.impl.LocalRepositoryImpl
 import io.ak1.paper.data.repositories.notes.NotesRepository
 import io.ak1.paper.data.repositories.notes.impl.NotesRepositoryImpl
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 /**
  * Created by akshay on 27/10/21
@@ -46,3 +48,6 @@ fun getDoodleRepository(doodleDao: DoodleDao): DoodlesRepository = DoodlesReposi
 fun getImageRepository(imageDao: ImageDao): ImageRepository = ImageRepositoryImpl(imageDao)
 
 fun getLocalRepository(): LocalRepository = LocalRepositoryImpl()
+
+
+fun getRandomNumber() = Random(System.currentTimeMillis()).nextInt(0..17)

@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import io.ak1.paper.R
 import io.ak1.paper.models.ClickableUri
 import io.ak1.paper.models.NoteWithDoodleAndImage
 import java.io.ByteArrayOutputStream
@@ -77,7 +78,6 @@ fun Modifier.paddingBottom(paddingValues: PaddingValues): Modifier {
 fun Int.toPercent(dependency: Float) =
     this.let { it -> 1 - ((it * 100 / dependency) / 100f) }
 
-
 fun Context.clickImage(currentPhotoPath: MutableState<String>, callback: (Uri) -> Unit) {
 
     val photoFile: File? = try {
@@ -102,7 +102,7 @@ fun Context.clickImage(currentPhotoPath: MutableState<String>, callback: (Uri) -
     photoFile?.also {
         val photoURI: Uri = FileProvider.getUriForFile(
             this,
-            "io.ak1.paper.fileprovider",
+            getString(R.string.paper_file_provider),
             it
         )
         callback.invoke(photoURI)
@@ -155,9 +155,9 @@ internal fun Context.saveImage(bitmap: Bitmap?, imageName: String): Uri? {
 
 fun NoteWithDoodleAndImage.getUriList(): MutableList<ClickableUri> {
     val list = doodleList.map {
-        ClickableUri(it.doodleid,it.uri,it.updatedOn,true)
+        ClickableUri(it.doodleid, it.uri, it.updatedOn, true)
     }.toMutableList()
-    val list2 = imageList.map {  ClickableUri(it.imageId,it.uri,it.updatedOn, false) }
+    val list2 = imageList.map { ClickableUri(it.imageId, it.uri, it.updatedOn, false) }
     list.addAll(list2)
     list.sortBy { it.updatedOn }
     list.reverse()

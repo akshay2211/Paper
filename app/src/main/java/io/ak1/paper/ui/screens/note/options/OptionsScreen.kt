@@ -15,17 +15,18 @@
  */
 package io.ak1.paper.ui.screens.note.options
 
+import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -44,13 +45,15 @@ data class Menu(val iconId: Int, val stringId: Int)
 @Composable
 fun OptionsScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
     val optionsViewModel by inject<OptionsViewModel>()
+    val context = LocalContext.current
 
-
-    val list = listOf(
-        Menu(R.drawable.ic_camera, R.string.take_photo),
+    val list = mutableListOf(
         Menu(R.drawable.ic_image, R.string.add_image),
-        Menu(R.drawable.ic_doodle, R.string.add_doodle),
-    )
+        Menu(R.drawable.ic_doodle, R.string.add_doodle)
+    ).apply {
+        if (!context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA))
+            add(0, Menu(R.drawable.ic_camera, R.string.take_photo))
+    }.toList()
 
     val elevation = ButtonDefaults.elevation(
         defaultElevation = 0.dp,
@@ -59,9 +62,12 @@ fun OptionsScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
         focusedElevation = 0.dp
     )
 
-
     val colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
-    LazyColumn(modifier = Modifier.padding(3.dp, 12.dp).statusBarsPadding().navigationBarsPadding()) {
+    LazyColumn(
+        modifier = Modifier
+            .padding(3.dp, 12.dp)
+            .navigationBarsPadding()
+    ) {
         items(list) { it ->
             Button(
                 onClick = {
