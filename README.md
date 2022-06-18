@@ -27,11 +27,6 @@ Screenshots
 Upcoming Features
 -----------
 
-#### Phase 2
-
-* Image Integrations
-* Doodle Screen Integration 
-
 #### Phase 3
 
 * Feature to Share Notes
