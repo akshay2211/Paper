@@ -6,7 +6,7 @@
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Paper-green.svg?style=flat-square)](https://android-arsenal.com/details/3/8296)
 
 A minimal notes application in [Jetpack Compose](https://developer.android.com/jetpack/compose) with [MVVM architecture](https://developer.android.com/jetpack/guide).
-Built with components like DataStore, Coroutines, ViewModel, LiveData, Room, Navigation-Compose, Coil, koin etc.
+Built with components like DataStore, Coroutines, ViewModel, Flow-State, Room, Navigation-Compose, Coil, koin etc.
 
 
 #### This App showcases:
@@ -26,11 +26,6 @@ Screenshots
 
 Upcoming Features
 -----------
-
-#### Phase 2
-
-* Image Integrations
-* Doodle Screen Integration 
 
 #### Phase 3
 
