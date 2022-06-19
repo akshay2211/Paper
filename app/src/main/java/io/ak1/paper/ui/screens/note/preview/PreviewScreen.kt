@@ -15,12 +15,11 @@
  */
 @file:OptIn(ExperimentalSnapperApi::class)
 
-package io.ak1.paper.ui.screens.note.note
+package io.ak1.paper.ui.screens.note.preview
 
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -43,7 +42,6 @@ import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import io.ak1.paper.R
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.Destinations
-import io.ak1.paper.ui.screens.note.preview.PreviewViewModel
 import org.koin.androidx.compose.inject
 
 /**
@@ -59,7 +57,6 @@ fun PreviewScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
     val context = LocalContext.current
 
     LaunchedEffect(uiState.selection) {
-        Log.e("uiState.selection", "=>  ${uiState.selection}")
         lazyListState.scrollToItem(uiState.selection)
     }
     Box(
@@ -95,21 +92,28 @@ fun PreviewScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
                 }
             },
             actions = {
-                PaperIconButton(
-                    id = if (item?.isDoodle == true) R.drawable.ic_edit else R.drawable.ic_crop,
-                ) {
-                    item?.let {
-                        if (it.isDoodle) {
-                            previewViewModel.saveCurrentDoodleId(it.id)
-                            navigateTo(Destinations.DOODLE_ROUTE)
-                        } else {
-                            Toast.makeText(context, "Image Editing not working", Toast.LENGTH_SHORT)
-                                .show()
-                            previewViewModel.saveCurrentImageId(it.id)
-                            navigateTo(Destinations.IMAGE_ROUTE)
+                if (item?.isDoodle == true) {
+                    PaperIconButton(
+                        // id = if (item.isDoodle == true) R.drawable.ic_edit else R.drawable.ic_crop,
+                        id = R.drawable.ic_edit
+                    ) {
+                        item.let {
+                            if (it.isDoodle) {
+                                previewViewModel.saveCurrentDoodleId(it.id)
+                                navigateTo(Destinations.DOODLE_ROUTE)
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Image Editing not working",
+                                    Toast.LENGTH_SHORT
+                                )
+                                    .show()
+                                previewViewModel.saveCurrentImageId(it.id)
+                                navigateTo(Destinations.IMAGE_ROUTE)
+                            }
                         }
-                    }
 
+                    }
                 }
                 PaperIconButton(
                     id = R.drawable.ic_trash,
