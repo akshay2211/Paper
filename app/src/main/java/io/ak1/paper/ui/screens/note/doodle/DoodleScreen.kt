@@ -211,20 +211,24 @@ private fun DoodleScreen(
                 }
             }
         }) { padding ->
-        DrawBox(
-            drawController = drawController,
-            modifier = Modifier.fillMaxSize().padding(padding),
-            backgroundColor = defaultBgColor.value,
-            bitmapCallback = { bitmap, error ->
-                val base64 = bitmap?.asAndroidBitmap()?.getEncodedString() ?: ""
-                val uri = context.saveImage(bitmap?.asAndroidBitmap(), doodle.doodleid)
-                val list = drawController.exportPath()
-                val json = gsonBuilder.toJson(list)
-                save.invoke(base64, json, uri)
-            }) { undo_count, redo_count ->
-            colorBarVisibility = false
-            undoCount.value = undo_count
-            redoCount.value = redo_count
+        val modifier = Modifier
+            .fillMaxSize()
+        Box(modifier.padding(padding)) {
+            DrawBox(
+                drawController = drawController,
+                modifier = modifier,
+                backgroundColor = defaultBgColor.value,
+                bitmapCallback = { bitmap, error ->
+                    val base64 = bitmap?.asAndroidBitmap()?.getEncodedString() ?: ""
+                    val uri = context.saveImage(bitmap?.asAndroidBitmap(), doodle.doodleid)
+                    val list = drawController.exportPath()
+                    val json = gsonBuilder.toJson(list)
+                    save.invoke(base64, json, uri)
+                }) { undo_count, redo_count ->
+                colorBarVisibility = false
+                undoCount.value = undo_count
+                redoCount.value = redo_count
+            }
         }
     }
     BackHandler(enabled = true) {
