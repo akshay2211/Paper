@@ -1,11 +1,13 @@
 package io.ak1.paper.ui.component
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,8 +22,8 @@ import io.ak1.paper.ui.screens.home.HomeScreen
 import io.ak1.paper.ui.screens.note.doodle.DoodleScreen
 import io.ak1.paper.ui.screens.note.image.ImageScreen
 import io.ak1.paper.ui.screens.note.note.NoteScreen
-import io.ak1.paper.ui.screens.note.note.PreviewScreen
 import io.ak1.paper.ui.screens.note.options.OptionsScreen
+import io.ak1.paper.ui.screens.note.preview.PreviewScreen
 import io.ak1.paper.ui.screens.search.SearchScreen
 import io.ak1.paper.ui.screens.setting.SettingsScreen
 import io.ak1.paper.ui.theme.PaperTheme
@@ -35,8 +37,9 @@ import io.ak1.paper.ui.theme.isSystemInDarkThemeCustom
 
 @OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
-fun RootComponent() {
+fun RootComponent(activity: ComponentActivity) {
     val isDark = isSystemInDarkThemeCustom()
+    val context = LocalContext.current
     val systemUiController = rememberSystemUiController()
     val uriHandler = LocalUriHandler.current
     PaperTheme(isDark) {
@@ -77,7 +80,7 @@ fun RootComponent() {
                         { navController.navigateUp() }
                     }
                     bottomSheet(Destinations.OPTIONS_ROUTE) {
-                        OptionsScreen({ navController.navigate(it) })
+                        OptionsScreen(activity, { navController.navigate(it) })
                         { navController.navigateUp() }
                     }
                 }

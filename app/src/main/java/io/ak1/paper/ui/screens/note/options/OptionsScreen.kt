@@ -15,9 +15,12 @@
  */
 package io.ak1.paper.ui.screens.note.options
 
+import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.Looper
+import androidx.activity.ComponentActivity
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,6 +33,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import io.ak1.paper.R
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.note.image.ImageChooserType
@@ -41,17 +45,33 @@ import org.koin.androidx.compose.inject
  */
 data class Menu(val iconId: Int, val stringId: Int)
 
+const val cameraPermission = Manifest.permission.CAMERA
 
 @Composable
-fun OptionsScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
-    val optionsViewModel by inject<OptionsViewModel>()
+fun OptionsScreen(
+    activity: ComponentActivity,
+    navigateTo: (String) -> Unit,
+    backPress: () -> Unit
+) {
     val context = LocalContext.current
+    val optionsViewModel by inject<OptionsViewModel>()
+
+    val requestPermissionLauncher =
+        activity.registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                optionsViewModel.saveCurrentImageType(ImageChooserType.CAMERA)
+                navigateTo(Destinations.IMAGE_ROUTE)
+            }
+        }
+
 
     val list = mutableListOf(
         Menu(R.drawable.ic_image, R.string.add_image),
         Menu(R.drawable.ic_doodle, R.string.add_doodle)
     ).apply {
-        if (!context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA))
+        if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA))
             add(0, Menu(R.drawable.ic_camera, R.string.take_photo))
     }.toList()
 
@@ -77,8 +97,15 @@ fun OptionsScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
                     Handler(Looper.getMainLooper()).postDelayed({
                         when (it.iconId) {
                             R.drawable.ic_camera -> {
-                                optionsViewModel.saveCurrentImageType(ImageChooserType.CAMERA)
-                                navigateTo(Destinations.IMAGE_ROUTE)
+                                if (ContextCompat.checkSelfPermission(
+                                        context, cameraPermission
+                                    ) == PackageManager.PERMISSION_GRANTED
+                                ) {
+                                    optionsViewModel.saveCurrentImageType(ImageChooserType.CAMERA)
+                                    navigateTo(Destinations.IMAGE_ROUTE)
+                                } else {
+                                    requestPermissionLauncher.launch(cameraPermission)
+                                }
                             }
                             R.drawable.ic_image -> {
                                 optionsViewModel.saveCurrentImageType(ImageChooserType.GALLERY)

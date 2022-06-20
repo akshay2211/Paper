@@ -17,7 +17,6 @@
 
 package io.ak1.paper.ui.screens.note.preview
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
