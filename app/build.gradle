@@ -156,6 +156,8 @@ dependencies {
     implementation 'com.google.accompanist:accompanist-navigation-material:0.24.10-beta'
     //System UI Controller
     implementation 'com.google.accompanist:accompanist-systemuicontroller:0.24.10-beta'
+    //Permissions
+    implementation 'com.google.accompanist:accompanist-permissions:0.24.10-beta'
 
     // Tests
     testImplementation 'junit:junit:4.13.2'

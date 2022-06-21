@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:OptIn(ExperimentalPermissionsApi::class)
+
 package io.ak1.paper.ui.screens.note.options
 
+import android.Manifest
 import android.content.pm.PackageManager
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,6 +31,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.rememberPermissionState
 import io.ak1.paper.R
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.note.image.ImageChooserType
@@ -41,17 +45,29 @@ import org.koin.androidx.compose.inject
  */
 data class Menu(val iconId: Int, val stringId: Int)
 
+const val cameraPermission = Manifest.permission.CAMERA
 
 @Composable
-fun OptionsScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
-    val optionsViewModel by inject<OptionsViewModel>()
+fun OptionsScreen(
+    navigateTo: (String) -> Unit,
+    backPress: () -> Unit
+) {
     val context = LocalContext.current
+    val optionsViewModel by inject<OptionsViewModel>()
+
+    val cameraPermissionState = rememberPermissionState(cameraPermission) { isGranted: Boolean ->
+        if (isGranted) {
+            optionsViewModel.saveCurrentImageType(ImageChooserType.CAMERA)
+            navigateTo(Destinations.IMAGE_ROUTE)
+        }
+    }
+
 
     val list = mutableListOf(
         Menu(R.drawable.ic_image, R.string.add_image),
         Menu(R.drawable.ic_doodle, R.string.add_doodle)
     ).apply {
-        if (!context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA))
+        if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA))
             add(0, Menu(R.drawable.ic_camera, R.string.take_photo))
     }.toList()
 
@@ -74,19 +90,26 @@ fun OptionsScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
                     backPress.invoke()
                     optionsViewModel.saveCurrentDoodleId()
                     optionsViewModel.saveCurrentImageId()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        when (it.iconId) {
-                            R.drawable.ic_camera -> {
-                                optionsViewModel.saveCurrentImageType(ImageChooserType.CAMERA)
-                                navigateTo(Destinations.IMAGE_ROUTE)
+                    when (it.iconId) {
+                        R.drawable.ic_camera -> {
+                            when (cameraPermissionState.status) {
+                                // If the camera permission is granted, then show screen with the feature enabled
+                                PermissionStatus.Granted -> {
+                                    optionsViewModel.saveCurrentImageType(ImageChooserType.CAMERA)
+                                    navigateTo(Destinations.IMAGE_ROUTE)
+                                }
+                                is PermissionStatus.Denied -> {
+                                    cameraPermissionState.launchPermissionRequest()
+                                }
+                                else -> cameraPermissionState.launchPermissionRequest()
                             }
-                            R.drawable.ic_image -> {
-                                optionsViewModel.saveCurrentImageType(ImageChooserType.GALLERY)
-                                navigateTo(Destinations.IMAGE_ROUTE)
-                            }
-                            R.drawable.ic_doodle -> navigateTo(Destinations.DOODLE_ROUTE)
                         }
-                    }, 100L)
+                        R.drawable.ic_image -> {
+                            optionsViewModel.saveCurrentImageType(ImageChooserType.GALLERY)
+                            navigateTo(Destinations.IMAGE_ROUTE)
+                        }
+                        R.drawable.ic_doodle -> navigateTo(Destinations.DOODLE_ROUTE)
+                    }
                 },
                 elevation = elevation,
                 colors = colors,
