@@ -37,9 +37,8 @@ import io.ak1.paper.ui.theme.isSystemInDarkThemeCustom
 
 @OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
-fun RootComponent(activity: ComponentActivity) {
+fun RootComponent() {
     val isDark = isSystemInDarkThemeCustom()
-    val context = LocalContext.current
     val systemUiController = rememberSystemUiController()
     val uriHandler = LocalUriHandler.current
     PaperTheme(isDark) {
@@ -80,7 +79,7 @@ fun RootComponent(activity: ComponentActivity) {
                         { navController.navigateUp() }
                     }
                     bottomSheet(Destinations.OPTIONS_ROUTE) {
-                        OptionsScreen(activity, { navController.navigate(it) })
+                        OptionsScreen({ navController.navigate(it) })
                         { navController.navigateUp() }
                     }
                 }
