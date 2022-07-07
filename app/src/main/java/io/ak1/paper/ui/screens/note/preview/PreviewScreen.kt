@@ -117,8 +117,10 @@ fun PreviewScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
                 PaperIconButton(
                     id = R.drawable.ic_trash,
                 ) {
-                    Toast.makeText(context, "Media deletion not working", Toast.LENGTH_SHORT).show()
-
+                    item?.isDoodle?.let {
+                        previewViewModel.deleteMedia(it, item.id)
+                    }
+                    Toast.makeText(context,R.string.media_deleted,Toast.LENGTH_SHORT).show()
                 }
             },
             backgroundColor = MaterialTheme.colors.background.copy(0.4f),

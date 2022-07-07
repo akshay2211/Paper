@@ -17,6 +17,8 @@ package io.ak1.paper.ui.screens.note.preview
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.ak1.paper.data.repositories.doodles.DoodlesRepository
+import io.ak1.paper.data.repositories.image.ImageRepository
 import io.ak1.paper.data.repositories.local.LocalRepository
 import io.ak1.paper.models.ClickableUri
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +38,11 @@ data class PreviewUiState(
     var selection: Int = 0
 )
 
-class PreviewViewModel(private val localRepository: LocalRepository) : ViewModel() {
+class PreviewViewModel(
+    private val localRepository: LocalRepository,
+    private val imageRepository: ImageRepository,
+    private val doodlesRepository: DoodlesRepository
+) : ViewModel() {
     // UI state exposed to the UI
     private val _uiState = MutableStateFlow(PreviewUiState(loading = true))
     val uiState: StateFlow<PreviewUiState> = _uiState.asStateFlow()
@@ -64,6 +70,25 @@ class PreviewViewModel(private val localRepository: LocalRepository) : ViewModel
     fun saveCurrentImageId(currentImageId: String) {
         viewModelScope.launch {
             localRepository.saveCurrentImageId(currentImageId)
+        }
+    }
+
+    fun deleteImage(imageId: String) {
+        viewModelScope.launch {
+            imageRepository.deleteImageById(imageId)
+        }
+    }
+
+    fun deleteDoodle(doodleId: String) {
+        viewModelScope.launch {
+            doodlesRepository.deleteDoodleById(doodleId)
+        }
+    }
+    fun deleteMedia(isDoodle:Boolean, mediaId:String){
+        if (isDoodle){
+            deleteDoodle(mediaId)
+        }else{
+            deleteImage(mediaId)
         }
     }
 
