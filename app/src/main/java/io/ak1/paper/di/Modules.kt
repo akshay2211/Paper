@@ -30,8 +30,8 @@ var viewModel = module {
     viewModel { HomeViewModel(get(), get()) }
     viewModel { NoteViewModel(get(), get()) }
     viewModel { OptionsViewModel(get()) }
-    viewModel { ImageViewModel(get(),get()) }
-    viewModel { PreviewViewModel(get()) }
+    viewModel { ImageViewModel(get(), get()) }
+    viewModel { PreviewViewModel(get(), get(), get(), get()) }
     viewModel { DoodleViewModel(get(), get(), get()) }
 }
 var repositories = module {
@@ -40,6 +40,6 @@ var repositories = module {
     single { getImageRepository(get()) }
     single { getNotesRepository(get(), get(), get()) }
 }
-var utils  = module {
+var utils = module {
     factory { getRandomNumber() }
 }
