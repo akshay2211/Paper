@@ -20,7 +20,9 @@ import androidx.lifecycle.viewModelScope
 import io.ak1.paper.data.repositories.doodles.DoodlesRepository
 import io.ak1.paper.data.repositories.image.ImageRepository
 import io.ak1.paper.data.repositories.local.LocalRepository
+import io.ak1.paper.data.repositories.notes.NotesRepository
 import io.ak1.paper.models.ClickableUri
+import io.ak1.paper.ui.utils.getUriList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,7 +43,8 @@ data class PreviewUiState(
 class PreviewViewModel(
     private val localRepository: LocalRepository,
     private val imageRepository: ImageRepository,
-    private val doodlesRepository: DoodlesRepository
+    private val doodlesRepository: DoodlesRepository,
+    private val notesRepository: NotesRepository,
 ) : ViewModel() {
     // UI state exposed to the UI
     private val _uiState = MutableStateFlow(PreviewUiState(loading = true))
@@ -49,15 +52,19 @@ class PreviewViewModel(
 
     init {
         viewModelScope.launch {
-            localRepository.currentMediaList.collect { list ->
-                _uiState.update {
-                    it.copy(
-                        list = list,
-                        selection = localRepository.currentSelectedPosition.value
-                    )
+            localRepository.currentNote.collect { id ->
+                notesRepository.getNoteByFlow(id).collect{note ->
+                    note?.let {
+                        _uiState.update {
+                            it.copy(
+                                list = note.getUriList(),
+                                selection = localRepository.currentSelectedPosition.value
+                            )
+                        }
+                    }
+
                 }
             }
-
         }
     }
 
@@ -84,10 +91,11 @@ class PreviewViewModel(
             doodlesRepository.deleteDoodleById(doodleId)
         }
     }
-    fun deleteMedia(isDoodle:Boolean, mediaId:String){
-        if (isDoodle){
+
+    fun deleteMedia(isDoodle: Boolean, mediaId: String) {
+        if (isDoodle) {
             deleteDoodle(mediaId)
-        }else{
+        } else {
             deleteImage(mediaId)
         }
     }

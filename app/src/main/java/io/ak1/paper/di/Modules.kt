@@ -31,7 +31,7 @@ var viewModel = module {
     viewModel { NoteViewModel(get(), get()) }
     viewModel { OptionsViewModel(get()) }
     viewModel { ImageViewModel(get(), get()) }
-    viewModel { PreviewViewModel(get(), get(), get()) }
+    viewModel { PreviewViewModel(get(), get(), get(), get()) }
     viewModel { DoodleViewModel(get(), get(), get()) }
 }
 var repositories = module {

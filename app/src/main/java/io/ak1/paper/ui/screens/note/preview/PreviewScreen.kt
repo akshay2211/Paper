@@ -120,7 +120,10 @@ fun PreviewScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
                     item?.isDoodle?.let {
                         previewViewModel.deleteMedia(it, item.id)
                     }
-                    Toast.makeText(context,R.string.media_deleted,Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.media_deleted, Toast.LENGTH_SHORT).show()
+                    if (uiState.list.size <= 1) {
+                        backPress.invoke()
+                    }
                 }
             },
             backgroundColor = MaterialTheme.colors.background.copy(0.4f),
