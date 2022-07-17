@@ -24,6 +24,30 @@ Screenshots
 -----------
 <img src="media/light.png" width="25%"/><img src="media/dark.png" width="25%"/>
 
+Flow
+-----------
+```mermaid
+stateDiagram-v2
+[*] --> HomeScreen
+
+HomeScreen --> NoteScreen
+NoteScreen --> Add
+Add --> DoodleScreen
+Add --> ImageScreen
+NoteScreen --> HomeScreen
+NoteScreen --> PreviewScreen
+PreviewScreen -->  Edit
+PreviewScreen -->  Delete
+Edit --> DoodleScreen
+Delete --> DoodleScreen
+Delete --> ImageScreen
+PreviewScreen --> ImageScreen
+HomeScreen --> SearchScreen
+SearchScreen --> NoteScreen
+HomeScreen --> SettingScreen
+HomeScreen --> [*]
+```
+
 Upcoming Features
 -----------
 
