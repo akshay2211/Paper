@@ -140,7 +140,6 @@ fun NoteScreen(
                 if (data.isNotEmpty()) {
                     LazyRow(modifier = Modifier.padding(5.dp, 15.dp)) {
                         itemsIndexed(data) { index, item ->
-
                             Image(
                                 painter = rememberAsyncImagePainter(model = item.uri),
                                 contentScale = ContentScale.Crop,
