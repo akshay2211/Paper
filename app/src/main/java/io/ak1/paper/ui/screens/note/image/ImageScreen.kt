@@ -121,7 +121,7 @@ fun ImageScreen(backPress: () -> Unit) {
                 elevation = 0.dp,
                 backgroundColor = MaterialTheme.colors.background,
             )
-        },
+        }/*,
         bottomBar = {
             BottomAppBar(
                 backgroundColor = Color.Transparent,
@@ -132,7 +132,7 @@ fun ImageScreen(backPress: () -> Unit) {
 
             }
 
-        }) { paddingValues ->
+        }*/) { paddingValues ->
         imageData.value?.let {
             Image(
                 painter = rememberAsyncImagePainter(model = imageData.value, onState = {
