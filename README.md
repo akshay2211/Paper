@@ -48,6 +48,17 @@ HomeScreen --> SettingScreen
 HomeScreen --> [*]
 ```
 
+Completed
+-----------
+
+#### Phase 1
+* minimal todo app
+
+#### Phase 2
+
+* Image Integrations
+* Doodle Screen Integration 
+
 Upcoming Features
 -----------
 
