@@ -71,10 +71,9 @@ Upcoming Features
 * To-do list integration
 * Tags/Folders to segregate notes
 
-Credits
+Thanks to
 ----------
-Thanks to [DrawBox](https://github.com/akshay2211/DrawBox) for providing ability to created dynamic doodles on canvas.
-
+[DrawBox](https://github.com/akshay2211/DrawBox) for providing ability to created dynamic doodles on canvas.
 
 Contribute
 ----------
