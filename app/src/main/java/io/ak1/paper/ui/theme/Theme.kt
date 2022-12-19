@@ -1,13 +1,17 @@
 package io.ak1.paper.ui.theme
 
+import android.app.Activity
 import android.content.res.Configuration
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 import io.ak1.paper.data.local.dataStore
 import io.ak1.paper.data.local.isDarkThemeOn
 import io.ak1.paper.data.local.themePreferenceKey
@@ -15,52 +19,68 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
 
-private val DarkColorPalette = darkColors(
+private val DarkColorScheme = darkColorScheme(
     primary = WhiteDark,
-    primaryVariant = Grey,
     secondary = Accent,
-    secondaryVariant = WhiteDark,
+    tertiary = Grey,
     background = BlackDark,
-    surface = BlackLite,
+    surface = BlackDark,
     onPrimary = BlackDark,
-    onSecondary = BlackDark,
-    onBackground = WhiteDark,
-    onSurface = WhiteDark,
+    onBackground = WhiteDark
 )
 
-private val LightColorPalette = lightColors(
+private val LightColorScheme = lightColorScheme(
     primary = BlackDark,
-    primaryVariant = Grey,
     secondary = Accent,
-    secondaryVariant = BlackDark,
+    tertiary = Grey,
     background = WhiteDark,
-    surface = WhiteLite,
+    surface = WhiteDark,
     onPrimary = WhiteDark,
-    onSecondary = WhiteDark,
-    onBackground = BlackDark,
-    onSurface = BlackDark,
+    onBackground = WhiteDark
 
     /* Other default colors to override
-    background = Color.White,
-    surface = Color.White,
+    background = Color(0xFFFFFBFE),
+    surface = Color(0xFFFFFBFE),
     onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
+    onSecondary = Color.White,
+    onTertiary = Color.White,
+    onBackground = Color(0xFF1C1B1F),
+    onSurface = Color(0xFF1C1B1F),
     */
 )
-
 @Composable
-fun PaperTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable() () -> Unit) {
-    val colors = if (darkTheme) DarkColorPalette else LightColorPalette
+fun PaperTheme(darkTheme: Boolean = isSystemInDarkTheme(),
+    // Dynamic color is available on Android 12+
+    dynamicColor: Boolean = true,
+    content: @Composable () -> Unit
+    ) {
+        val colorScheme =
+            when {
+                dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                    val context = LocalContext.current
+                    if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+                }
+                darkTheme -> DarkColorScheme
+                else -> LightColorScheme
+            }
+        val view = LocalView.current
+        if (!view.isInEditMode) {
+            val currentWindow = (view.context as? Activity)?.window
+                ?: throw Exception("Not in an activity - unable to get Window reference")
 
-    MaterialTheme(
-        colors = colors,
-        typography = Typography,
-        shapes = Shapes,
-        content = content
-    )
-}
+            SideEffect {
+                currentWindow.statusBarColor = Color.Transparent.value.toInt()
+                WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightStatusBars =
+                    !darkTheme
+            }
+        }
+
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 
 @Composable
 fun isSystemInDarkThemeCustom(): Boolean {

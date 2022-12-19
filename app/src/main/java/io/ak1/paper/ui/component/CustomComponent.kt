@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterialApi::class, ExperimentalUnitApi::class)
-
 package io.ak1.paper.ui.component
 
 import android.content.res.Configuration
@@ -13,7 +11,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,10 +27,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.ExperimentalUnitApi
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.*
 import coil.compose.rememberAsyncImagePainter
 import io.ak1.paper.R
 import io.ak1.paper.models.Note
@@ -52,7 +47,6 @@ import io.ak1.paper.ui.utils.toPercent
  */
 
 
-@OptIn(ExperimentalUnitApi::class)
 @Composable
 fun HomeHeader(
     modifier: Modifier = Modifier,
@@ -86,10 +80,7 @@ fun HomeHeader(
     ) {
         Text(
             text = stringResource(id = R.string.app_name),
-            fontSize = TextUnit(
-                textSize,
-                TextUnitType.Sp
-            ),
+            fontSize = textSize.sp,
             color = headerColor,
             modifier = Modifier
                 .padding(16.dp, headerPadding, 12.dp, textPadding)
@@ -117,8 +108,7 @@ fun NotesListComponent(
     navigateTo: (String) -> Unit,
     callback: (NoteWithDoodleAndImage) -> Unit
 ) {
-    val modifier = Modifier
-        .padding(padding)
+    val modifier = Modifier.padding(padding)
     Column {
         LazyColumn(modifier = modifier, state = scrollState) {
             if (includeHeader) {
@@ -178,7 +168,7 @@ fun PlaceHolderBox(modifier: Modifier, colorFilter: ColorFilter) {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteView(element: NoteWithDoodleAndImage, callback: (NoteWithDoodleAndImage) -> Unit) {
     val hasDoodle = element.doodleList.isNotEmpty()
@@ -189,7 +179,7 @@ fun NoteView(element: NoteWithDoodleAndImage, callback: (NoteWithDoodleAndImage)
             .fillMaxWidth()
             .padding(16.dp, 8.dp),
         shape = RoundedCornerShape(10),
-        elevation = 0.dp,
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         onClick = { callback(element) },
     ) {
         Column {
@@ -201,15 +191,15 @@ fun NoteView(element: NoteWithDoodleAndImage, callback: (NoteWithDoodleAndImage)
                     Text(
                         text = element.note.description.trim().gridTrim(),
                         modifier = Modifier.fillMaxWidth(),
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.bodyMedium,
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis
                     )
                     VerticalSpacer(7.dp)
                     Text(
                         text = element.note.updatedOn.timeAgo(),
-                        color = MaterialTheme.colors.primaryVariant,
-                        style = MaterialTheme.typography.caption
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        style = MaterialTheme.typography.labelSmall
                     )
 
                 }
@@ -238,15 +228,14 @@ fun ImageGridView(element: NoteWithDoodleAndImage) {
 
             }
         }
-        if (element.note.description.trim().isEmpty())
-            Text(
-                text = element.note.updatedOn.timeAgo(),
-                color = MaterialTheme.colors.primaryVariant,
-                style = MaterialTheme.typography.caption,
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(14.dp)
-            )
+        if (element.note.description.trim().isEmpty()) Text(
+            text = element.note.updatedOn.timeAgo(),
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(14.dp)
+        )
     }
 }
 
@@ -257,12 +246,11 @@ fun ImageGridView(element: NoteWithDoodleAndImage) {
 @Composable
 fun Preview() {
     PaperTheme {
-        Surface(color = MaterialTheme.colors.background) {
+        Surface(color = MaterialTheme.colorScheme.background) {
             Column {
                 NoteView(
                     element = NoteWithDoodleAndImage(
-                        Note(DEFAULT, "Hello this is sample text"), listOf(),
-                        listOf()
+                        Note(DEFAULT, "Hello this is sample text"), listOf(), listOf()
                     )
                 ) {}
             }
@@ -275,7 +263,7 @@ fun PaperIconButton(
     @DrawableRes id: Int,
     enabled: Boolean = true,
     border: Boolean = false,
-    tint: Color = if (enabled) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant,
+    tint: Color = if (enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
     onClick: () -> Unit
 ) {
     IconButton(
@@ -287,9 +275,7 @@ fun PaperIconButton(
             contentDescription = stringResource(id = R.string.image_desc),
             tint = tint,
             modifier = if (border) Modifier.border(
-                0.5.dp,
-                MaterialTheme.colors.primary,
-                CircleShape
+                0.5.dp, MaterialTheme.colorScheme.primary, CircleShape
             ) else Modifier
         )
     }

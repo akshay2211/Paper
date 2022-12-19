@@ -5,16 +5,9 @@ import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateInt
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import io.ak1.paper.R
 
 /**
  * Created by akshay on 10/03/22
@@ -40,33 +33,34 @@ fun CollapsibleTopBar(
     collapsibleTopBarState: CollapsibleTopBarState,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
+
     val transition = updateTransition(collapsibleTopBarState, label = "CollapsibleTopBarTransition")
 
     val topBarHeight = transition.animateDp(label = "CollapsibleTopBarHeight") { state ->
         if (CollapsibleTopBarState.Expanded == state) 200.dp else 48.dp
     }
-    val topBarElevation = transition.animateDp(label = "CollapsibleTopBarElevation") { state ->
-        if (CollapsibleTopBarState.Expanded == state) 0.dp else AppBarDefaults.TopAppBarElevation
-    }
+   // val topBarElevation = transition.animateDp(label = "CollapsibleTopBarElevation") { state ->
+  //      if (CollapsibleTopBarState.Expanded == state) 0.dp else AppBarDefaults.TopAppBarElevation
+  //  }
     val headerTextSize = transition.animateInt(label = "CollapsibleTopBarTitleSize") { state ->
         if (CollapsibleTopBarState.Expanded == state) 48 else 20
     }
     val topBarColor = transition.animateColor(label = "CollapsibleTopBarColor") { state ->
-        if (CollapsibleTopBarState.Expanded == state) MaterialTheme.colors.background else MaterialTheme.colors.surface
+        if (CollapsibleTopBarState.Expanded == state) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surface
     }
 
-    Surface(
+   /* Surface(
         color = topBarColor.value,
-        contentColor = MaterialTheme.colors.onSurface,
-        elevation = topBarElevation.value,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        shadowElevation = topBarElevation.value,
         shape = RectangleShape,
     ) {
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+      //  CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
             Box(modifier = Modifier.statusBarsPadding()) {
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .padding(AppBarDefaults.ContentPadding)
+                        .padding(12.dp)//AppBarDefaults.ContentPadding)
                         .height(topBarHeight.value),
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.Bottom,
@@ -106,6 +100,5 @@ fun CollapsibleTopBar(
                     }
                 )
             }
-        }
+        }*/
     }
-}
