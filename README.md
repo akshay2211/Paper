@@ -59,15 +59,22 @@ Completed
 * Image Integrations
 * Doodle Screen Integration 
 
-Upcoming Features
+On-going Features
 -----------
 
 #### Phase 3
 
+* Material 2 to Material 3 migration
+
+Upcoming Features
+-----------
+
+#### Phase 4
+
 * Feature to Share Notes
 * Backup and Restore Feature
 
-##### Phase 4
+##### Phase 5
 * To-do list integration
 * Tags/Folders to segregate notes
 
