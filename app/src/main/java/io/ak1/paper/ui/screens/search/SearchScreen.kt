@@ -99,12 +99,10 @@ fun SearchScreen(navController: NavController) {
         )
     }) { paddingValues ->
         NotesListComponent(
-            false,
             MaterialTheme.colorScheme.onPrimary,
             HomeUiState(resultList.value, false),
             scrollState,
-            paddingValues,
-            {}) {
+            paddingValues) {
             focus.value = false
             homeViewModel.saveCurrentNote(it.note.noteId)
             navController.navigate(Destinations.NOTE_ROUTE)

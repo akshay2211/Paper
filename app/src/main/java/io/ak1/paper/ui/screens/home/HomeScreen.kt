@@ -3,25 +3,20 @@
 package io.ak1.paper.ui.screens.home
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalTextInputService
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import io.ak1.paper.R
 import io.ak1.paper.models.NoteWithDoodleAndImage
 import io.ak1.paper.ui.component.*
@@ -40,9 +35,8 @@ const val lighterToneIndex = 1
 
 @Composable
 fun HomeScreen(isDark: Boolean, scrollState: LazyListState, navigateTo: (String) -> Unit) {
-    val homeViewModel  = get<HomeViewModel>()
+    val homeViewModel = get<HomeViewModel>()
     val uiState by homeViewModel.uiState.collectAsState()
-    LocalTextInputService.current?.hideSoftwareKeyboard()
     HomeScreen(isDark, uiState, scrollState, {
         homeViewModel.saveCurrentNote(it.note.noteId)
         navigateTo(Destinations.NOTE_ROUTE)
@@ -61,41 +55,39 @@ fun HomeScreen(
     openNewNote: () -> Unit,
     navigateTo: (String) -> Unit
 ) {
-    val randomInt  = get<Int>()
-    val maxHeightInPX = with(LocalDensity.current) { headerBarExpandedHeight.toPx() }
-    val minHeightInPx = with(LocalDensity.current) { headerBarCollapsedHeight.toPx() }
+    val randomInt = get<Int>()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val headerColor = colorArray[randomInt][if (isDark) lighterToneIndex else darkerToneIndex]
     val tintColor = colorArray[randomInt][if (isDark) darkerToneIndex else lighterToneIndex]
     Scaffold(
         modifier = Modifier
-            .navigationBarsPadding(),
+            .navigationBarsPadding()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            Spacer(modifier = Modifier.statusBarsPadding())
+            LargeTopAppBar(title = {
+                Text(
+                    text = stringResource(id = R.string.app_name),
+                    style = MaterialTheme.typography.displaySmall,
+                    color = headerColor,
+                    fontFamily = FontFamily(Font(R.font.lavishly_yours_regular))
+                )
+            }, actions = {
+                PaperIconButton(
+                    id = R.drawable.ic_search,
+                ) { navigateTo(Destinations.SEARCH_ROUTE) }
+                PaperIconButton(
+                    id = R.drawable.ic_more,
+                ) { navigateTo(Destinations.SETTING_ROUTE) }
+            }, scrollBehavior = scrollBehavior)
         },
         content = { paddingValues ->
             NotesListComponent(
-                true,
                 headerColor,
                 uiState,
                 scrollState,
                 paddingValues,
-                navigateTo,
                 saveNote
             )
-
-            if (scrollState.firstVisibleItemIndex != 0 || (scrollState.firstVisibleItemIndex == 0 && scrollState.firstVisibleItemScrollOffset > maxHeightInPX - minHeightInPx)) {
-                HomeHeader(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background), headerColor
-                ) {
-                    PaperIconButton(
-                        id = R.drawable.ic_search,
-                    ) { navigateTo(Destinations.SEARCH_ROUTE) }
-                    PaperIconButton(
-                        id = R.drawable.ic_more,
-                    ) { navigateTo(Destinations.SETTING_ROUTE) }
-                }
-            }
         },
         floatingActionButton = {
             FloatingActionButton(
