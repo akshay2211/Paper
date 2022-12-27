@@ -52,7 +52,7 @@ Completed
 -----------
 
 #### Phase 1
-* minimal todo app
+* Minimal todo app
 
 #### Phase 2
 
