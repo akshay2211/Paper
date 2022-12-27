@@ -1,10 +1,12 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package io.ak1.paper.ui.screens.setting
 
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,7 +46,7 @@ fun SettingsScreen(navigateUp: () -> Unit,openWith:(String)->Unit) {
                 title = {
                     Text(
                         text = stringResource(id = R.string.settings_title),
-                        style = MaterialTheme.typography.h6, modifier = Modifier.padding(0.dp, 9.dp)
+                        style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(0.dp, 9.dp)
                     )
                 },
                 navigationIcon = {
@@ -52,8 +54,8 @@ fun SettingsScreen(navigateUp: () -> Unit,openWith:(String)->Unit) {
                         navigateUp.invoke()
                     }
                 },
-                backgroundColor = MaterialTheme.colors.background,
-                elevation = 0.dp
+               // backgroundColor = MaterialTheme.colorScheme.background,
+                //elevation = 0.dp
             )
         }
     ) { padding ->
@@ -66,7 +68,7 @@ fun SettingsScreen(navigateUp: () -> Unit,openWith:(String)->Unit) {
                 .padding(padding)
                 .fillMaxWidth()
         ) {
-            val elevation = ButtonDefaults.elevation(
+            val elevation = ButtonDefaults.buttonElevation(
                 defaultElevation = 0.dp,
                 pressedElevation = 0.dp,
                 hoveredElevation = 0.dp,
@@ -89,7 +91,7 @@ fun SettingsScreen(navigateUp: () -> Unit,openWith:(String)->Unit) {
                     Column(modifier = Modifier.weight(1f, true)) {
                         Text(
                             "Theme",
-                            style = MaterialTheme.typography.h6,
+                            style = MaterialTheme.typography.headlineSmall,
                             maxLines = 2,
                             textAlign = TextAlign.Start,
                             overflow = TextOverflow.Ellipsis,
@@ -102,12 +104,12 @@ fun SettingsScreen(navigateUp: () -> Unit,openWith:(String)->Unit) {
                                     else -> R.string.custom_theme
                                 }
                             ),
-                            style = MaterialTheme.typography.overline,
+                            style = MaterialTheme.typography.labelSmall,
                             textAlign = TextAlign.Start,
                         )
                     }
                     Switch(
-                        colors = SwitchDefaults.colors(uncheckedThumbColor = MaterialTheme.colors.secondaryVariant),
+                        colors = SwitchDefaults.colors(uncheckedThumbColor = MaterialTheme.colorScheme.secondary),
                         onCheckedChange = {
                             coroutineScope.launch {
                                 context.dataStore.edit { settings ->
@@ -130,7 +132,7 @@ fun SettingsScreen(navigateUp: () -> Unit,openWith:(String)->Unit) {
                         Column(modifier = Modifier.weight(1f, true)) {
                             Text(
                                 "Dark Mode",
-                                style = MaterialTheme.typography.h6,
+                                style = MaterialTheme.typography.headlineSmall,
                                 maxLines = 2,
                                 textAlign = TextAlign.Start,
                                 overflow = TextOverflow.Ellipsis,
@@ -144,12 +146,12 @@ fun SettingsScreen(navigateUp: () -> Unit,openWith:(String)->Unit) {
                                         else -> R.string.default_theme
                                     }
                                 ),
-                                style = MaterialTheme.typography.caption,
+                                style = MaterialTheme.typography.labelMedium,
                                 textAlign = TextAlign.Start,
                             )
                         }
                         Switch(
-                            colors = SwitchDefaults.colors(uncheckedThumbColor = MaterialTheme.colors.secondaryVariant),
+                            colors = SwitchDefaults.colors(uncheckedThumbColor = MaterialTheme.colorScheme.secondary),
                             onCheckedChange = {
                                 coroutineScope.launch {
                                     context.dataStore.edit { settings ->
@@ -173,17 +175,17 @@ fun SettingsScreen(navigateUp: () -> Unit,openWith:(String)->Unit) {
                         Button(
                             onClick = {openWith("https://github.com/akshay2211/Paper") },
                             elevation = elevation,
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                             modifier = Modifier.weight(1f, true)
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Icon(
                                     painterResource(id = R.drawable.ic_github),
                                     contentDescription = stringResource(id = R.string.app_name),
-                                    tint = MaterialTheme.colors.surface,
+                                    tint = MaterialTheme.colorScheme.surface,
                                     modifier = Modifier
                                         .align(Alignment.CenterHorizontally)
-                                        .background(MaterialTheme.colors.onSurface, CircleShape)
+                                        .background(MaterialTheme.colorScheme.onSurface, CircleShape)
                                         .padding(10.dp)
                                 )
                                 Spacer(
@@ -193,8 +195,8 @@ fun SettingsScreen(navigateUp: () -> Unit,openWith:(String)->Unit) {
                                 )
                                 Text(
                                     text = "Get Source",
-                                    color = MaterialTheme.colors.primary,
-                                    style = MaterialTheme.typography.body1,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    style = MaterialTheme.typography.bodyMedium,
                                     textAlign = TextAlign.Center
                                 )
                             }
@@ -202,7 +204,7 @@ fun SettingsScreen(navigateUp: () -> Unit,openWith:(String)->Unit) {
                         Button(
                             onClick = {openWith("https://github.com/akshay2211/Paper") },
                             elevation = elevation,
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                             modifier = Modifier.weight(1f, true)
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -211,7 +213,7 @@ fun SettingsScreen(navigateUp: () -> Unit,openWith:(String)->Unit) {
                                     contentDescription = stringResource(id = R.string.app_name),
                                     tint = Color(0xFFF44336),
                                     modifier = Modifier
-                                        .background(MaterialTheme.colors.onSurface, CircleShape)
+                                        .background(MaterialTheme.colorScheme.onSurface, CircleShape)
                                         .align(Alignment.CenterHorizontally)
                                         .padding(10.dp)
                                 )
@@ -222,8 +224,8 @@ fun SettingsScreen(navigateUp: () -> Unit,openWith:(String)->Unit) {
                                 )
                                 Text(
                                     text = "Spare a Star",
-                                    color = MaterialTheme.colors.primary,
-                                    style = MaterialTheme.typography.body1,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    style = MaterialTheme.typography.bodyMedium,
                                     textAlign = TextAlign.Center
                                 )
                             }
@@ -231,7 +233,7 @@ fun SettingsScreen(navigateUp: () -> Unit,openWith:(String)->Unit) {
                         Button(
                             onClick = {openWith("https://github.com/akshay2211/Paper/issues") },
                             elevation = elevation,
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                             modifier = Modifier.weight(1f, true)
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -240,7 +242,7 @@ fun SettingsScreen(navigateUp: () -> Unit,openWith:(String)->Unit) {
                                     contentDescription = stringResource(id = R.string.app_name),
                                     tint = Color(0xFFFBC02D),
                                     modifier = Modifier
-                                        .background(MaterialTheme.colors.onSurface, CircleShape)
+                                        .background(MaterialTheme.colorScheme.onSurface, CircleShape)
                                         .align(Alignment.CenterHorizontally)
                                         .padding(10.dp)
                                 )
@@ -251,8 +253,8 @@ fun SettingsScreen(navigateUp: () -> Unit,openWith:(String)->Unit) {
                                 )
                                 Text(
                                     text = "File a Bug",
-                                    color = MaterialTheme.colors.primary,
-                                    style = MaterialTheme.typography.body1,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    style = MaterialTheme.typography.bodyMedium,
                                     textAlign = TextAlign.Center
                                 )
                             }

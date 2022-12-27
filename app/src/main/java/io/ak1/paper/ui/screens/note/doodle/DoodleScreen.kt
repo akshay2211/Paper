@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package io.ak1.paper.ui.screens.note.doodle
 
 import android.net.Uri
@@ -9,7 +11,7 @@ import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,7 +30,7 @@ import io.ak1.paper.ui.utils.getEncodedString
 import io.ak1.paper.ui.utils.saveImage
 import io.ak1.rangvikalp.RangVikalp
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.inject
+import org.koin.androidx.compose.get
 
 
 /**
@@ -39,9 +41,9 @@ private val gsonBuilder = GsonBuilder().create()
 
 @Composable
 fun DoodleScreen(backPress: () -> Unit) {
-    val doodleViewModel by inject<DoodleViewModel>()
+    val doodleViewModel  = get<DoodleViewModel>()
     val uiState by doodleViewModel.uiState.collectAsState()
-    val defaultColor = MaterialTheme.colors.surface
+    val defaultColor = MaterialTheme.colorScheme.surface
     val drawController = rememberDrawController()
 
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
@@ -116,11 +118,11 @@ private fun DoodleScreen(
     }
 
     Scaffold(
-        backgroundColor = defaultBgColor.value,
+        containerColor = defaultBgColor.value,
         topBar = {
             TopAppBar(
                 modifier = Modifier.statusBarsPadding(),
-                title = { Text(text = "Doodle", color = MaterialTheme.colors.primary) },
+                title = { Text(text = "Doodle", color = MaterialTheme.colorScheme.primary) },
                 navigationIcon = {
                     PaperIconButton(id = R.drawable.ic_back) {
                         backPress.invoke()
@@ -147,15 +149,15 @@ private fun DoodleScreen(
                         if (doodle.rawText.isNotBlank()) delete.invoke() else backPress.invoke()
                     }
                 },
-                backgroundColor = defaultBgColor.value,
-                elevation = 0.dp
+               // colors = defaultBgColor.value,
+               // ele = 0.dp
             )
         },
         bottomBar = {
-            Column(Modifier.background(MaterialTheme.colors.surface.copy(0.1f))) {
+            Column(Modifier.background(MaterialTheme.colorScheme.surface.copy(0.1f))) {
                 BottomAppBar(
-                    backgroundColor = Color.Transparent,
-                    elevation = 0.dp
+                    containerColor = Color.Transparent,
+                    tonalElevation = 0.dp
                 ) {
                     PaperIconButton(id = R.drawable.ic_undo, enabled = undoCount.value != 0) {
                         drawController.unDo()

@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,47 +36,40 @@ fun CustomAlertDialog(
                     text = stringResource(
                         id = titleId
                     ),
-                    style = MaterialTheme.typography.h6,
+                    style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
                 )
             },
-            buttons = {
-                Row(
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
+            confirmButton = {
+                Button(
+                    onClick = {
+                        setShowDialog(false)
+                        callback()
+                    },
+                    modifier = Modifier.padding(8.dp, 0.dp)
                 ) {
-                    Button(
-                        onClick = {
-                            setShowDialog(false)
-                            callback()
-                        },
-                        modifier = Modifier.padding(8.dp, 0.dp)
-                    ) {
-                        Text(
-                            text = stringResource(
-                                id = android.R.string.ok
-                            ),
-                            style = MaterialTheme.typography.caption
-                        )
-                    }
-                    Button(
-                        onClick = { setShowDialog(false) },
-                        modifier = Modifier.padding(8.dp)
-                    ) {
-                        Text(
-                            text = stringResource(
-                                id = android.R.string.cancel
-                            ),
-                            style = MaterialTheme.typography.caption
-                        )
-                    }
+                    Text(
+                        text = stringResource(
+                            id = android.R.string.ok
+                        ),
+                        style = MaterialTheme.typography.labelMedium
+                    )
                 }
-
+            },
+            dismissButton = {
+                Button(
+                    onClick = { setShowDialog(false) },
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Text(
+                        text = stringResource(
+                            id = android.R.string.cancel
+                        ),
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
             }
         )
     }
@@ -87,7 +80,7 @@ fun ColorRow(
     isVisible: Boolean,
     rowElementsCount: Int = 8,
     colors: List<Color>,
-    backgroundColor: Color = MaterialTheme.colors.background,
+    backgroundColor: Color = MaterialTheme.colorScheme.background,
     clickedColor: (Color) -> Unit
 ) {
     val density = LocalDensity.current

@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package io.ak1.paper.ui.screens.note.image
 
 import android.graphics.Bitmap
@@ -24,13 +26,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
@@ -38,7 +38,7 @@ import io.ak1.paper.R
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.utils.clickImage
 import io.ak1.paper.ui.utils.saveImage
-import org.koin.androidx.compose.inject
+import org.koin.androidx.compose.get
 
 /**
  * Created by akshay on 28/05/22
@@ -47,7 +47,7 @@ import org.koin.androidx.compose.inject
 
 @Composable
 fun ImageScreen(backPress: () -> Unit) {
-    val imageViewModel by inject<ImageViewModel>()
+    val imageViewModel  = get<ImageViewModel>()
     val uiState by imageViewModel.uiState.collectAsState()
     val context = LocalContext.current
     val bitmap = remember {
@@ -95,7 +95,7 @@ fun ImageScreen(backPress: () -> Unit) {
         topBar = {
             TopAppBar(
                 modifier = Modifier.statusBarsPadding(),
-                title = { Text(text = "Add Image", color = MaterialTheme.colors.primary) },
+                title = { Text(text = "Add Image", color = MaterialTheme.colorScheme.primary) },
                 navigationIcon = {
                     PaperIconButton(id = R.drawable.ic_back) {
                         backPress.invoke()
@@ -118,8 +118,8 @@ fun ImageScreen(backPress: () -> Unit) {
                     }
                 },
                 //  backgroundColor = defaultBgColor.value,
-                elevation = 0.dp,
-                backgroundColor = MaterialTheme.colors.background,
+               // elevation = 0.dp,
+                //backgroundColor = MaterialTheme.colorScheme.background,
             )
         }/*,
         bottomBar = {

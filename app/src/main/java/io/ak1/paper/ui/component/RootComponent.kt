@@ -1,13 +1,9 @@
 package io.ak1.paper.ui.component
 
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,7 +12,6 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.home.HomeScreen
 import io.ak1.paper.ui.screens.note.doodle.DoodleScreen
@@ -39,12 +34,12 @@ import io.ak1.paper.ui.theme.isSystemInDarkThemeCustom
 @Composable
 fun RootComponent() {
     val isDark = isSystemInDarkThemeCustom()
-    val systemUiController = rememberSystemUiController()
+  //  val systemUiController = rememberSystemUiController()
     val uriHandler = LocalUriHandler.current
     PaperTheme(isDark) {
-        val darkIcons = MaterialTheme.colors.isLight
-        SideEffect { systemUiController.setSystemBarsColor(Color.Transparent, darkIcons) }
-        Surface(color = MaterialTheme.colors.background) {
+       // val darkIcons = !isDark
+      //  SideEffect { systemUiController.setSystemBarsColor(Color.Transparent, darkIcons) }
+        Surface(color = MaterialTheme.colorScheme.background) {
             val scrollState = rememberLazyListState()
             val bottomSheetNavigator = rememberBottomSheetNavigator()
             val navController = rememberNavController(bottomSheetNavigator)

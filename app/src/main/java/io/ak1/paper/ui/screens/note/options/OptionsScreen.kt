@@ -23,7 +23,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,7 +37,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 import io.ak1.paper.R
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.note.image.ImageChooserType
-import org.koin.androidx.compose.inject
+import org.koin.androidx.compose.get
 
 /**
  * Created by akshay on 15/05/22
@@ -45,7 +45,7 @@ import org.koin.androidx.compose.inject
  */
 data class Menu(val iconId: Int, val stringId: Int)
 
-const val cameraPermission = Manifest.permission.CAMERA
+const val cameraPermission = Manifest.permission.MANAGE_DOCUMENTS
 
 @Composable
 fun OptionsScreen(
@@ -53,7 +53,7 @@ fun OptionsScreen(
     backPress: () -> Unit
 ) {
     val context = LocalContext.current
-    val optionsViewModel by inject<OptionsViewModel>()
+    val optionsViewModel = get<OptionsViewModel>()
 
     val cameraPermissionState = rememberPermissionState(cameraPermission) { isGranted: Boolean ->
         if (isGranted) {
@@ -71,14 +71,14 @@ fun OptionsScreen(
             add(0, Menu(R.drawable.ic_camera, R.string.take_photo))
     }.toList()
 
-    val elevation = ButtonDefaults.elevation(
+    val elevation = ButtonDefaults.buttonElevation(
         defaultElevation = 0.dp,
         pressedElevation = 0.dp,
         hoveredElevation = 0.dp,
         focusedElevation = 0.dp
     )
 
-    val colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
+    val colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
     LazyColumn(
         modifier = Modifier
             .padding(3.dp, 12.dp)
@@ -117,12 +117,12 @@ fun OptionsScreen(
                 Icon(
                     painterResource(id = it.iconId),
                     contentDescription = stringResource(id = it.stringId),
-                    tint = MaterialTheme.colors.primary,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(10.dp, 3.dp)
                 )
                 Text(
                     text = stringResource(id = it.stringId),
-                    color = MaterialTheme.colors.primary,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .weight(1f, true)
                         .padding(10.dp, 3.dp)

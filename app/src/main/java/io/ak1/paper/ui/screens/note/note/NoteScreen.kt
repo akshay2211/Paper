@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+
 package io.ak1.paper.ui.screens.note.note
 
 import android.util.Log
@@ -10,7 +12,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,7 +41,7 @@ import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.utils.getUriList
 import io.ak1.paper.ui.utils.timeAgoInSeconds
-import org.koin.androidx.compose.inject
+import org.koin.androidx.compose.get
 
 /**
  * Created by akshay on 23/02/22
@@ -48,7 +50,7 @@ import org.koin.androidx.compose.inject
 
 @Composable
 fun NoteScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
-    val noteViewModel by inject<NoteViewModel>()
+    val noteViewModel  = get<NoteViewModel>()
     val uiState by noteViewModel.uiState.collectAsState()
     val context = LocalContext.current
     val description = remember { mutableStateOf(TextFieldValue()) }
@@ -103,7 +105,7 @@ fun NoteScreen(
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
     val noteFont = TextStyle(
         fontWeight = FontWeight.Thin,
-        color = MaterialTheme.colors.primary,
+        color = MaterialTheme.colorScheme.primary,
         fontSize = 20.sp,
         letterSpacing = 0.10.sp
     )
@@ -159,13 +161,14 @@ fun NoteScreen(
 
                     }
                 }
+
                 BasicTextField(
                     value = description.value,
                     onValueChange = { tx ->
                         description.value = tx
                     },
                     textStyle = noteFont,
-                    cursorBrush = SolidColor(MaterialTheme.colors.primary),
+                    cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                     modifier = Modifier
                         .fillMaxSize()
                         .weight(1f, true)
@@ -206,7 +209,7 @@ fun NotesTopBar(backPress: () -> Unit, save: () -> Unit, showDialog: () -> Unit)
                 id = R.drawable.ic_check,
                 /*   tint = if (description.value.text.trim()
                            .isEmpty()
-                   ) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary*/
+                   ) MaterialTheme.colorScheme.primaryVariant else MaterialTheme.colorScheme.primary*/
             ) {
                 save.invoke()
             }
@@ -214,7 +217,7 @@ fun NotesTopBar(backPress: () -> Unit, save: () -> Unit, showDialog: () -> Unit)
                 id = R.drawable.ic_trash,
                 /*tint = if (description.value.text.trim()
                         .isEmpty()
-                ) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.primary*/
+                ) MaterialTheme.colorScheme.primaryVariant else MaterialTheme.colorScheme.primary*/
             ) {
                 showDialog.invoke()
                 /*if (note != null) {
@@ -222,8 +225,8 @@ fun NotesTopBar(backPress: () -> Unit, save: () -> Unit, showDialog: () -> Unit)
                 }*/
             }
         },
-        backgroundColor = MaterialTheme.colors.background,
-        elevation = 0.dp
+        //backgroundColor = MaterialTheme.colorScheme.background,
+        //elevation = 0.dp
     )
 }
 
@@ -237,7 +240,7 @@ fun NotesBottomBar(note: Note, onClick: () -> Unit) {
     ) {
         BottomAppBar(
             modifier = Modifier.height(46.dp),
-            backgroundColor = MaterialTheme.colors.background,
+            //backgroundColor = MaterialTheme.colorScheme.background,
             contentPadding = PaddingValues(4.dp, 4.dp),
             content = {
                 Row(
@@ -249,7 +252,7 @@ fun NotesBottomBar(note: Note, onClick: () -> Unit) {
                         Text(
                             text = "Last updated $it",
                             textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.overline,
+                            style = MaterialTheme.typography.labelSmall,
                             modifier = Modifier.padding(8.dp, 0.dp)
                         )
                     }
