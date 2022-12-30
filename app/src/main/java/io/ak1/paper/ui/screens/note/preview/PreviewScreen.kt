@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:OptIn(ExperimentalSnapperApi::class)
+@file:OptIn(ExperimentalSnapperApi::class, ExperimentalMaterial3Api::class)
 
 package io.ak1.paper.ui.screens.note.preview
 
@@ -25,8 +25,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -34,14 +34,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import io.ak1.paper.R
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.Destinations
-import org.koin.androidx.compose.inject
+import org.koin.androidx.compose.get
 
 /**
  * Created by akshay on 05/06/22
@@ -51,7 +50,7 @@ import org.koin.androidx.compose.inject
 @Composable
 fun PreviewScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
     val lazyListState = rememberLazyListState()
-    val previewViewModel by inject<PreviewViewModel>()
+    val previewViewModel  = get<PreviewViewModel>()
     val uiState by previewViewModel.uiState.collectAsState()
     val context = LocalContext.current
 
@@ -126,8 +125,8 @@ fun PreviewScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
                     }
                 }
             },
-            backgroundColor = MaterialTheme.colors.background.copy(0.4f),
-            elevation = 0.dp
+           // backgroundColor = MaterialTheme.colorScheme.background.copy(0.4f),
+            //elevation = 0.dp
         )
     }
 

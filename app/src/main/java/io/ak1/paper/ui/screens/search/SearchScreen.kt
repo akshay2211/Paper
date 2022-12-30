@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package io.ak1.paper.ui.screens.search
 
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -5,7 +7,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -21,7 +23,7 @@ import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.home.HomeUiState
 import io.ak1.paper.ui.screens.home.HomeViewModel
-import org.koin.androidx.compose.inject
+import org.koin.androidx.compose.get
 
 /**
  * Created by akshay on 01/12/21
@@ -33,7 +35,7 @@ fun SearchScreen(navController: NavController) {
     val focusRequester = remember { FocusRequester() }
     val inputService = LocalTextInputService.current
     val focus = remember { mutableStateOf(true) }
-    val homeViewModel by inject<HomeViewModel>()
+    val homeViewModel  = get<HomeViewModel>()
     val description = rememberSaveable {
         mutableStateOf("")
     }
@@ -57,7 +59,7 @@ fun SearchScreen(navController: NavController) {
             placeholder = {
                 Text(
                     text = "Search",
-                    style = MaterialTheme.typography.h6
+                    style = MaterialTheme.typography.headlineSmall
                 )
             },
             leadingIcon = {
@@ -75,7 +77,7 @@ fun SearchScreen(navController: NavController) {
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions { inputService?.hideSoftwareKeyboard() },
 
-            textStyle = MaterialTheme.typography.h6,
+            textStyle = MaterialTheme.typography.headlineSmall,
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
@@ -90,19 +92,17 @@ fun SearchScreen(navController: NavController) {
                     }
                 },
             colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = MaterialTheme.colors.background,
-                focusedIndicatorColor = MaterialTheme.colors.background,
-                unfocusedIndicatorColor = MaterialTheme.colors.background
+                containerColor = MaterialTheme.colorScheme.background,
+                focusedIndicatorColor = MaterialTheme.colorScheme.background,
+                unfocusedIndicatorColor = MaterialTheme.colorScheme.background
             )
         )
     }) { paddingValues ->
         NotesListComponent(
-            false,
-            MaterialTheme.colors.onPrimary,
+            MaterialTheme.colorScheme.onPrimary,
             HomeUiState(resultList.value, false),
             scrollState,
-            paddingValues,
-            {}) {
+            paddingValues) {
             focus.value = false
             homeViewModel.saveCurrentNote(it.note.noteId)
             navController.navigate(Destinations.NOTE_ROUTE)
