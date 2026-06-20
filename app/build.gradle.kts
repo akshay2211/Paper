@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -13,12 +15,12 @@ plugins {
 
 android {
     namespace = "io.ak1.paper"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "io.ak1.paper"
-        minSdk = 21
-        targetSdk = 34
+        minSdk = 23
+        targetSdk = 36
         versionCode = 3
         versionName = "1.0.2"
 
@@ -61,9 +63,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
     buildFeatures {
         compose = true
     }
@@ -75,6 +74,12 @@ android {
     sourceSets {
         getByName("androidTest").java.srcDirs("src/test-common/java")
         getByName("test").java.srcDirs("src/test-common/java")
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 
@@ -90,9 +95,6 @@ dependencies {
 
     // Lifecycle
     implementation(libs.bundles.lifecycle)
-
-    // Multidex
-    implementation(libs.androidx.multidex)
 
     // Image Size Compressor
     implementation(libs.compressor)
@@ -112,6 +114,7 @@ dependencies {
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.material.navigation)
 
     // Coil
     implementation(libs.coil.compose)
