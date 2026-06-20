@@ -7,18 +7,15 @@ import io.ak1.paper.ui.screens.note.note.NoteViewModel
 import io.ak1.paper.ui.screens.note.options.OptionsViewModel
 import io.ak1.paper.ui.screens.note.preview.PreviewViewModel
 import org.koin.android.ext.koin.androidApplication
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 /**
- * Created by akshay on 27/10/21
- * https://ak1.io
+ * Koin modules, split per feature so each one can later be lifted into its own
+ * Gradle module without further refactoring.
  */
 
-/**
- * modules for dependency injection where [single] represents singleton class
- */
-var databaseModule = module {
+val databaseModule = module {
     single { getDb(androidApplication()) }
     single { getNoteTableDao(get()) }
     single { getDoodleTableDao(get()) }
@@ -26,20 +23,33 @@ var databaseModule = module {
     single { getFolderTableDao(get()) }
 }
 
-var viewModel = module {
-    viewModel { HomeViewModel(get(), get()) }
-    viewModel { NoteViewModel(get(), get()) }
-    viewModel { OptionsViewModel(get()) }
-    viewModel { ImageViewModel(get(), get()) }
-    viewModel { PreviewViewModel(get(), get(), get(), get()) }
-    viewModel { DoodleViewModel(get(), get(), get()) }
-}
-var repositories = module {
+val repositoryModule = module {
     single { getLocalRepository() }
     single { getDoodleRepository(get()) }
     single { getImageRepository(get()) }
     single { getNotesRepository(get(), get(), get()) }
 }
-var utils = module {
+
+val homeModule = module {
+    viewModelOf(::HomeViewModel)
+}
+
+val noteModule = module {
+    viewModelOf(::NoteViewModel)
+    viewModelOf(::OptionsViewModel)
+    viewModelOf(::ImageViewModel)
+    viewModelOf(::PreviewViewModel)
+    viewModelOf(::DoodleViewModel)
+}
+
+val utilsModule = module {
     factory { getRandomNumber() }
 }
+
+val appModules = listOf(
+    databaseModule,
+    repositoryModule,
+    homeModule,
+    noteModule,
+    utilsModule,
+)

@@ -15,9 +15,9 @@
  */
 package io.ak1.paper.data.repositories.local.impl
 
-import io.ak1.paper.data.repositories.local.LocalRepository
+import io.ak1.paper.domain.model.ImageChooserType
+import io.ak1.paper.domain.repository.LocalRepository
 import io.ak1.paper.models.ClickableUri
-import io.ak1.paper.ui.screens.note.image.ImageChooserType
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.*
 

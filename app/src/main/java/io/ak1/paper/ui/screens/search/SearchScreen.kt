@@ -21,9 +21,10 @@ import io.ak1.paper.R
 import io.ak1.paper.ui.component.NotesListComponent
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.Destinations
+import io.ak1.paper.ui.screens.home.HomeEvent
 import io.ak1.paper.ui.screens.home.HomeUiState
 import io.ak1.paper.ui.screens.home.HomeViewModel
-import org.koin.androidx.compose.get
+import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * Created by akshay on 01/12/21
@@ -35,7 +36,7 @@ fun SearchScreen(navController: NavController) {
     val focusRequester = remember { FocusRequester() }
     val inputService = LocalTextInputService.current
     val focus = remember { mutableStateOf(true) }
-    val homeViewModel  = get<HomeViewModel>()
+    val homeViewModel = koinViewModel<HomeViewModel>()
     val description = rememberSaveable {
         mutableStateOf("")
     }
@@ -106,7 +107,7 @@ fun SearchScreen(navController: NavController) {
             scrollState,
             paddingValues) {
             focus.value = false
-            homeViewModel.saveCurrentNote(it.note.noteId)
+            homeViewModel.onEvent(HomeEvent.OpenExistingNote(it.note.noteId))
             navController.navigate(Destinations.NOTE_ROUTE)
         }
     }

@@ -41,7 +41,7 @@ import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.utils.getUriList
 import io.ak1.paper.ui.utils.timeAgoInSeconds
-import org.koin.androidx.compose.get
+import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * Created by akshay on 23/02/22
@@ -50,7 +50,7 @@ import org.koin.androidx.compose.get
 
 @Composable
 fun NoteScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
-    val noteViewModel  = get<NoteViewModel>()
+    val noteViewModel = koinViewModel<NoteViewModel>()
     val uiState by noteViewModel.uiState.collectAsState()
     val context = LocalContext.current
     val description = remember { mutableStateOf(TextFieldValue()) }
@@ -64,25 +64,24 @@ fun NoteScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
         }
     }
     fun saveAndExit(note: NoteWithDoodleAndImage) {
-        if (note.note.description != description.value.text.trim()
-        ) {
+        if (note.note.description != description.value.text.trim()) {
             note.note.description = description.value.text.trim()
-            noteViewModel.saveNote(note.note)
+            noteViewModel.onEvent(NoteEvent.SaveNote(note.note))
         }
         if (description.value.text.isEmpty() && note.doodleList.isEmpty() && note.imageList.isEmpty()) {
-            noteViewModel.deleteNote(note.note)
+            noteViewModel.onEvent(NoteEvent.DeleteNote(note.note))
         }
     }
 
     NoteScreen(
         uiState, description, { saveAndExit(uiState.note) },
         {   //delete
-            noteViewModel.deleteNote(uiState.note.note)
+            noteViewModel.onEvent(NoteEvent.DeleteNote(uiState.note.note))
             Toast.makeText(context, R.string.note_removed, Toast.LENGTH_LONG).show()
             backPress.invoke()
         }, { pos ->
-            noteViewModel.setSelectedImage(pos)
-            noteViewModel.setCurrentMediaList(uiState.note.getUriList())
+            noteViewModel.onEvent(NoteEvent.SetSelectedImage(pos))
+            noteViewModel.onEvent(NoteEvent.SetCurrentMediaList(uiState.note.getUriList()))
         }, backPress, navigateTo
     )
 

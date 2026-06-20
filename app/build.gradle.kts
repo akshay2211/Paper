@@ -103,8 +103,11 @@ dependencies {
     implementation(libs.bundles.room)
     ksp(libs.androidx.room.compiler)
 
-    // Koin
-    implementation(libs.koin.androidx.compose)
+    // Koin (multiplatform-ready)
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
+    implementation(libs.koin.compose.viewmodel)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)

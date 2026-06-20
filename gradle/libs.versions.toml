@@ -19,21 +19,23 @@ composeBom = "2025.06.01"
 # Persistence
 room = "2.7.2"
 
-# DI (kept on 3.x — Koin 4.x is an API-breaking swap, scheduled for Phase 2)
-koin = "3.5.6"
+# DI (Koin 4.x — multiplatform with koin-compose / koin-compose-viewmodel)
+koin = "4.2.2"
 
 # Async
 coroutines = "1.11.0"
 
-# Serialization (kept — Gson -> kotlinx.serialization is a Phase 2 swap)
-gson = "2.10.1"
+# Serialization (Gson is only used to (de)serialize io.ak1:drawbox PathWrapper/DrawBoxPayLoad,
+# which are Android-bound third-party types. Gson -> kotlinx.serialization is conjoined with
+# drawbox replacement in Phase 4.)
+gson = "2.14.0"
 
 # Image / Drawing (Coil kept on 2.x — Coil 3 is a Phase 4 swap)
 coil = "2.7.0"
 compressor = "3.0.1"
 drawbox = "1.0.3"
 snapper = "0.3.0"
-rangVikalp = "1.0.0-alpha02"
+rangVikalp = "1.0.0-beta1"
 
 # Compose Material Navigation (replacement for accompanist-navigation-material)
 composeMaterialNavigation = "1.11.3"
@@ -76,8 +78,11 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 
-# Koin
-koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
+# Koin (multiplatform-ready)
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 
 # Coroutines
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }

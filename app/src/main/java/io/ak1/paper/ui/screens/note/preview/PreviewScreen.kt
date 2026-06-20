@@ -40,7 +40,7 @@ import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import io.ak1.paper.R
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.screens.Destinations
-import org.koin.androidx.compose.get
+import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * Created by akshay on 05/06/22
@@ -50,7 +50,7 @@ import org.koin.androidx.compose.get
 @Composable
 fun PreviewScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
     val lazyListState = rememberLazyListState()
-    val previewViewModel  = get<PreviewViewModel>()
+    val previewViewModel = koinViewModel<PreviewViewModel>()
     val uiState by previewViewModel.uiState.collectAsState()
     val context = LocalContext.current
 
@@ -97,7 +97,7 @@ fun PreviewScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
                     ) {
                         item.let {
                             if (it.isDoodle) {
-                                previewViewModel.saveCurrentDoodleId(it.id)
+                                previewViewModel.onEvent(PreviewEvent.SetDoodleId(it.id))
                                 navigateTo(Destinations.DOODLE_ROUTE)
                             } else {
                                 Toast.makeText(
@@ -106,7 +106,7 @@ fun PreviewScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()
-                                previewViewModel.saveCurrentImageId(it.id)
+                                previewViewModel.onEvent(PreviewEvent.SetImageId(it.id))
                                 navigateTo(Destinations.IMAGE_ROUTE)
                             }
                         }
@@ -117,7 +117,7 @@ fun PreviewScreen(navigateTo: (String) -> Unit, backPress: () -> Unit) {
                     id = R.drawable.ic_trash,
                 ) {
                     item?.isDoodle?.let {
-                        previewViewModel.deleteMedia(it, item.id)
+                        previewViewModel.onEvent(PreviewEvent.DeleteMedia(it, item.id))
                     }
                     Toast.makeText(context, R.string.media_deleted, Toast.LENGTH_SHORT).show()
                     if (uiState.list.size <= 1) {

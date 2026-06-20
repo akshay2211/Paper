@@ -30,7 +30,7 @@ import io.ak1.paper.ui.utils.getEncodedString
 import io.ak1.paper.ui.utils.saveImage
 import io.ak1.rangvikalp.RangVikalp
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.get
+import org.koin.compose.viewmodel.koinViewModel
 
 
 /**
@@ -41,7 +41,7 @@ private val gsonBuilder = GsonBuilder().create()
 
 @Composable
 fun DoodleScreen(backPress: () -> Unit) {
-    val doodleViewModel  = get<DoodleViewModel>()
+    val doodleViewModel = koinViewModel<DoodleViewModel>()
     val uiState by doodleViewModel.uiState.collectAsState()
     val defaultColor = MaterialTheme.colorScheme.surface
     val drawController = rememberDrawController()
@@ -74,7 +74,7 @@ fun DoodleScreen(backPress: () -> Unit) {
                 this.rawText = json
                 this.uri = uri.toString()
             }
-            doodleViewModel.saveDoodle(newDoodle)
+            doodleViewModel.onEvent(DoodleEvent.Save(newDoodle))
             backPress.invoke()
         },
         { setShowDialog(true) }, backPress
@@ -89,7 +89,7 @@ fun DoodleScreen(backPress: () -> Unit) {
         setShowDialog = setShowDialog
     ) {
 
-        doodleViewModel.deleteDoodle(uiState.doodle)
+        doodleViewModel.onEvent(DoodleEvent.Delete(uiState.doodle))
         backPress.invoke()
         Toast.makeText(context, R.string.doodle_removed, Toast.LENGTH_LONG).show()
     }

@@ -36,8 +36,8 @@ import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 import io.ak1.paper.R
 import io.ak1.paper.ui.screens.Destinations
-import io.ak1.paper.ui.screens.note.image.ImageChooserType
-import org.koin.androidx.compose.get
+import io.ak1.paper.domain.model.ImageChooserType
+import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * Created by akshay on 15/05/22
@@ -53,11 +53,11 @@ fun OptionsScreen(
     backPress: () -> Unit
 ) {
     val context = LocalContext.current
-    val optionsViewModel = get<OptionsViewModel>()
+    val optionsViewModel = koinViewModel<OptionsViewModel>()
 
     val cameraPermissionState = rememberPermissionState(cameraPermission) { isGranted: Boolean ->
         if (isGranted) {
-            optionsViewModel.saveCurrentImageType(ImageChooserType.CAMERA)
+            optionsViewModel.onEvent(OptionsEvent.SetImageType(ImageChooserType.CAMERA))
             navigateTo(Destinations.IMAGE_ROUTE)
         }
     }
@@ -88,14 +88,14 @@ fun OptionsScreen(
             Button(
                 onClick = {
                     backPress.invoke()
-                    optionsViewModel.saveCurrentDoodleId()
-                    optionsViewModel.saveCurrentImageId()
+                    optionsViewModel.onEvent(OptionsEvent.SetDoodleId())
+                    optionsViewModel.onEvent(OptionsEvent.SetImageId())
                     when (it.iconId) {
                         R.drawable.ic_camera -> {
                             when (cameraPermissionState.status) {
                                 // If the camera permission is granted, then show screen with the feature enabled
                                 PermissionStatus.Granted -> {
-                                    optionsViewModel.saveCurrentImageType(ImageChooserType.CAMERA)
+                                    optionsViewModel.onEvent(OptionsEvent.SetImageType(ImageChooserType.CAMERA))
                                     navigateTo(Destinations.IMAGE_ROUTE)
                                 }
                                 is PermissionStatus.Denied -> {
@@ -105,7 +105,7 @@ fun OptionsScreen(
                             }
                         }
                         R.drawable.ic_image -> {
-                            optionsViewModel.saveCurrentImageType(ImageChooserType.GALLERY)
+                            optionsViewModel.onEvent(OptionsEvent.SetImageType(ImageChooserType.GALLERY))
                             navigateTo(Destinations.IMAGE_ROUTE)
                         }
                         R.drawable.ic_doodle -> navigateTo(Destinations.DOODLE_ROUTE)
