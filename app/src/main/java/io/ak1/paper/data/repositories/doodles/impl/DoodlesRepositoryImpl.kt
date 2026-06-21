@@ -16,7 +16,7 @@
 package io.ak1.paper.data.repositories.doodles.impl
 
 import io.ak1.paper.data.local.DoodleDao
-import io.ak1.paper.data.repositories.doodles.DoodlesRepository
+import io.ak1.paper.domain.repository.DoodlesRepository
 import io.ak1.paper.models.Doodle
 
 /**

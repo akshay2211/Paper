@@ -8,6 +8,7 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Animatable
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -28,9 +29,18 @@ import io.ak1.paper.ui.component.CustomAlertDialog
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.utils.getEncodedString
 import io.ak1.paper.ui.utils.saveImage
+import io.ak1.rangvikalp.HexRow
+import io.ak1.rangvikalp.PresetSwatches
 import io.ak1.rangvikalp.RangVikalp
+import io.ak1.rangvikalp.RangVikalpColors
+import io.ak1.rangvikalp.RangVikalpState
+import io.ak1.rangvikalp.colorArray
+import io.ak1.rangvikalp.defaultRangVikalpColors
+import io.ak1.rangvikalp.defaultRangVikalpPresets
+import io.ak1.rangvikalp.rememberRangVikalpState
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.get
+import org.koin.compose.viewmodel.koinViewModel
 
 
 /**
@@ -41,7 +51,7 @@ private val gsonBuilder = GsonBuilder().create()
 
 @Composable
 fun DoodleScreen(backPress: () -> Unit) {
-    val doodleViewModel  = get<DoodleViewModel>()
+    val doodleViewModel = koinViewModel<DoodleViewModel>()
     val uiState by doodleViewModel.uiState.collectAsState()
     val defaultColor = MaterialTheme.colorScheme.surface
     val drawController = rememberDrawController()
@@ -74,7 +84,7 @@ fun DoodleScreen(backPress: () -> Unit) {
                 this.rawText = json
                 this.uri = uri.toString()
             }
-            doodleViewModel.saveDoodle(newDoodle)
+            doodleViewModel.onEvent(DoodleEvent.Save(newDoodle))
             backPress.invoke()
         },
         { setShowDialog(true) }, backPress
@@ -89,7 +99,7 @@ fun DoodleScreen(backPress: () -> Unit) {
         setShowDialog = setShowDialog
     ) {
 
-        doodleViewModel.deleteDoodle(uiState.doodle)
+        doodleViewModel.onEvent(DoodleEvent.Delete(uiState.doodle))
         backPress.invoke()
         Toast.makeText(context, R.string.doodle_removed, Toast.LENGTH_LONG).show()
     }
@@ -191,7 +201,38 @@ private fun DoodleScreen(
                     }
                 }
 
-                RangVikalp(
+                val state = rememberRangVikalpState()
+                AnimatedVisibility(colorBarVisibility) {
+                    PresetView(
+                        state         = state,
+                        presetGroups= colorArray,
+                        colors = defaultRangVikalpColors(),
+                        modifier      = Modifier.fillMaxHeight(),
+                    )
+                }
+
+                LaunchedEffect(state) {
+                    snapshotFlow { state.color }
+                        .distinctUntilChanged()
+                        .collect { coroutine.launch {
+                            if (colorIsBg) {
+                                defaultBgColor.animateTo(it, animationSpec = tween(1000)) {
+                                    drawController.changeBgColor(this.value)
+                                }
+
+                            } else {
+                                defaultTextColor.animateTo(it, animationSpec = tween(1000)) {
+                                    drawController.changeColor(this.value)
+                                }
+
+                            }
+
+                            colorBarVisibility = false
+
+                        } }
+                }
+
+               /* RangVikalp(
                     isVisible = colorBarVisibility,
                     defaultColor = if (colorIsBg) defaultBgColor.value else defaultTextColor.value,
                     colorIntensity = if (colorIsBg) 0 else 7
@@ -210,7 +251,7 @@ private fun DoodleScreen(
                         }
 
                     }
-                }
+                }*/
             }
         }) { padding ->
         val modifier = Modifier
@@ -240,4 +281,24 @@ private fun DoodleScreen(
             backPress.invoke()
     }
 
+}
+
+@Composable
+private fun PresetView(
+    state: RangVikalpState,
+    presetGroups: List<List<Color>>,
+    colors: RangVikalpColors,
+    modifier: Modifier = Modifier,
+) {
+    // Top-anchored swatches + bottom-anchored hex row — any extra height
+    // imposed by the shared-size wrapper is absorbed by the middle weight(1f).
+    Column(modifier = modifier.fillMaxWidth()) {
+        PresetSwatches(
+            state    = state,
+            families = presetGroups,
+            colors   = colors,
+        )
+        Spacer(Modifier.weight(1f, fill = true).heightIn(min = 14.dp))
+        HexRow(state = state, colors = colors)
+    }
 }

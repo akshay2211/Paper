@@ -22,7 +22,8 @@ import io.ak1.paper.models.NoteWithDoodleAndImage
 import io.ak1.paper.ui.component.*
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.rangvikalp.colorArray
-import org.koin.androidx.compose.get
+import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * Created by akshay on 27/11/21
@@ -35,13 +36,13 @@ const val lighterToneIndex = 1
 
 @Composable
 fun HomeScreen(isDark: Boolean, scrollState: LazyListState, navigateTo: (String) -> Unit) {
-    val homeViewModel = get<HomeViewModel>()
+    val homeViewModel = koinViewModel<HomeViewModel>()
     val uiState by homeViewModel.uiState.collectAsState()
     HomeScreen(isDark, uiState, scrollState, {
-        homeViewModel.saveCurrentNote(it.note.noteId)
+        homeViewModel.onEvent(HomeEvent.OpenExistingNote(it.note.noteId))
         navigateTo(Destinations.NOTE_ROUTE)
     }, {
-        homeViewModel.saveCurrentNote()
+        homeViewModel.onEvent(HomeEvent.OpenNewNote)
         navigateTo(Destinations.NOTE_ROUTE)
     }, navigateTo)
 }
@@ -55,7 +56,7 @@ fun HomeScreen(
     openNewNote: () -> Unit,
     navigateTo: (String) -> Unit
 ) {
-    val randomInt = get<Int>()
+    val randomInt = koinInject<Int>()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val headerColor = colorArray[randomInt][if (isDark) lighterToneIndex else darkerToneIndex]
     val tintColor = colorArray[randomInt][if (isDark) darkerToneIndex else lighterToneIndex]

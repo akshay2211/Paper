@@ -8,10 +8,9 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
-import com.google.accompanist.navigation.material.ModalBottomSheetLayout
-import com.google.accompanist.navigation.material.bottomSheet
-import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
+import androidx.compose.material.navigation.ModalBottomSheetLayout
+import androidx.compose.material.navigation.bottomSheet
+import androidx.compose.material.navigation.rememberBottomSheetNavigator
 import io.ak1.paper.ui.screens.Destinations
 import io.ak1.paper.ui.screens.home.HomeScreen
 import io.ak1.paper.ui.screens.note.doodle.DoodleScreen
@@ -30,7 +29,6 @@ import io.ak1.paper.ui.theme.isSystemInDarkThemeCustom
  */
 
 
-@OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
 fun RootComponent() {
     val isDark = isSystemInDarkThemeCustom()

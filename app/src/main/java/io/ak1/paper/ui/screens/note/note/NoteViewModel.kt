@@ -2,8 +2,8 @@ package io.ak1.paper.ui.screens.note.note
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.ak1.paper.data.repositories.local.LocalRepository
-import io.ak1.paper.data.repositories.notes.NotesRepository
+import io.ak1.paper.domain.repository.LocalRepository
+import io.ak1.paper.domain.repository.NotesRepository
 import io.ak1.paper.models.ClickableUri
 import io.ak1.paper.models.Note
 import io.ak1.paper.models.NoteWithDoodleAndImage
@@ -14,28 +14,29 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/**
- * Created by akshay on 27/11/21
- * https://ak1.io
- */
-
-
 data class NoteUiState(
     val note: NoteWithDoodleAndImage = getEmptyNote(),
     val loading: Boolean = false,
 )
 
-fun getEmptyNote(id: String? = null) = NoteWithDoodleAndImage(Note(DEFAULT, "").apply {
-    if (id != null) this.noteId = id
-}, ArrayList(), ArrayList())
+fun getEmptyNote(id: String? = null) = NoteWithDoodleAndImage(
+    Note(DEFAULT, "").apply { if (id != null) noteId = id },
+    ArrayList(),
+    ArrayList(),
+)
 
+sealed interface NoteEvent {
+    data class SetSelectedImage(val pos: Int) : NoteEvent
+    data class SaveNote(val note: Note) : NoteEvent
+    data class DeleteNote(val note: Note) : NoteEvent
+    data class SetCurrentMediaList(val uriList: MutableList<ClickableUri>) : NoteEvent
+}
 
 class NoteViewModel(
     private val notesRepository: NotesRepository,
-    private val localRepository: LocalRepository
+    private val localRepository: LocalRepository,
 ) : ViewModel() {
 
-    // UI state exposed to the UI
     private val _uiState = MutableStateFlow(NoteUiState(loading = true))
     val uiState: StateFlow<NoteUiState> = _uiState.asStateFlow()
 
@@ -50,34 +51,21 @@ class NoteViewModel(
         }
     }
 
-    fun setSelectedImage(pos: Int) {
-        viewModelScope.launch {
-            localRepository.saveSelectedPosition(pos)
+    fun onEvent(event: NoteEvent) {
+        when (event) {
+            is NoteEvent.SetSelectedImage -> viewModelScope.launch {
+                localRepository.saveSelectedPosition(event.pos)
+            }
+            is NoteEvent.SaveNote -> viewModelScope.launch {
+                notesRepository.create(event.note.apply { updatedOn = System.currentTimeMillis() })
+            }
+            is NoteEvent.DeleteNote -> viewModelScope.launch {
+                notesRepository.delete(event.note.noteId)
+                localRepository.saveCurrentNote()
+            }
+            is NoteEvent.SetCurrentMediaList -> viewModelScope.launch {
+                localRepository.saveCurrentMediaList(event.uriList)
+            }
         }
     }
-
-    fun saveNote(note: Note) {
-        viewModelScope.launch {
-            notesRepository.create(note.apply {
-                updatedOn = System.currentTimeMillis()
-            })
-        }
-
-    }
-
-
-    fun deleteNote(note: Note) {
-        viewModelScope.launch {
-            notesRepository.delete(note.noteId)
-            localRepository.saveCurrentNote()
-        }
-    }
-
-    fun setCurrentMediaList(uriList: MutableList<ClickableUri>) {
-        viewModelScope.launch {
-            localRepository.saveCurrentMediaList(uriList)
-        }
-    }
-
-
 }

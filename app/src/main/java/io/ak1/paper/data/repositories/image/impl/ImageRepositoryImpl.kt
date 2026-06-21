@@ -16,7 +16,7 @@
 package io.ak1.paper.data.repositories.image.impl
 
 import io.ak1.paper.data.local.ImageDao
-import io.ak1.paper.data.repositories.image.ImageRepository
+import io.ak1.paper.domain.repository.ImageRepository
 import io.ak1.paper.models.Image
 
 /**

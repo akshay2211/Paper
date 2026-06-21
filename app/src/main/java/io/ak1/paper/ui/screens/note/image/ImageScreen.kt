@@ -35,10 +35,11 @@ import androidx.core.graphics.drawable.toBitmap
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import io.ak1.paper.R
+import io.ak1.paper.domain.model.ImageChooserType
 import io.ak1.paper.ui.component.PaperIconButton
 import io.ak1.paper.ui.utils.clickImage
 import io.ak1.paper.ui.utils.saveImage
-import org.koin.androidx.compose.get
+import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * Created by akshay on 28/05/22
@@ -47,7 +48,7 @@ import org.koin.androidx.compose.get
 
 @Composable
 fun ImageScreen(backPress: () -> Unit) {
-    val imageViewModel  = get<ImageViewModel>()
+    val imageViewModel = koinViewModel<ImageViewModel>()
     val uiState by imageViewModel.uiState.collectAsState()
     val context = LocalContext.current
     val bitmap = remember {
@@ -62,7 +63,7 @@ fun ImageScreen(backPress: () -> Unit) {
     { result ->
         if (result) {
             imageData.value = imageClickedUri.value
-            imageViewModel.saveCurrentImageType()
+            imageViewModel.onEvent(ImageEvent.ChangeImageType(ImageChooserType.NONE))
             //imageData.value = Uri.parse("file://${currentPhotoPath.value}")
         } else {
             backPress.invoke()
@@ -74,7 +75,7 @@ fun ImageScreen(backPress: () -> Unit) {
             backPress.invoke()
             return@rememberLauncherForActivityResult
         }
-        imageViewModel.saveCurrentImageType()
+        imageViewModel.onEvent(ImageEvent.ChangeImageType(ImageChooserType.NONE))
 
         imageData.value = result
     }
@@ -109,7 +110,7 @@ fun ImageScreen(backPress: () -> Unit) {
                             Log.e("Bitmap", "Is null")
                         }
                         val uri = context.saveImage(bitmap.value, uiState.image.imageId)
-                        imageViewModel.save(uri, bitmap.value)
+                        imageViewModel.onEvent(ImageEvent.Save(uri, bitmap.value))
                         backPress.invoke()
                     }
                     PaperIconButton(
