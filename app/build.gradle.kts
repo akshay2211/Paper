@@ -15,12 +15,11 @@ plugins {
 
 android {
     namespace = "io.ak1.paper"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "io.ak1.paper"
-        minSdk = 23
-        targetSdk = 36
+        minSdk = 24
         versionCode = 3
         versionName = "1.0.2"
 
